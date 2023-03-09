@@ -6,24 +6,30 @@
 /*   By: dwimpy <dwimpy@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/06 17:17:25 by dwimpy           ###   ########.fr       */
+/*   Updated: 2023/03/08 22:35:16 by dwimpy           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "lexer.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
 int main(void)
 {
-    char    *line;
+	t_lexer *lexer;
+	t_token *token;
+	char *line;
+
+	lexer = init_lexer("   echo     hello \"world\" | new command");
     while (1)
     {
         line = readline("minishell$ ");
         if (!line)
             break ;
-        printf("Line: %s\n", line);
+        token = get_next_token(lexer);
+        printf("Token value: [%s]\n", token->value);
         add_history(line);
         free(line);
     }

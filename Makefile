@@ -6,13 +6,13 @@
 #    By: dwimpy <dwimpy@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/03/06 17:03:14 by dwimpy           ###   ########.fr        #
+#    Updated: 2023/03/08 21:10:06 by dwimpy           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Variables
 NAME			= minishell
-INCLUDE			= -I include/
+INCLUDE			= -I include/ -I libft-printf/include/
 DSYM			= ./minishell.dSYM
 SRC_DIR			= ./src
 OBJ_DIR			= ./obj
@@ -21,8 +21,8 @@ NORM_INCLUDE	= ./include
 
 # Compiler
 CC			= cc
-LDLFLAGS	= -lreadline
-CFLAGS		= -Wall -Werror -Wextra -g3 -pthread 
+LDLFLAGS	= -lreadline -lft -L./libft-printf/ 
+CFLAGS		= #-Wall -Werror -Wextra -g3 -pthread 
 
 ASAN		= #-fsanitize=address
 
@@ -46,7 +46,7 @@ SRCS	:=	$(wildcard $(SRC_DIR)/*.c)
 OBJS	:= 	$(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Rules
-all:	$(NAME)
+all:	libft $(NAME)
 
 $(NAME): $(OBJS) $(MAIN_FILE)
 	@$(CC) $(INCLUDE) $(FRAMEWORK) $(ASAN) $(OBJS) $(MAIN_FILE) -o $@ $(LDLFLAGS)
@@ -58,6 +58,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 
 $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
+
+libft:
+			@make -C libft-printf
 
  clean:
 			@$(RM) -rdf $(OBJ_DIR)
