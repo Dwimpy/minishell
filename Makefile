@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dwimpy <dwimpy@student.42.fr>              +#+  +:+       +#+         #
+#    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/03/08 21:10:06 by dwimpy           ###   ########.fr        #
+#    Updated: 2023/03/11 17:17:55 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,11 +18,12 @@ SRC_DIR			= ./src
 OBJ_DIR			= ./obj
 MAIN_FILE		:= main.c
 NORM_INCLUDE	= ./include
+LIBFT_FOLDER	:= ./libft-printf
 
 # Compiler
 CC			= cc
-LDLFLAGS	= -lreadline -lft -L./libft-printf/ 
-CFLAGS		= #-Wall -Werror -Wextra -g3 -pthread 
+LDLFLAGS	= -lreadline -lft -L./libft-printf
+CFLAGS		= -g3 #-Wall -Werror -Wextra -g3 -pthread 
 
 ASAN		= #-fsanitize=address
 
@@ -43,7 +44,7 @@ WHITE = \033[0;97m
 # Sources
 SRCS	:=	$(wildcard $(SRC_DIR)/*.c)
 # Objects
-OBJS	:= 	$(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)/%.o, $(SRCS))
+OBJS	:= 	$(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Rules
 all:	libft $(NAME)
@@ -60,7 +61,7 @@ $(OBJ_DIR):
 	@mkdir -p $(OBJ_DIR)
 
 libft:
-			@make -C libft-printf
+			@make -C $(LIBFT_FOLDER)
 
  clean:
 			@$(RM) -rdf $(OBJ_DIR)
@@ -68,6 +69,7 @@ libft:
 			@echo "$(YELLOW)minishell$(DEF_COLOR) $(CYAN)successfully cleaned!$(DEF_COLOR)"
 
 fclean:		clean
+			@make fclean -C $(LIBFT_FOLDER)
 			@$(RM) -f $(NAME)
 			@echo "$(YELLOW)All$(DEF_COLOR) $(CYAN)objects successfully cleaned!$(DEF_COLOR)"
 

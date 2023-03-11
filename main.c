@@ -3,35 +3,52 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dwimpy <dwimpy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/08 22:35:16 by dwimpy           ###   ########.fr       */
+/*   Updated: 2023/03/11 19:59:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "lexer.h"
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer.h"
-#include <readline/readline.h>
-#include <readline/history.h>
 
-int main(void)
+int	main(void)
 {
-	t_lexer *lexer;
-	t_token *token;
-	char *line;
+	t_token_list	*tokens;
+	t_token			*token;
+	t_lexer			lexer;
+	char			*line;
 
-	lexer = init_lexer("   echo     hello \"world\" | new command");
-    while (1)
-    {
-        line = readline("minishell$ ");
-        if (!line)
-            break ;
-        token = get_next_token(lexer);
-        printf("Token value: [%s]\n", token->value);
-        add_history(line);
-        free(line);
-    }
-    return (0);
+	tokens = new_token_list();
+	while (1)
+	{
+		line = readline("minishell$ ");
+		if (!line)
+			break ;
+		init_lexer(&lexer, line);
+		while (lexer.read_position < lexer.input_len)
+		{
+			token = get_next_token(&lexer);
+			add_token(tokens, token);
+		}
+		print_tokens(tokens);
+		printf("Size: %zu\n", tokens->num_tokens);
+		add_history(line);
+		if (is_string_type(tokens->first->type) && \
+			ft_strncmp(tokens->first->value.string, "exit", 5) == 0)
+		{
+			free_token_list(tokens);
+			free(tokens);
+			system("leaks minishell");
+			exit(0);
+		}
+		free(lexer.input);
+		free_token_list(tokens);
+		free(line);
+	}
+	return (0);
 }

@@ -3,26 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: dwimpy <dwimpy@student.42.fr>              +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/08 22:34:02 by dwimpy           ###   ########.fr       */
+/*   Updated: 2023/03/11 21:20:36 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 #include <stdio.h>
-t_lexer	*init_lexer(char *input)
+
+void	skip_whitespace(t_lexer *lexer);
+
+void	init_lexer(t_lexer *lexer, char *input)
 {
-	t_lexer *lexer;
-	
-	lexer = (t_lexer *)malloc(sizeof(t_lexer));
-	lexer->input = ft_strtrim(input ," \t\n");
-	lexer->position = 0;
-	lexer->read_position = 0;
+	lexer->input = ft_strtrim(input, " \t\n");
+	lexer->read_position = -1;
 	lexer->input_len = ft_strlen(lexer->input);
 	lexer->ch = '\0';
-	return (lexer);
 }
 
 char	get_next_char(t_lexer *lexer)
@@ -40,44 +38,30 @@ char	get_next_char(t_lexer *lexer)
 
 t_token	*get_next_token(t_lexer *lexer)
 {
-	t_token *token;
-	char	*str;
-		
-	skip_whitespace(lexer);
-	while (match_word(get_next_char(lexer)))
-		;
-	str = ft_substr(lexer->input, lexer->position, lexer->read_position - lexer->position);
-	token = new_token(str);
-	lexer->position = lexer->read_position;
-	return (token);
+	char	buffer[4096];
+	int		i;
+
+	i = 0;
+	get_next_char(lexer);
+	if (lexer->ch == '\0')
+		return (new_empty_token());
+	if (match_word(lexer->ch))
+		return (tokenize_word(lexer));
+	if (lexer->ch == '|')
+		return (tokenize_pipe(lexer));
+	if (lexer->ch == '&')
+		return (tokenize_ampersand(lexer));
+	if (lexer->ch == '<')
+		return (tokenize_redir_input(lexer));
+	if (lexer->ch == '>')
+		return (tokenize_redir_output(lexer));
+	return (NULL);
 }
 
-void skip_whitespace(t_lexer *lexer)
+char	look_ahead(t_lexer *lexer)
 {
-	while (match_whitespace(lexer->ch))
-	{
-		lexer->position++;
-		get_next_char(lexer);
-	}
-}
-
-int	match_whitespace(char c)
-{
-	return (c == ' ' || c == '\t' || c == '\n');
-}
-
-int	match_word(char c)
-{
-	return (ft_isalnum(c) || c == '_' || c == '\"');
-}
-
-t_token	*new_token(char *value)
-{
-	t_token *token;
-	
-	token = (t_token *)malloc(sizeof(t_token));
-	token->value = value;
-	token->type = TOKEN_EOF;
-	token->next = NULL;
-	return (token);
+	if (lexer->read_position < lexer->input_len)
+		return (lexer->input[lexer->read_position + 1]);
+	else
+		return ('\0');
 }
