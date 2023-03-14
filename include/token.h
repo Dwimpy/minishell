@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/14 16:35:44 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/14 19:12:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ typedef enum e_token_type
 	TOKEN_GREAT,
 	TOKEN_DLESS,
 	TOKEN_DGREAT,
+	TOKEN_LINEBREAK,
+	TOKEN_LPARENTHESIS,
+	TOKEN_RPARENTHESIS,
 	TOKEN_EOF
 }						t_token_type;
 
@@ -82,6 +85,16 @@ typedef struct s_token_linebreak
 	char			c;
 }				t_token_linebreak;
 
+typedef struct s_token_lbrace
+{
+	char			c;
+}				t_token_lparantesis;
+
+typedef struct s_token_rbrace
+{
+	char			c;
+}				t_token_rparantesis;
+
 typedef struct s_token_eof
 {
 	char			c;
@@ -89,16 +102,19 @@ typedef struct s_token_eof
 
 typedef union u_token_value
 {
-	t_token_word		word;
-	t_token_pipe		pipe;
-	t_token_and			and;
-	t_token_or_if		or_if;
-	t_token_and_if		and_if;
-	t_token_less		less;
-	t_token_great		great;
-	t_token_dless		dless;
-	t_token_dgreat		dgreat;
-	t_token_eof			eof;
+	t_token_word			word;
+	t_token_pipe			pipe;
+	t_token_and				and;
+	t_token_or_if			or_if;
+	t_token_and_if			and_if;
+	t_token_less			less;
+	t_token_great			great;
+	t_token_dless			dless;
+	t_token_dgreat			dgreat;
+	t_token_linebreak		linebreak;
+	t_token_lparantesis		lparanthesis;
+	t_token_rparantesis		rparanthesis;
+	t_token_eof				eof;
 }						t_token_value;
 
 typedef struct s_token
@@ -109,7 +125,6 @@ typedef struct s_token
 }						t_token;
 
 t_token		*new_token(t_token_type type, char *value);
-t_token		*new_empty_token(void);
 int			is_string_type(t_token_type type);
 int			is_operator_type(t_token_type type);
 void		print_token_value(t_token *token);

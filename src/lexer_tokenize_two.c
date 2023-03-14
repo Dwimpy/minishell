@@ -1,18 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.h                                           :+:      :+:    :+:   */
+/*   lexer_tokenize_two.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/14 17:28:35 by arobu            ###   ########.fr       */
+/*   Created: 2023/03/14 18:58:12 by arobu             #+#    #+#             */
+/*   Updated: 2023/03/14 19:09:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARSER_H
-# define PARSER_H
+#include "lexer.h"
 
-
-
-#endif
+t_token	*tokenize_braces(t_lexer *lexer)
+{
+	if (lexer->ch == '(')
+		return (new_token(TOKEN_LPARENTHESIS, NULL));
+	if (lexer->ch == ')')
+		return (new_token(TOKEN_RPARENTHESIS, NULL));
+	return (NULL);
+}

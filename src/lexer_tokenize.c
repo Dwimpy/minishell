@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/14 16:42:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/14 19:00:36 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,9 @@ t_token	*tokenize_word(t_lexer *lexer)
 
 t_token	*tokenize_pipe(t_lexer *lexer)
 {
-	char	buffer[3];
-
-	buffer[0] = lexer->ch;
-	buffer[1] = '\0';
 	if (look_ahead(lexer) == '|')
 	{
 		get_next_char(lexer);
-		buffer[1] = lexer->ch;
-		buffer[2] = '\0';
 		return (new_token(TOKEN_OR_IF, NULL));
 	}
 	return (new_token(TOKEN_PIPE, NULL));
@@ -47,31 +41,19 @@ t_token	*tokenize_pipe(t_lexer *lexer)
 
 t_token	*tokenize_ampersand(t_lexer *lexer)
 {
-	char	buffer[3];
-
-	buffer[0] = lexer->ch;
-	buffer[1] = '\0';
 	if (look_ahead(lexer) == '&')
 	{
 		get_next_char(lexer);
-		buffer[1] = lexer->ch;
-		buffer[2] = '\0';
-		return (new_token(TOKEN_AND_IF, buffer));
+		return (new_token(TOKEN_AND_IF, NULL));
 	}
 	return (new_token(TOKEN_AND, NULL));
 }
 
 t_token	*tokenize_redir_input(t_lexer *lexer)
 {
-	char	buffer[3];
-
-	buffer[0] = lexer->ch;
-	buffer[1] = '\0';
 	if (look_ahead(lexer) == '<')
 	{
 		get_next_char(lexer);
-		buffer[1] = lexer->ch;
-		buffer[2] = '\0';
 		return (new_token(TOKEN_DLESS, NULL));
 	}
 	return (new_token(TOKEN_LESS, NULL));
@@ -79,15 +61,9 @@ t_token	*tokenize_redir_input(t_lexer *lexer)
 
 t_token	*tokenize_redir_output(t_lexer *lexer)
 {
-	char	buffer[3];
-
-	buffer[0] = lexer->ch;
-	buffer[1] = '\0';
 	if (look_ahead(lexer) == '>')
 	{
 		get_next_char(lexer);
-		buffer[1] = lexer->ch;
-		buffer[2] = '\0';
 		return (new_token(TOKEN_DGREAT, NULL));
 	}
 	return (new_token(TOKEN_GREAT, NULL));
