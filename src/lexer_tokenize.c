@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/11 21:20:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/14 16:42:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ t_token	*tokenize_word(t_lexer *lexer)
 	}
 	lexer->read_position--;
 	buffer[i] = '\0';
-	return (new_token(TOKEN_WORD, \
-		(t_token_value){.string = ft_strdup(buffer)}));
+	return (new_token(TOKEN_WORD, buffer));
 }
 
 t_token	*tokenize_pipe(t_lexer *lexer)
@@ -41,11 +40,9 @@ t_token	*tokenize_pipe(t_lexer *lexer)
 		get_next_char(lexer);
 		buffer[1] = lexer->ch;
 		buffer[2] = '\0';
-		return (new_token(TOKEN_OR, \
-			(t_token_value){.string = ft_strdup(buffer)}));
+		return (new_token(TOKEN_OR_IF, NULL));
 	}
-	return (new_token(TOKEN_PIPE, \
-		(t_token_value){.operator = buffer[0]}));
+	return (new_token(TOKEN_PIPE, NULL));
 }
 
 t_token	*tokenize_ampersand(t_lexer *lexer)
@@ -59,11 +56,9 @@ t_token	*tokenize_ampersand(t_lexer *lexer)
 		get_next_char(lexer);
 		buffer[1] = lexer->ch;
 		buffer[2] = '\0';
-		return (new_token(TOKEN_D_AND, \
-			(t_token_value){.string = ft_strdup(buffer)}));
+		return (new_token(TOKEN_AND_IF, buffer));
 	}
-	return (new_token(TOKEN_AND, \
-		(t_token_value){.operator = buffer[0]}));
+	return (new_token(TOKEN_AND, NULL));
 }
 
 t_token	*tokenize_redir_input(t_lexer *lexer)
@@ -77,11 +72,9 @@ t_token	*tokenize_redir_input(t_lexer *lexer)
 		get_next_char(lexer);
 		buffer[1] = lexer->ch;
 		buffer[2] = '\0';
-		return (new_token(TOKEN_REDIR_INPUT_APPEND, \
-			(t_token_value){.string = ft_strdup(buffer)}));
+		return (new_token(TOKEN_DLESS, NULL));
 	}
-	return (new_token(TOKEN_REDIR_INPUT, \
-			(t_token_value){.operator = buffer[0]}));
+	return (new_token(TOKEN_LESS, NULL));
 }
 
 t_token	*tokenize_redir_output(t_lexer *lexer)
@@ -95,9 +88,7 @@ t_token	*tokenize_redir_output(t_lexer *lexer)
 		get_next_char(lexer);
 		buffer[1] = lexer->ch;
 		buffer[2] = '\0';
-		return (new_token(TOKEN_REDIR_INPUT_APPEND, \
-			(t_token_value){.string = ft_strdup(buffer)}));
+		return (new_token(TOKEN_DGREAT, NULL));
 	}
-	return (new_token(TOKEN_REDIR_INPUT, \
-			(t_token_value){.operator = buffer[0]}));
+	return (new_token(TOKEN_GREAT, NULL));
 }

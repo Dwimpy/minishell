@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/11 19:59:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/14 16:38:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	main(void)
 		printf("Size: %zu\n", tokens->num_tokens);
 		add_history(line);
 		if (is_string_type(tokens->first->type) && \
-			ft_strncmp(tokens->first->value.string, "exit", 5) == 0)
+			ft_strncmp(tokens->first->value.word.value, "exit", 5) == 0)
 		{
 			free_token_list(tokens);
 			free(tokens);

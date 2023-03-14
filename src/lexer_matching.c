@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:12:41 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/11 15:19:20 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/13 13:05:51 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,5 @@ int	match_character(char c)
 
 int	match_word(char c)
 {
-	return (ft_isalnum(c) || c == '_');
+	return (ft_isalnum(c) || c == '_' || c == '"');
 }
