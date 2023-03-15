@@ -6,15 +6,16 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/14 16:38:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/15 13:24:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "lexer.h"
+#include "atom.h"
 
 int	main(void)
 {
@@ -24,6 +25,7 @@ int	main(void)
 	char			*line;
 
 	tokens = new_token_list();
+
 	while (1)
 	{
 		line = readline("minishell$ ");
