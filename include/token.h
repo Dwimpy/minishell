@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/14 19:12:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/17 16:26:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ typedef struct s_token	t_token;
 typedef enum e_token_type
 {
 	TOKEN_WORD,
+	TOKEN_ASSIGN_WORD,
 	TOKEN_PIPE,	
 	TOKEN_OR_IF,
 	TOKEN_AND,
@@ -39,6 +40,11 @@ typedef struct s_token_word
 {
 	char			*value;
 }						t_token_word;
+
+typedef struct s_token_assign_word
+{
+	char			*value;
+}						t_token_assign_word;
 
 typedef struct s_token_pipe
 {
@@ -103,6 +109,7 @@ typedef struct s_token_eof
 typedef union u_token_value
 {
 	t_token_word			word;
+	t_token_assign_word		assign_word;
 	t_token_pipe			pipe;
 	t_token_and				and;
 	t_token_or_if			or_if;

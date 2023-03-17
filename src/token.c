@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/15 12:40:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/17 16:40:23 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ t_token_value	get_value(t_token_type type, char *value)
 {
 	if (type == TOKEN_WORD)
 		return ((t_token_value){.word.value = ft_strdup(value)});
+	if (type == TOKEN_ASSIGN_WORD)
+		return ((t_token_value){.assign_word.value = ft_strdup(value)});
 	if (type == TOKEN_PIPE)
 		return ((t_token_value){.pipe.c = '|'});
 	if (type == TOKEN_AND)
@@ -60,6 +62,8 @@ void	print_token_value(t_token *token)
 {
 	if (token->type == TOKEN_WORD)
 		printf("\t[ %s ] (WORD)\n", token->value.word.value);
+	if (token->type == TOKEN_ASSIGN_WORD)
+		printf("\t[ %s ] (ASSIGNMENT WORD)\n", token->value.assign_word.value);
 	if (token->type == TOKEN_PIPE)
 		printf("\t[ %c ] (PIPE)\n", token->value.pipe.c);
 	if (token->type == TOKEN_OR_IF)
@@ -89,6 +93,8 @@ void	print_token_value(t_token *token)
 void	free_token(t_token *token)
 {
 	if (token->type == TOKEN_WORD)
+		free(token->value.word.value);
+	if (token->type == TOKEN_ASSIGN_WORD)
 		free(token->value.word.value);
 	if (token->type == TOKEN_OR_IF)
 		free(token->value.or_if.value);

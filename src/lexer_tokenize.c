@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/14 19:00:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/17 16:41:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_token	*tokenize_word(t_lexer *lexer)
 	int		i;
 
 	i = 0;
-	while (match_word(lexer->ch))
+	while (match_word(lexer->ch) || lexer->ch == '=')
 	{
 		buffer[i] = lexer->ch;
 		get_next_char(lexer);
@@ -26,6 +26,8 @@ t_token	*tokenize_word(t_lexer *lexer)
 	}
 	lexer->read_position--;
 	buffer[i] = '\0';
+	if (ft_strchr(buffer, '=') != NULL)
+		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	return (new_token(TOKEN_WORD, buffer));
 }
 

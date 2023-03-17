@@ -6,13 +6,14 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 01:03:29 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/15 01:36:32 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/16 16:25:55 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "atom.h"
 #include "ft_printf.h"
 #include <stdio.h>
+
 t_atom	*atom_new(const void *const bytes, \
 				const size_t len, const uint32_t hash)
 {
@@ -21,9 +22,7 @@ t_atom	*atom_new(const void *const bytes, \
 	atom = (t_atom *)malloc(sizeof(t_atom));
 	if (bytes == NULL)
 		return (NULL);
-	if (SIZE_MAX - SIZE_MAX / len < 0)
-		return (NULL);
-	atom->bytes = (void *)malloc(len + 1);
+	atom->bytes = (void *)malloc(len);
 	if (atom->bytes == NULL)
 		return (NULL);
 	ft_memcpy(atom->bytes, bytes, len);
@@ -50,4 +49,5 @@ uint32_t	atom_hash(const void *const bytes, const size_t len)
 	hash += hash << 3;
 	hash ^= hash >> 11;
 	hash += hash << 15;
+	return hash;
 }
