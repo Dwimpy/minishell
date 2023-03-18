@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/18 12:32:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 12:38:13 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ int	main(int argc, char **argv, char **envp)
 	// hashmap_put(hashmap, "asd", "hello");
 	// hashmap_put(hashmap, "fds", "Grav");
 	// hashmap_put(hashmap, "fdds", "Grav");
-	// array = (char **)hashmap_toarray(hashmap, NULL);
+	array = (char **)hashmap_toarray(hashmap, NULL);
 	// hashmap_remove(hashmap, "key");
 	// hashmap_remove(hashmap, "fdds");
 	// hashmap_remove(hashmap, "fds");
 	// hashmap_remove(hashmap, "asd");
 	// hashmap_remove(hashmap, "bro");
 	// printf("\n%s\n", array[4]);
-	// free(array);
+	free(array);
 	// if ((char *)hashmap_get(hashmap, "bro") == NULL)
 	// 	printf("NULL");
 	hashmap_free(&hashmap);
