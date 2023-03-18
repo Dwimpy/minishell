@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:21:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/17 17:30:52 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 12:33:25 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,12 @@ t_hashmap	*hashmap_new(int size)
 		;
 	hashmap->size = primes[i - 1];
 	hashmap->table = (t_entry **)malloc(sizeof(t_entry *) * primes[i - 1]);
+	i = 0;
+	while (i < hashmap->size)
+	{
+		hashmap->table[i] = NULL;
+		i++;
+	}
 	hashmap->hash = &table_hash;
 	hashmap->compare = &compare_keys;
 	hashmap->length = 0;
@@ -37,7 +43,7 @@ void	*hashmap_get(t_hashmap *hashmap, const void *key)
 	t_entry	*entry;
 	int		index;
 
-	if (!hashmap || !hashmap->table || !key)
+	if (!hashmap && !hashmap->table && !key)
 		return (NULL);
 	index = hashmap->hash(key) % hashmap->size;
 	entry = hashmap->table[index];
@@ -58,7 +64,7 @@ void	*hashmap_put(t_hashmap *hashmap, const void *key, void *value)
 	int		index;
 	void	*prev;
 
-	if (!hashmap || !hashmap->table || !key)
+	if (!hashmap && !hashmap->table && !key)
 		return (NULL);
 	index = hashmap->hash(key) % hashmap->size;
 	entry = hashmap->table[index];
@@ -91,7 +97,7 @@ int	compare_keys(const void *x, const void *y)
 
 int	hashmap_length(t_hashmap *hashmap)
 {
-	if (!hashmap || !hashmap->table)
+	if (!hashmap && !hashmap->table)
 		return (-1);
 	return (hashmap->length);
 }
@@ -124,7 +130,7 @@ void	*hashmap_remove(t_hashmap *hashmap, const void *key)
 	int		index;
 	int		i;
 
-	if (!hashmap || !hashmap->table || !key)
+	if (!hashmap && !hashmap->table && !key)
 		return (NULL);
 	index = hashmap->hash(key) % hashmap->size;
 	entry_ptr = &hashmap->table[index];
@@ -154,9 +160,10 @@ void	**hashmap_toarray(t_hashmap	*hashmap, void *end)
 
 	i = 0;
 	j = 0;
-	if (!hashmap || !hashmap->table)
+	if (!hashmap && !hashmap->table)
 		return (NULL);
 	array = malloc((2 * hashmap->length + 1) * sizeof(*array));
+	i = 0;
 	while (i < hashmap->size)
 	{
 		entry = hashmap->table[i];
@@ -170,4 +177,31 @@ void	**hashmap_toarray(t_hashmap	*hashmap, void *end)
 	}
 	array[j] = end;
 	return (array);
+}
+
+void	hashmap_free(t_hashmap **hashmap)
+{
+	t_entry	*entry;
+	t_entry	*prev_entry;
+	int		i;
+
+	i = 0;
+	if (!hashmap && !(*hashmap)->table)
+		return ;
+	if ((*hashmap)->length > 0)
+	{
+		while (i < (*hashmap)->size)
+		{
+			entry = (*hashmap)->table[i];
+			while (entry)
+			{
+				prev_entry = entry;
+				entry = entry->next;
+				free(prev_entry);
+			}
+			i++;
+		}
+	}
+	free((*hashmap)->table);
+	free(*hashmap);
 }

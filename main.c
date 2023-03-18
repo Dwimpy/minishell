@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/17 17:35:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 12:32:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 #include "atom.h"
 #include "hashmap.h"
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	t_token_list	*tokens;
 	t_token			*token;
@@ -29,29 +29,33 @@ int	main(void)
 	
 	int	a = 25;
 	int	b = 22;
-	tokens = new_token_list();
-	add_token(tokens, new_token(TOKEN_WORD, "Hello"));
+	// tokens = new_token_list();
 	hashmap = hashmap_new(100);
-	printf("%02x\n", table_hash(tokens));
-	hashmap_put(hashmap, tokens, &a);
-	hashmap_put(hashmap, "key", "WTF");
-	hashmap_put(hashmap, "asd", &b);
-	hashmap_put(hashmap, "fds", &b);
-	printf("Prev elem: %d", *(int *)hashmap_put(hashmap, tokens, &b));
-	hashmap_put(hashmap, tokens, &b);
-	hashmap_put(hashmap, tokens, &b);
-	hashmap_put(hashmap, tokens, &b);
-	array = (char **)hashmap_toarray(hashmap, NULL);
-	printf("\n%s\n", array[1]);
-	printf("Elem: %d\t", *(int *)hashmap_get(hashmap, tokens));
-	printf("%d", hashmap_length(hashmap));
+	// // printf("%02x\n", table_hash(tokens));
+	// hashmap_put(hashmap, "bro", "what");
+	// hashmap_put(hashmap, "key", "WTF");
+	// hashmap_put(hashmap, "asd", "hello");
+	// hashmap_put(hashmap, "fds", "Grav");
+	// hashmap_put(hashmap, "fdds", "Grav");
+	// array = (char **)hashmap_toarray(hashmap, NULL);
+	// hashmap_remove(hashmap, "key");
+	// hashmap_remove(hashmap, "fdds");
+	// hashmap_remove(hashmap, "fds");
+	// hashmap_remove(hashmap, "asd");
+	// hashmap_remove(hashmap, "bro");
+	// printf("\n%s\n", array[4]);
+	// free(array);
+	// if ((char *)hashmap_get(hashmap, "bro") == NULL)
+	// 	printf("NULL");
+	hashmap_free(&hashmap);
+	// printf("%d", hashmap_length(hashmap));
+	// printf("%s", envp[0]);
 	// while (1)
 	// {
 	// 	line = readline("minishell$ ");
 	// 	if (!line)
 	// 		break ;
 	// 	init_lexer(&lexer, line);
-	// 	printf("Line: %s\n", line);
 	// 	while (lexer.read_position < lexer.input_len)
 	// 	{
 	// 		token = get_next_token(&lexer);
@@ -65,6 +69,7 @@ int	main(void)
 	// 	{
 	// 		free_token_list(tokens);
 	// 		free(tokens);
+	// 		free(lexer.input);
 	// 		system("leaks minishell");
 	// 		exit(0);
 	// 	}
