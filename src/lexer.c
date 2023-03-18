@@ -6,21 +6,42 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/17 16:45:43 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 14:15:54 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include <readline/history.h>
+#include <readline/readline.h>
 #include <stdio.h>
+#include "lexer.h"
 
 void	skip_whitespace(t_lexer *lexer);
 
-void	init_lexer(t_lexer *lexer, char *input)
+void	init_lexer(t_lexer *lexer)
 {
-	lexer->input = ft_strtrim(input, " \t\n");
+	char	*line;
+	char	*next_line;
+	char	*init_line;
+	char	*trimmed;
+
+	line = readline("minishell$ ");
+	while (ft_strrchr(line, '\\') != NULL && \
+		(ft_strrchr(line, '\\') + 1)[0] == '\0')
+	{
+		init_line = line;
+		trimmed = ft_strtrim(line, "\\\n");
+		free(init_line);
+		next_line = readline("> ");
+		line = ft_strjoin(trimmed, next_line);
+		free(trimmed);
+		free(next_line);
+	}
 	lexer->read_position = -1;
+	add_history(line);
+	lexer->input = ft_strdup(line);
 	lexer->input_len = ft_strlen(lexer->input);
 	lexer->ch = '\0';
+	free(line);
 }
 
 char	get_next_char(t_lexer *lexer)

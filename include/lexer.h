@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/14 19:08:38 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 14:19:07 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ typedef struct s_lexer
 	char				ch;
 }						t_lexer;
 
-void					init_lexer(t_lexer *lexer, char *input);
+void					init_lexer(t_lexer *lexer);
 int						match_whitespace(char c);
 int						match_digit(char c);
 int						match_symbol(char c);
@@ -39,5 +39,5 @@ t_token					*tokenize_ampersand(t_lexer *lexer);
 t_token					*tokenize_redir_input(t_lexer *lexer);
 t_token					*tokenize_redir_output(t_lexer *lexer);
 t_token					*tokenize_braces(t_lexer *lexer);
-
+void					get_tokens(t_token_list *tokens, t_lexer lexer);
 #endif

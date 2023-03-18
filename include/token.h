@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/17 16:26:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 12:32:37 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ typedef enum e_token_type
 	TOKEN_GREAT,
 	TOKEN_DLESS,
 	TOKEN_DGREAT,
-	TOKEN_LINEBREAK,
 	TOKEN_LPARENTHESIS,
 	TOKEN_RPARENTHESIS,
 	TOKEN_EOF

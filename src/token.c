@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/17 16:40:23 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/18 12:33:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ t_token_value	get_value(t_token_type type, char *value)
 		return ((t_token_value){.dless.value = ft_strdup("<<")});
 	if (type == TOKEN_DGREAT)
 		return ((t_token_value){.dgreat.value = ft_strdup(">>")});
-	if (type == TOKEN_LINEBREAK)
-		return ((t_token_value){.linebreak.c = '\\'});
 	if (type == TOKEN_LPARENTHESIS)
 		return ((t_token_value){.lparanthesis.c = '('});
 	if (type == TOKEN_RPARENTHESIS)
@@ -80,8 +78,6 @@ void	print_token_value(t_token *token)
 		printf("\t[ %s ] (DLESS)\n", token->value.dless.value);
 	if (token->type == TOKEN_DGREAT)
 		printf("\t[ %s ] (DGREAT)\n", token->value.dgreat.value);
-	if (token->type == TOKEN_LINEBREAK)
-		printf("\t[ %c ] (LINEBREAK)\n", token->value.linebreak.c);
 	if (token->type == TOKEN_LPARENTHESIS)
 		printf("\t[ %c ] (L PARENTHESIS)\n", token->value.lparanthesis.c);
 	if (token->type == TOKEN_RPARENTHESIS)

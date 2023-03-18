@@ -6,19 +6,20 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/03/11 17:17:55 by arobu            ###   ########.fr        #
+#    Updated: 2023/03/18 13:49:28 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Variables
 NAME			= minishell
-INCLUDE			= -I include/ -I libft-printf/include/
+INCLUDE			= -I include/ -I libft-printf/include/ -I get_next_line/gnl/include
 DSYM			= ./minishell.dSYM
 SRC_DIR			= ./src
 OBJ_DIR			= ./obj
 MAIN_FILE		:= main.c
 NORM_INCLUDE	= ./include
 LIBFT_FOLDER	:= ./libft-printf
+GNL				:= ./get_next_line
 
 # Compiler
 CC			= cc
