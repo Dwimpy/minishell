@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/18 14:19:07 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/19 13:07:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int						match_character(char c);
 int						match_word(char c);
 char					look_ahead(t_lexer *lexer);
 char					get_next_char(t_lexer *lexer);
-t_token					*get_next_token(t_lexer *lexer);
+t_token					*create_next_token(t_lexer *lexer);
 t_token					*tokenize_word(t_lexer *lexer);
 t_token					*tokenize_pipe(t_lexer *lexer);
 t_token					*tokenize_ampersand(t_lexer *lexer);

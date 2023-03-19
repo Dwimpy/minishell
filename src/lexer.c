@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/18 14:15:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/19 13:07:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ char	get_next_char(t_lexer *lexer)
 	return (lexer->ch);
 }
 
-t_token	*get_next_token(t_lexer *lexer)
+t_token	*create_next_token(t_lexer *lexer)
 {
 	char	buffer[4096];
 	int		i;

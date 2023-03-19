@@ -6,11 +6,12 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/18 19:35:31 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/19 16:03:23 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
+#include "ft_printf.h"
 
 t_ast_node	*new_node(t_data data)
 {
@@ -26,8 +27,7 @@ t_ast_node	*new_node(t_data data)
 	return (new_node);
 }
 
-void	ast_add_parent(t_ast_node **current, t_ast_node *new_parent, \
-					t_node_type type)
+void	ast_add_parent(t_ast_node **current, t_ast_node *new_parent)
 {
 	t_ast_node	*curr_node;
 
@@ -47,8 +47,7 @@ void	ast_add_parent(t_ast_node **current, t_ast_node *new_parent, \
 	*current = (*current)->parent;
 }
 
-void	ast_add_left(t_ast_node *root, t_ast_node *left_child, \
-					t_node_type type)
+void	ast_add_left(t_ast_node *root, t_ast_node *left_child)
 {
 	t_ast_node	*curr_node;
 
@@ -63,8 +62,7 @@ void	ast_add_left(t_ast_node *root, t_ast_node *left_child, \
 	}
 }
 
-void	ast_add_right(t_ast_node *root, t_ast_node *right_child, \
-						t_node_type type)
+void	ast_add_right(t_ast_node *root, t_ast_node *right_child)
 {
 	t_ast_node	*curr_node;
 
@@ -77,4 +75,18 @@ void	ast_add_right(t_ast_node *root, t_ast_node *right_child, \
 		curr_node = root;
 		curr_node->right = right_child;
 	}
+}
+
+void	ast_set_type(t_ast_node *node, t_node_type type)
+{
+	node->type = type;
+}
+
+void	ast_del_node(t_ast_node *node)
+{
+	if (!node)
+		return ;
+	ast_del_node(node->left);
+	ast_del_node(node->right);
+	free(node);
 }

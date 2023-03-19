@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/11 16:59:38 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/19 14:45:21 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,46 @@ void	print_tokens(t_token_list *list)
 {
 	t_token	*token;
 
+	if (!list)
+		return ;
 	token = list->first;
 	while (token)
 	{
 		print_token_value(token);
 		token = token->next;
 	}
+}
+
+t_token	*peek_token(t_token_list *tokens, int look_ahead_times)
+{
+	t_token	*token;
+	int		i;
+
+	i = 0;
+	while (token && i < look_ahead_times)
+	{
+		token = token->next;
+	}
+	return (token);
+}
+
+t_token	*get_next_token(t_token *token)
+{
+	(token) = (token)->next;
+	return (token);
+}
+
+int	get_nargs(t_token *token)
+{
+	t_token	*curr_token;
+	int		count;
+
+	curr_token = token;
+	count = 0;
+	while (curr_token->type == TOKEN_WORD)
+	{
+		count++;
+		curr_token = curr_token->next;
+	}
+	return (count);
 }
