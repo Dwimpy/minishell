@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/18 12:33:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/20 16:30:39 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,3 +104,5 @@ void	free_token(t_token *token)
 		free(token->value.dgreat.value);
 	free(token);
 }
+
+

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/19 14:17:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/20 17:49:34 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,42 @@ typedef struct s_ast_node	t_ast_node;
 
 typedef enum e_node_type
 {
-	SIMPLE_COMMAND,
+	COMMAND	,
 	PIPELINE,
 }				t_node_type;
 
-typedef struct s_redirection
+typedef struct s_io_redirect
 {
 	int			fd;
-	char		*file;
-}				t_redirection;
+	char		*filename;
+}				t_io_redirect;
+
+typedef struct s_assignment_word
+{
+	t_arglist	*arglist;
+}				t_assignment_word;
+
+typedef struct s_cmd_prefix
+{
+	t_io_redirect		input;
+	t_io_redirect		output;
+	t_assignment_word	assignments;
+}				t_cmd_prefix;
+
+typedef struct s_cmd_suffix
+{
+	t_io_redirect	input;
+	t_io_redirect	output;
+	t_arglist		words;
+}				t_cmd_suffix;
 
 typedef struct s_command
 {
 	char			*name;
 	t_arglist		*arglist;
+	t_cmd_prefix	prefix;
+	t_cmd_suffix	suffix;
 	t_node_type		type;
-	t_redirection	input;
-	t_redirection	output;
 }				t_command;
 
 typedef struct s_pipeline
