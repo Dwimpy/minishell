@@ -1,43 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lexer_terminals.c                                  :+:      :+:    :+:   */
+/*   parser_acceptor.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/11 15:17:58 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/21 10:36:49 by arobu            ###   ########.fr       */
+/*   Created: 2023/03/21 09:57:56 by arobu             #+#    #+#             */
+/*   Updated: 2023/03/21 10:01:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "parser.h"
 
-int	match_whitespace(char c)
+int	accept(t_token *token, t_token_type type)
 {
-	return (c == ' ' || c == '\t' || c == '\n');
+	return (token->type == type);
 }
 
-int	match_digit(char c)
+int	expect(t_token *token, t_token_type type)
 {
-	return (ft_isdigit(c));
+	return (accept(token, type));
 }
 
-int	match_symbol(char c)
+int	accept_redirection(t_token *token)
 {
-	const char	symbols[35] = "!@#$%^&*()=-_+{}[]|\\:;\"',.<>/?`~";
-	int			i;
-
-	i = 0;
-	while (symbols[i])
+	if (accept(token, TOKEN_LESS) || accept(token, TOKEN_GREAT) || \
+	accept(token, TOKEN_DGREAT) || accept(token, TOKEN_DLESS))
 	{
-		if (c == symbols[i])
+		if (accept(token->next, TOKEN_WORD))
 			return (1);
-		i++;
 	}
 	return (0);
-}
-
-int	match_letter(char c)
-{
-	return (ft_isalpha(c));
 }

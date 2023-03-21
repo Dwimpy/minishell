@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/20 18:06:05 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/21 15:09:01 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,11 @@ int	main(int argc, char **argv, char **envp)
 	{
 		init_lexer(&lexer);
 		get_tokens(tokens, lexer);
-		// print_tokens(tokens);
+		print_tokens(tokens);
+		printf("Size: %zu\n", tokens->num_tokens);
 		ast_node = parse_command(tokens);
+		if (ast_node->data.command.prefix.assignments.arglist)
+			printf("Assignment: %s\n", ast_node->data.command.prefix.assignments.arglist->first->value);
 		if (ast_node)
 		{
 			if (ast_node->data.command.name != NULL)
@@ -65,18 +68,16 @@ int	main(int argc, char **argv, char **envp)
 				printf("Input Redir: %s\n", ast_node->data.command.prefix.input.filename);
 				printf("Output Redir: %s\n", ast_node->data.command.prefix.output.filename);
 				print_args(ast_node->data.command.arglist);
-				printf("Size: %zu\n", tokens->num_tokens);
 			}
 		}
-		// if (is_string_type(tokens->first->type) && \
-		// 	ft_strncmp(tokens->first->value.word.value, "exit", 5) == 0)
-		// {
-		// 	free_token_list(tokens);
-		// 	free(tokens);
-		// 	free(lexer.input);
-		// 	system("leaks minishell");
-		// 	exit(0);
-		// }
+		if (ast_node->data.command.name && ft_strncmp(ast_node->data.command.name, "exit", 5) == 0)
+		{
+			free_token_list(tokens);
+			free(lexer.input);
+			system("leaks minishell");
+			exit(0);
+		}
+		ast_del_node(ast_node);
 		free(lexer.input);
 		free_token_list(tokens);
 	}

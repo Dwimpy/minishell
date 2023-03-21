@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/19 14:49:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/21 12:45:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,21 @@ void	print_args(t_arglist *arglist)
 		printf("%s | ", arg->value);
 		arg = arg->next;
 	}
+}
+
+void	free_args(t_arglist *arglist)
+{
+	t_arg	*arg;
+
+	if (!arglist)
+		return ;
+	arg = arglist->first;
+	while (arg)
+	{
+		arglist->first = arglist->first->next;
+		free(arg->value);
+		free(arg);
+		arg = arglist->first;
+	}
+	free(arglist);
 }

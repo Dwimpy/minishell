@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/20 16:19:25 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/21 14:57:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ typedef struct s_token	t_token;
 typedef enum e_token_type
 {
 	TOKEN_WORD,
+	TOKEN_SQUOTE,
+	TOKEN_DQUOTE,
 	TOKEN_ASSIGN_WORD,
 	TOKEN_PIPE,	
 	TOKEN_OR_IF,
@@ -39,6 +41,16 @@ typedef struct s_token_word
 {
 	char			*value;
 }						t_token_word;
+
+typedef struct s_token_squote
+{
+	char			*value;
+}						t_token_squote;
+
+typedef struct s_token_dquote
+{
+	char			*value;
+}						t_token_dquote;
 
 typedef struct s_token_assign_word
 {
@@ -108,6 +120,8 @@ typedef struct s_token_eof
 typedef union u_token_value
 {
 	t_token_word			word;
+	t_token_squote			squote;
+	t_token_dquote			dquote;
 	t_token_assign_word		assign_word;
 	t_token_pipe			pipe;
 	t_token_and				and;
@@ -133,6 +147,8 @@ typedef struct s_token
 t_token		*new_token(t_token_type type, char *value);
 int			is_string_type(t_token_type type);
 int			is_operator_type(t_token_type type);
+t_token		*return_type(int is_literal, char *buffer);
+
 void		print_token_value(t_token *token);
 void		free_token(t_token *token);
 #endif
