@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/21 13:48:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/22 21:28:19 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 t_ast_node	*parse_command(t_token_list *tokens)
 {
-	t_token		*current_token;
 	t_data		data;
 	int			i;
 
@@ -22,22 +21,31 @@ t_ast_node	*parse_command(t_token_list *tokens)
 	data.command.name = NULL;
 	data.command.arglist = NULL;
 	data.command.prefix = parse_prefix(&tokens);
-	current_token = tokens->first;
-	if (accept(current_token, TOKEN_WORD))
+	parse_cmd_word(&tokens, &data);
+	data.command.suffix = parse_suffix(&tokens);
+	return (new_node(data));
+}
+
+t_ast_node	*parse_pipeline(t_token_list *tokens)
+{
+	
+}
+
+void	parse_cmd_word(t_token_list	**tokens, t_data *data)
+{
+	if (is_cmd_word((*tokens)->first))
 	{
-		if (!data.command.name)
-			data.command.name = ft_strdup(current_token->value.word.value);
-		current_token = get_next_token(current_token);
-		while (accept(current_token, TOKEN_WORD))
+		data->command.name = ft_strdup(get_token_value((*tokens)->first));
+		consume_token((*tokens));
+		while (is_cmd_word((*tokens)->first))
 		{
-			if (!data.command.arglist)
-				data.command.arglist = new_arglist();
-			new_argument(data.command.arglist, \
-				create_arg(current_token->value.word.value));
-			current_token = get_next_token(current_token);
+			if (!data->command.arglist)
+				data->command.arglist = new_arglist();
+			new_argument(data->command.arglist, \
+				create_arg((*tokens)->first));
+			consume_token(*tokens);
 		}
 	}
-	return (new_node(data));
 }
 
 t_cmd_prefix	parse_prefix(t_token_list **tokens)
@@ -49,31 +57,96 @@ t_cmd_prefix	parse_prefix(t_token_list **tokens)
 	prefix.assignments.arglist = NULL;
 	while (is_prefix((*tokens)->first))
 	{
-		parse_redirection((*tokens), &prefix);
+		parse_redirection_prefix((*tokens), &prefix);
 		parse_assignment((*tokens), &prefix);
 	}
 	return (prefix);
 }
 
-void	parse_redirection(t_token_list *tokens, t_cmd_prefix *prefix)
+t_cmd_suffix	parse_suffix(t_token_list **tokens)
+{
+	t_cmd_suffix	suffix;
+
+	suffix.input.filename = NULL;
+	suffix.output.filename = NULL;
+	suffix.arglist = NULL;
+	while (is_cmd_suffix((*tokens)->first))
+	{
+		parse_redirection_suffix(*tokens, &suffix);
+		parse_suffix_words(*tokens, &suffix);
+	}
+	return (suffix);
+}
+
+void	parse_suffix_words(t_token_list *tokens, t_cmd_suffix *suffix)
+{
+	while (is_cmd_word((tokens)->first))
+	{
+		if (!suffix->arglist)
+			suffix->arglist = new_arglist();
+		new_argument(suffix->arglist, \
+			create_arg((tokens)->first));
+		consume_token(tokens);
+	}
+}
+
+void	parse_redirection_prefix(t_token_list *tokens, \
+			t_cmd_prefix *prefix)
 {
 	if (accept_redirection((tokens)->first))
 	{
 		if (is_input_redir((tokens)->first))
 		{
 			consume_token(tokens);
-			prefix->input.filename = \
-				ft_strdup((tokens)->first->value.word.value);
+			create_and_free((tokens)->first, &prefix->input.filename, INPUT);
 			consume_token(tokens);
 		}
 		else if (is_output_redir((tokens)->first))
 		{
 			consume_token(tokens);
-			prefix->output.filename = \
-				ft_strdup((tokens)->first->value.word.value);
+			create_and_free((tokens)->first, &prefix->output.filename, OUTPUT);
 			consume_token(tokens);
 		}
 	}
+}
+
+void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix)
+{
+	if (accept_redirection((tokens)->first))
+	{
+		if (is_input_redir((tokens)->first))
+		{
+			consume_token(tokens);
+			create_and_free((tokens)->first, &suffix->input.filename, INPUT);
+			consume_token(tokens);
+		}
+		else if (is_output_redir((tokens)->first))
+		{
+			consume_token(tokens);
+			create_and_free((tokens)->first, &suffix->output.filename, OUTPUT);
+			consume_token(tokens);
+		}
+	}
+}
+
+void	create_and_free(t_token *token, char **filename, int io)
+{
+	int	fd;
+
+	if (!*filename)
+		*filename = ft_strdup(get_token_value(token));
+	else
+	{
+		free(*filename);
+		*filename = ft_strdup(get_token_value(token));
+	}
+	if (io == INPUT)
+		fd = open(*filename, O_RDONLY);
+	else if (io == OUTPUT)
+		fd = open(*filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd < 0)
+		perror("error");
+	close(fd);
 }
 
 void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
@@ -83,21 +156,7 @@ void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
 		if (!prefix->assignments.arglist)
 			prefix->assignments.arglist = new_arglist();
 		new_argument(prefix->assignments.arglist, \
-			create_arg(tokens->first->value.word.value));
+			create_arg((tokens)->first));
 		consume_token(tokens);
 	}
-}
-
-t_cmd_suffix	parse_suffix(t_token **token)
-{
-	t_cmd_suffix	suffix;
-
-	return (suffix);
-}
-
-int	parse_io_file(t_token *token)
-{
-	t_token	*curr_token;
-
-	return (0);
 }

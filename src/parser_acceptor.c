@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 09:57:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/21 10:01:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/22 16:02:00 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	accept_redirection(t_token *token)
 	if (accept(token, TOKEN_LESS) || accept(token, TOKEN_GREAT) || \
 	accept(token, TOKEN_DGREAT) || accept(token, TOKEN_DLESS))
 	{
-		if (accept(token->next, TOKEN_WORD))
+		if (is_cmd_word(token->next))
 			return (1);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/21 15:09:01 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/22 19:10:19 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,9 +65,12 @@ int	main(int argc, char **argv, char **envp)
 			if (ast_node->data.command.name != NULL)
 			{
 				printf("Command: %s\n", ast_node->data.command.name);
-				printf("Input Redir: %s\n", ast_node->data.command.prefix.input.filename);
-				printf("Output Redir: %s\n", ast_node->data.command.prefix.output.filename);
+				printf("P: Input Redir: %s\n", ast_node->data.command.prefix.input.filename);
+				printf("P: Output Redir: %s\n", ast_node->data.command.prefix.output.filename);
+				printf("S: Input Redir: %s\n", ast_node->data.command.suffix.input.filename);
+				printf("S: Output Redir: %s\n", ast_node->data.command.suffix.output.filename);
 				print_args(ast_node->data.command.arglist);
+				print_args(ast_node->data.command.suffix.arglist);
 			}
 		}
 		if (ast_node->data.command.name && ft_strncmp(ast_node->data.command.name, "exit", 5) == 0)

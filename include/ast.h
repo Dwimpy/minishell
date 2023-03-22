@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/20 17:49:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/22 21:23:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,11 @@ typedef struct s_ast_node	t_ast_node;
 typedef enum e_node_type
 {
 	COMMAND	,
-	PIPELINE,
+	PIPELINE
 }				t_node_type;
 
 typedef struct s_io_redirect
 {
-	int			fd;
 	char		*filename;
 }				t_io_redirect;
 
@@ -46,7 +45,7 @@ typedef struct s_cmd_suffix
 {
 	t_io_redirect	input;
 	t_io_redirect	output;
-	t_arglist		words;
+	t_arglist		*arglist;
 }				t_cmd_suffix;
 
 typedef struct s_command
@@ -83,6 +82,7 @@ t_arglist	*new_arg(t_arglist *prev, char *value);
 void		ast_add_parent(t_ast_node **current, t_ast_node *new_parent);
 void		ast_add_left(t_ast_node *root, t_ast_node *left_child);
 void		ast_add_right(t_ast_node *root, t_ast_node *right_child);
+void		ast_add(t_ast_node	**root);
 void		ast_set_type(t_ast_node *node, t_node_type type);
 void		ast_del_node(t_ast_node	*node);
 
