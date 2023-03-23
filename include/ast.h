@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/22 21:23:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 17:14:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,11 @@ typedef struct s_io_redirect
 	char		*filename;
 }				t_io_redirect;
 
-typedef struct s_assignment_word
-{
-	t_arglist	*arglist;
-}				t_assignment_word;
-
 typedef struct s_cmd_prefix
 {
 	t_io_redirect		input;
 	t_io_redirect		output;
-	t_assignment_word	assignments;
+	t_arglist			*assignments;
 }				t_cmd_prefix;
 
 typedef struct s_cmd_suffix

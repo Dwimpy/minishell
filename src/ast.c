@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/21 12:47:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 17:15:01 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,6 @@ void	ast_del_node(t_ast_node *node)
 		free(node->data.command.prefix.input.filename);
 	if (node->data.command.prefix.output.filename)
 		free(node->data.command.prefix.output.filename);
-	free_args(node->data.command.prefix.assignments.arglist);
+	free_args(node->data.command.prefix.assignments);
 	free(node);
 }

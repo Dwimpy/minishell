@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/22 21:28:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 17:20:46 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ t_cmd_prefix	parse_prefix(t_token_list **tokens)
 
 	prefix.input.filename = NULL;
 	prefix.output.filename = NULL;
-	prefix.assignments.arglist = NULL;
+	prefix.assignments = NULL;
 	while (is_prefix((*tokens)->first))
 	{
-		parse_redirection_prefix((*tokens), &prefix);
-		parse_assignment((*tokens), &prefix);
+		parse_redirection_prefix(*tokens, &prefix);
+		parse_assignment(*tokens, &prefix);
 	}
 	return (prefix);
 }
@@ -153,9 +153,8 @@ void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
 {
 	if (is_assign_word(tokens->first))
 	{
-		if (!prefix->assignments.arglist)
-			prefix->assignments.arglist = new_arglist();
-		new_argument(prefix->assignments.arglist, \
+		prefix->assignments = new_arglist();
+		new_argument(prefix->assignments, \
 			create_arg((tokens)->first));
 		consume_token(tokens);
 	}

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/22 19:10:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 18:21:18 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	main(int argc, char **argv, char **envp)
 	t_hashmap		*hashmap;
 	t_ast_node		*ast_node;
 	t_token			*token;
+	int				unexpected;
 
 	tokens = new_token_list();
 	// add_token(tokens, new_token(TOKEN_WORD, "FUCK OFF"));
@@ -56,10 +57,17 @@ int	main(int argc, char **argv, char **envp)
 		init_lexer(&lexer);
 		get_tokens(tokens, lexer);
 		print_tokens(tokens);
+		if (analyze_syntax(tokens, &unexpected) != 0)
+		{
+			ft_putstr_fd("incorrect syntax near", 2);
+			printf(" %d\n", unexpected);
+			free_token_list(tokens);
+			continue ;
+		}
 		printf("Size: %zu\n", tokens->num_tokens);
 		ast_node = parse_command(tokens);
-		if (ast_node->data.command.prefix.assignments.arglist)
-			printf("Assignment: %s\n", ast_node->data.command.prefix.assignments.arglist->first->value);
+		if (ast_node->data.command.prefix.assignments)
+			printf("Assignment: %s\n", ast_node->data.command.prefix.assignments->first->value);
 		if (ast_node)
 		{
 			if (ast_node->data.command.name != NULL)

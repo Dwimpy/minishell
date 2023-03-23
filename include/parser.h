@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/22 17:25:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 14:09:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,5 @@ int				is_cmd_word(t_token *token);
 int				is_cmd_suffix(t_token *token);
 int				parse_io_file(t_token *token);
 void			create_and_free(t_token *token, char **filename, int io);
+int				analyze_syntax(t_token_list *tokens, int *unexpected);
 #endif

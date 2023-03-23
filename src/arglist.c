@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/22 12:18:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 17:20:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ char	*get_token_value(t_token *token)
 		return (token->value.squote.value);
 	if (token->type == TOKEN_DQUOTE)
 		return (token->value.dquote.value);
+	if (token->type == TOKEN_ASSIGN_WORD)
+		return (token->value.assign_word.value);
 	return (NULL);
 }
 
