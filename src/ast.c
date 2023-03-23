@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 17:15:01 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 22:41:01 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,41 @@ void	ast_add_right(t_ast_node *root, t_ast_node *right_child)
 	}
 }
 
+void	ast_add(t_ast_node **root, t_ast_node *add_node)
+{
+	if (!*root)
+		*root = add_node;
+	else if (is_single_node(*root))
+		ast_add_parent(root, add_node);
+	else if (has_left_child(*root) && \
+				!has_parent(*root) && \
+					!has_right_child(*root))
+		ast_add_right(*root, add_node);
+	else if (has_left_child(*root) && has_right_child(*root))
+		ast_add_parent(root, add_node);
+	return ;
+}
+
+int	is_single_node(t_ast_node *root)
+{
+	return (!root->parent && !root->left && !root->right);
+}
+
+int	has_right_child(t_ast_node *root)
+{
+	return(root->right != NULL);
+}
+
+int	has_left_child(t_ast_node *root)
+{
+	return (root->left != NULL);
+}
+
+int	has_parent(t_ast_node *root)
+{
+	return (root->parent != NULL);
+}
+
 void	ast_set_type(t_ast_node *node, t_node_type type)
 {
 	node->type = type;
@@ -86,15 +121,17 @@ void	ast_del_node(t_ast_node *node)
 {
 	if (!node)
 		return ;
-	ast_del_node(node->left);
-	ast_del_node(node->right);
-	free_args(node->data.command.arglist);
-	if (node->data.command.name)
-		free(node->data.command.name);
-	if (node->data.command.prefix.input.filename)
-		free(node->data.command.prefix.input.filename);
-	if (node->data.command.prefix.output.filename)
-		free(node->data.command.prefix.output.filename);
-	free_args(node->data.command.prefix.assignments);
-	free(node);
+	ast_del_node((node)->left);
+	ast_del_node((node)->right);
+	// free_args(node->data.command.arglist);
+	// if (node->data.command.name)
+	// 	free(node->data.command.name);
+	// if (node->data.command.prefix.input.filename)
+	// 	free(node->data.command.prefix.input.filename);
+	// if (node->data.command.prefix.output.filename)
+	// 	free(node->data.command.prefix.output.filename);
+	// free_args(node->data.command.prefix.assignments);
+	if (node)
+		free(node);
+	node = NULL;
 }

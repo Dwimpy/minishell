@@ -6,50 +6,80 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/21 14:56:52 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 21:12:05 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer.h"
 
+void	treat_squote(char c, int *squote, int *dquote, int *literal);
+void	treat_dquote(char c, int *squote, int *dquote, int *literal);
+void	init_word_parms(int *i, int *dquote, int *squote, int *literal);
+void	advance_input(t_lexer *lexer, char *buffer, int *index);
+int		is_correct_word(char c, int squote, int dquote);
+
 t_token	*tokenize_word(t_lexer *lexer)
 {
 	char	buffer[4096];
 	int		i;
-	int		in_double_quote;
-	int		in_single_quote;
-	int		is_literal;
+	int		dquote;
+	int		squote;
+	int		literal;
 
-	i = 0;
-	in_double_quote = 0;
-	in_single_quote = 0;
-	is_literal = 0;
-	while (match_word(lexer->ch) || lexer->ch == '=' \
-		|| in_single_quote || in_double_quote)
+	init_word_parms(&i, &dquote, &squote, &literal);
+	ft_memset(buffer, '\0', 4096);
+	while (is_correct_word(lexer->ch, squote, dquote))
 	{
 		if (lexer->input_len == lexer->read_position)
 			break ;
-		if (lexer->ch == '\'' && !in_double_quote)
-		{
-			in_single_quote ^= 1;
-			is_literal = 1;
-		}
-		if (lexer->ch == '\"' && !in_single_quote)
-		{
-			in_double_quote ^= 1;
-			is_literal = 2;
-		}
-		buffer[i] = lexer->ch;
-		get_next_char(lexer);
-		i++;
+		treat_squote(lexer->ch, &squote, &dquote, &literal);
+		treat_dquote(lexer->ch, &squote, &dquote, &literal);
+		advance_input(lexer, buffer, &i);
 	}
-	lexer->read_position--;
-	buffer[i] = '\0';
-	return (return_type(is_literal, buffer));
+	return (return_type(literal, buffer, lexer));
 }
 
-t_token	*return_type(int is_literal, char *buffer)
+void	advance_input(t_lexer *lexer, char *buffer, int *index)
 {
+	(buffer)[*index] = lexer->ch;
+	get_next_char(lexer);
+	(*index)++;
+}
+
+int	is_correct_word(char c, int squote, int dquote)
+{
+	return (match_word(c) || c == '=' || dquote || squote);
+}
+
+void	init_word_parms(int *i, int *dquote, int *squote, int *literal)
+{
+	*i = 0;
+	*dquote = 0;
+	*squote = 0;
+	*literal = 0;
+}
+
+void	treat_squote(char c, int *squote, int *dquote, int *literal)
+{
+	if (c == '\'' && !*dquote)
+	{
+		*squote ^= 1;
+		*literal = 1;
+	}
+}
+
+void	treat_dquote(char c, int *squote, int *dquote, int *literal)
+{
+	if (c == '\"' && !*squote)
+	{
+		*dquote ^= 1;
+		*literal = 2;
+	}
+}
+
+t_token	*return_type(int is_literal, char *buffer, t_lexer *lexer)
+{
+	lexer->read_position--;
 	if (is_literal == 1 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\'') > 0)
 		return (new_token(TOKEN_SQUOTE, buffer));

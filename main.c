@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/23 18:21:18 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 22:46:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int	main(int argc, char **argv, char **envp)
 	t_token_list	*tokens;
 	t_lexer			lexer;
 	t_hashmap		*hashmap;
+	t_ast_node		*root;
 	t_ast_node		*ast_node;
 	t_token			*token;
 	int				unexpected;
@@ -52,6 +53,7 @@ int	main(int argc, char **argv, char **envp)
 	// hashmap_free(&hashmap);
 	// printf("%d", hashmap_length(hashmap));
 	// printf("%s", envp[0]);
+	root = NULL;
 	while (1)
 	{
 		init_lexer(&lexer);
@@ -61,34 +63,52 @@ int	main(int argc, char **argv, char **envp)
 		{
 			ft_putstr_fd("incorrect syntax near", 2);
 			printf(" %d\n", unexpected);
+			free(lexer.input);
 			free_token_list(tokens);
 			continue ;
 		}
 		printf("Size: %zu\n", tokens->num_tokens);
 		ast_node = parse_command(tokens);
-		if (ast_node->data.command.prefix.assignments)
-			printf("Assignment: %s\n", ast_node->data.command.prefix.assignments->first->value);
-		if (ast_node)
-		{
-			if (ast_node->data.command.name != NULL)
-			{
-				printf("Command: %s\n", ast_node->data.command.name);
-				printf("P: Input Redir: %s\n", ast_node->data.command.prefix.input.filename);
-				printf("P: Output Redir: %s\n", ast_node->data.command.prefix.output.filename);
-				printf("S: Input Redir: %s\n", ast_node->data.command.suffix.input.filename);
-				printf("S: Output Redir: %s\n", ast_node->data.command.suffix.output.filename);
-				print_args(ast_node->data.command.arglist);
-				print_args(ast_node->data.command.suffix.arglist);
-			}
-		}
-		if (ast_node->data.command.name && ft_strncmp(ast_node->data.command.name, "exit", 5) == 0)
-		{
-			free_token_list(tokens);
-			free(lexer.input);
-			system("leaks minishell");
-			exit(0);
-		}
-		ast_del_node(ast_node);
+		t_ast_node	*test;
+		t_ast_node	*test2;
+		t_ast_node	*test3;
+		test = new_node((t_data){.pipeline.type = PIPELINE});
+		test2 = new_node((t_data){.command.name = ft_strdup("echo")});
+		test3 = new_node((t_data){.command.name = ft_strdup("cat")});
+		ast_add(&root, ast_node);
+		ast_add(&root, test);
+		ast_add(&root, test2);
+		ast_add(&root, test3);
+		printf("\t\t%s\n", root->data.command.name);
+		printf("\t%c\t\t%s\n", '|', "(null)");
+		printf("%s\t", root->left->left->data.command.name);
+		printf("\t%s\n", root->left->right->data.command.name);
+		
+		// printf("%s\t\t\n", root->data.command.name);
+		// if (ast_node->data.command.prefix.assignments)
+		// 	printf("Assignment: %s\n", ast_node->data.command.prefix.assignments->first->value);
+		// if (ast_node)
+		// {
+		// 	if (ast_node->data.command.name != NULL)
+		// 	{
+		// 		printf("Command: %s\n", ast_node->data.command.name);
+		// 		printf("P: Input Redir: %s\n", ast_node->data.command.prefix.input.filename);
+		// 		printf("P: Output Redir: %s\n", ast_node->data.command.prefix.output.filename);
+		// 		printf("S: Input Redir: %s\n", ast_node->data.command.suffix.input.filename);
+		// 		printf("S: Output Redir: %s\n", ast_node->data.command.suffix.output.filename);
+		// 		print_args(ast_node->data.command.arglist);
+		// 		print_args(ast_node->data.command.suffix.arglist);
+		// 	}
+		// }
+		// if (ast_node->data.command.name && ft_strncmp(ast_node->data.command.name, "exit", 5) == 0)
+		// {
+		// 	free_token_list(tokens);
+		// 	free(lexer.input);
+		// 	system("leaks minishell");
+		// 	exit(0);
+		// }
+		ast_del_node(root);
+		root = NULL;
 		free(lexer.input);
 		free_token_list(tokens);
 	}

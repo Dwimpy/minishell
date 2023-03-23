@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 18:40:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/23 21:11:39 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,8 +153,6 @@ typedef struct s_token
 t_token		*new_token(t_token_type type, char *value);
 int			is_string_type(t_token_type type);
 int			is_operator_type(t_token_type type);
-t_token		*return_type(int is_literal, char *buffer);
-
 void		print_token_value(t_token *token);
 void		free_token(t_token *token);
 #endif
