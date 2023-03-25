@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 13:43:59 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 18:43:45 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/25 17:04:32 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	is_redirection(t_token *token);
 int	is_type_word(t_token **token);
 int	is_pipe(t_token *token);
 int	is_logical_op(t_token *token);
-int	is_correct_pipe_logicalop(t_token **token);
+int	is_correct_pipe_logicalop(t_token **token, int *first);
 int	is_valid_beginning(t_token *token);
 
 int	analyze_syntax(t_token_list *tokens, int *unexpected)
@@ -36,14 +36,14 @@ int	analyze_syntax(t_token_list *tokens, int *unexpected)
 			token = token->next;
 			continue ;
 		}
-		if (is_redirection(token))
+		else if (is_redirection(token))
 		{
 			if (is_type_word(&token) == TOKEN_UNEXPECTED)
 				return (*unexpected = token->type);
 		}
 		else if (is_pipe(token) || is_logical_op(token))
 		{
-			if (is_correct_pipe_logicalop(&token) == TOKEN_UNEXPECTED)
+			if (is_correct_pipe_logicalop(&token, &first) == TOKEN_UNEXPECTED)
 				return (*unexpected = token->type);
 		}
 	}
@@ -64,11 +64,14 @@ int	is_valid_beginning(t_token *token)
 					token->type == TOKEN_ASSIGN_WORD);
 }
 
-int	is_correct_pipe_logicalop(t_token **token)
+int	is_correct_pipe_logicalop(t_token **token, int *first)
 {
 	(*token) = (*token)->next;
 	if (is_prefix((*token)) || is_cmd_word((*token)) || is_cmd_suffix((*token)))
+	{
+		(*first) = 0;
 		return (1);
+	}
 	return (TOKEN_UNEXPECTED);
 }
 
@@ -79,7 +82,7 @@ int	is_pipe(t_token *token)
 
 int	is_logical_op(t_token *token)
 {
-	return (token->type == TOKEN_AND_IF || TOKEN_OR_IF);
+	return (token->type == TOKEN_AND_IF || token->type == TOKEN_OR_IF);
 }
 
 int	is_type_word(t_token **token)

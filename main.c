@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/25 10:58:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/25 17:16:47 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,34 +67,49 @@ int	main(int argc, char **argv, char **envp)
 			free_token_list(tokens);
 			continue ;
 		}
+		ast_add(&root, parse_command(tokens));
+		ast_add(&root, parse_pipeline(tokens));
+		ast_add(&root, parse_and_if(tokens));
+		ast_add(&root, parse_or_if(tokens));
+		ast_add(&root, parse_command(tokens));
+		ast_add(&root, parse_pipeline(tokens));
+		ast_add(&root, parse_and_if(tokens));
+		ast_add(&root, parse_or_if(tokens));
+		ast_add(&root, parse_command(tokens));
+		ast_add(&root, parse_pipeline(tokens));
+		ast_add(&root, parse_and_if(tokens));
+		ast_add(&root, parse_or_if(tokens));
+		ast_add(&root, parse_command(tokens));
+		ast_add(&root, parse_pipeline(tokens));
+		ast_add(&root, parse_and_if(tokens));
+		ast_add(&root, parse_or_if(tokens));
+		ast_add(&root, parse_command(tokens));
 		printf("Size: %zu\n", tokens->num_tokens);
-		ast_node = parse_command(tokens);
-		t_ast_node	*test;
-		t_ast_node	*test2;
-		t_ast_node	*test3;
-		t_ast_node	*test4;
-		t_ast_node	*test5;
-		t_ast_node	*test6;
-		t_ast_node	*test7;
-		t_ast_node	*test8;
-		test = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
-		test2 = new_node((t_data){.command.name = ft_strdup("echo")}, COMMAND);
-		test3 = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
-		test4 = new_node((t_data){.command.name = ft_strdup("cat")}, COMMAND);
-		test5 = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
-		test6 = new_node((t_data){.command.name = ft_strdup("wtf")}, COMMAND);
-		test7 = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
-		test8 = new_node((t_data){.command.name = ft_strdup("wtf")}, COMMAND);
-
-		ast_add(&root, ast_node);
-		ast_add(&root, test);
-		ast_add(&root, test2);
-		ast_add(&root, test3);
-		ast_add(&root, test4);
-		ast_add(&root, test5);
-		ast_add(&root, test6);
-		ast_add(&root, test7);
-		ast_add(&root, test8);
+		// t_ast_node	*test;
+		// t_ast_node	*test2;
+		// t_ast_node	*test3;
+		// t_ast_node	*test4;
+		// t_ast_node	*test5;
+		// t_ast_node	*test6;
+		// t_ast_node	*test7;
+		// t_ast_node	*test8;
+		// test = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
+		// test2 = new_node((t_data){.command.name = ft_strdup("echo")}, COMMAND);
+		// test3 = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
+		// test4 = new_node((t_data){.command.name = ft_strdup("cat")}, COMMAND);
+		// test5 = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
+		// test6 = new_node((t_data){.command.name = ft_strdup("wtf")}, COMMAND);
+		// test7 = new_node((t_data){.pipeline.type = PIPELINE}, PIPELINE);
+		// test8 = new_node((t_data){.command.name = ft_strdup("wtf")}, COMMAND);
+		// ast_add(&root, ast_node);
+		// ast_add(&root, test);
+		// ast_add(&root, test2);
+		// ast_add(&root, test3);
+		// ast_add(&root, test4);
+		// ast_add(&root, test5);
+		// ast_add(&root, test6);
+		// ast_add(&root, test7);
+		// ast_add(&root, test8);
 		// printf("\t\t%s\n", root->data.command.name);
 		// printf("\t%c\t\t%s\n", '|', "(null)");
 		// printf("%s\t", root->left->left->data.command.name);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/25 10:51:48 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/25 17:06:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ typedef struct s_ast_node	t_ast_node;
 typedef enum e_node_type
 {
 	COMMAND	,
-	PIPELINE
+	PIPELINE,
+	AND_IF,
+	OR_IF
 }				t_node_type;
 
 typedef struct s_io_redirect
@@ -54,13 +56,25 @@ typedef struct s_command
 
 typedef struct s_pipeline
 {
-	t_node_type		type;
+	char		symbol;
 }				t_pipeline;
+
+typedef struct s_and_if
+{
+	char		*symbol;
+}				t_and_if;
+
+typedef struct s_and_or
+{
+	char		*symbol;
+}				t_and_or;
 
 typedef union u_data
 {
 	t_command		command;
 	t_pipeline		pipeline;
+	t_and_if		and_if;
+	t_and_or		or_if;
 }				t_data;
 
 typedef struct s_ast_node

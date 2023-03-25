@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/25 10:52:31 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/25 17:08:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,41 @@ t_ast_node	*parse_command(t_token_list *tokens)
 
 t_ast_node	*parse_pipeline(t_token_list *tokens)
 {
-	
+	t_data		data;
+
+	data.pipeline.symbol = '|';
+	if (tokens->first->type == TOKEN_PIPE)
+	{
+		consume_token(tokens);
+		return (new_node(data, PIPELINE));
+	}
+	return (NULL);
+}
+
+t_ast_node	*parse_and_if(t_token_list *tokens)
+{
+	t_data		data;
+
+	data.and_if.symbol = ft_strdup("&&");
+	if (tokens->first->type == TOKEN_AND_IF)
+	{
+		consume_token(tokens);
+		return (new_node(data, AND_IF));
+	}
+	return (NULL);
+}
+
+t_ast_node	*parse_or_if(t_token_list *tokens)
+{
+	t_data		data;
+
+	data.and_if.symbol = ft_strdup("||");
+	if (tokens->first->type == TOKEN_OR_IF)
+	{
+		consume_token(tokens);
+		return (new_node(data, OR_IF));
+	}
+	return (NULL);
 }
 
 void	parse_cmd_word(t_token_list	**tokens, t_data *data)
