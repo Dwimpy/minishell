@@ -6,20 +6,21 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 22:41:01 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/25 11:04:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "ft_printf.h"
 
-t_ast_node	*new_node(t_data data)
+t_ast_node	*new_node(t_data data, t_node_type type)
 {
 	t_ast_node	*new_node;
 
 	new_node = (t_ast_node *)malloc(sizeof(t_ast_node));
 	if (!new_node)
 		return (NULL);
+	new_node->type = type;
 	new_node->parent = NULL;
 	new_node->right = NULL;
 	new_node->left = NULL;
@@ -134,4 +135,33 @@ void	ast_del_node(t_ast_node *node)
 	if (node)
 		free(node);
 	node = NULL;
+}
+
+void	print_tree_helper(t_ast_node *node, int level)
+{
+	if (node == NULL) {
+		return;
+	}
+
+    // Print the right subtree
+    print_tree_helper(node->right, level + 1);
+
+    // Print the current node
+    for (int i = 0; i < level; i++) {
+        printf("    ");
+    }
+
+    if (node->type == COMMAND) {
+        printf("%s\n", node->data.command.name);
+    } else {
+        printf("|\n");
+    }
+
+    // Print the left subtree
+    print_tree_helper(node->left, level + 1);
+}
+
+void print_tree(t_ast_node *root)
+{
+    print_tree_helper(root, 0);
 }

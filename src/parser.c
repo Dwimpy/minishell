@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 17:20:46 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/25 10:52:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,10 @@ t_ast_node	*parse_command(t_token_list *tokens)
 	data.command.name = NULL;
 	data.command.arglist = NULL;
 	data.command.prefix = parse_prefix(&tokens);
+	data.command.type = COMMAND;
 	parse_cmd_word(&tokens, &data);
 	data.command.suffix = parse_suffix(&tokens);
-	return (new_node(data));
+	return (new_node(data, COMMAND));
 }
 
 t_ast_node	*parse_pipeline(t_token_list *tokens)
