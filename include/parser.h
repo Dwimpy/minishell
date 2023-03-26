@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/25 17:08:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/26 18:47:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ t_ast_node		*parse_command(t_token_list *list);
 t_ast_node		*parse_pipeline(t_token_list *tokens);
 t_ast_node		*parse_and_if(t_token_list *tokens);
 t_ast_node		*parse_or_if(t_token_list *tokens);
+t_ast_node		*parse_subshell(t_token_list *tokens);
 void			parse_redirection_prefix(t_token_list *tokens, \
 					t_cmd_prefix *prefix);
 void			parse_redirection_suffix(t_token_list *tokens, \

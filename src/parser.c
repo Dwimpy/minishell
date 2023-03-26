@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/25 17:08:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/26 19:23:17 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ t_ast_node	*parse_command(t_token_list *tokens)
 	int			i;
 
 	i = 0;
+	if (tokens->first->type == TOKEN_EOF)
+		return (NULL);
 	data.command.name = NULL;
 	data.command.arglist = NULL;
 	data.command.prefix = parse_prefix(&tokens);
@@ -64,6 +66,33 @@ t_ast_node	*parse_or_if(t_token_list *tokens)
 		return (new_node(data, OR_IF));
 	}
 	return (NULL);
+}
+
+t_ast_node	*parse_subshell(t_token_list *tokens)
+{
+	t_ast_node	*root;
+	t_ast_node	*subshell;
+	t_data		data;
+
+	subshell = NULL;
+	root = NULL;
+	data.subshell.input = NULL;
+	if (accept(tokens->first, TOKEN_LPARENTHESIS))
+	{
+		consume_token(tokens);
+		while (!accept(tokens->first, TOKEN_RPARENTHESIS))
+		{
+			ast_add(&root, parse_command(tokens));
+			ast_add(&root, parse_pipeline(tokens));
+			ast_add(&root, parse_and_if(tokens));
+			ast_add(&root, parse_or_if(tokens));
+		}
+		consume_token(tokens);
+		subshell = new_node(data, SUBSHELL);
+		subshell->left = root;
+		return (subshell);
+	}
+	return (root);
 }
 
 void	parse_cmd_word(t_token_list	**tokens, t_data *data)

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/25 17:06:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/26 15:03:54 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ typedef enum e_node_type
 	COMMAND	,
 	PIPELINE,
 	AND_IF,
-	OR_IF
+	OR_IF,
+	SUBSHELL
 }				t_node_type;
 
 typedef struct s_io_redirect
@@ -54,6 +55,11 @@ typedef struct s_command
 	t_node_type		type;
 }				t_command;
 
+typedef struct s_subshell
+{
+	char		*input;
+}				t_subshell;
+
 typedef struct s_pipeline
 {
 	char		symbol;
@@ -75,6 +81,7 @@ typedef union u_data
 	t_pipeline		pipeline;
 	t_and_if		and_if;
 	t_and_or		or_if;
+	t_subshell		subshell;
 }				t_data;
 
 typedef struct s_ast_node
@@ -99,4 +106,5 @@ int			has_parent(t_ast_node *root);
 void		ast_set_type(t_ast_node *node, t_node_type type);
 void		ast_del_node(t_ast_node	*node);
 void 		print_tree(t_ast_node *root);
+
 #endif

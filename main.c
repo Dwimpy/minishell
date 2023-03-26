@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/25 17:16:47 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/26 19:00:19 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,31 +59,22 @@ int	main(int argc, char **argv, char **envp)
 		init_lexer(&lexer);
 		get_tokens(tokens, lexer);
 		print_tokens(tokens);
-		if (analyze_syntax(tokens, &unexpected) != 0)
+		// if (analyze_syntax(tokens, &unexpected) != 0)
+		// {
+		// 	ft_putstr_fd("incorrect syntax near", 2);
+		// 	printf(" %d\n", unexpected);
+		// 	free(lexer.input);
+		// 	free_token_list(tokens);
+		// 	continue ;
+		// }
+		while (tokens->first->type != TOKEN_EOF)
 		{
-			ft_putstr_fd("incorrect syntax near", 2);
-			printf(" %d\n", unexpected);
-			free(lexer.input);
-			free_token_list(tokens);
-			continue ;
+			ast_add(&root, parse_command(tokens));
+			ast_add(&root, parse_pipeline(tokens));
+			ast_add(&root, parse_and_if(tokens));
+			ast_add(&root, parse_or_if(tokens));
+			ast_add(&root, parse_subshell(tokens));
 		}
-		ast_add(&root, parse_command(tokens));
-		ast_add(&root, parse_pipeline(tokens));
-		ast_add(&root, parse_and_if(tokens));
-		ast_add(&root, parse_or_if(tokens));
-		ast_add(&root, parse_command(tokens));
-		ast_add(&root, parse_pipeline(tokens));
-		ast_add(&root, parse_and_if(tokens));
-		ast_add(&root, parse_or_if(tokens));
-		ast_add(&root, parse_command(tokens));
-		ast_add(&root, parse_pipeline(tokens));
-		ast_add(&root, parse_and_if(tokens));
-		ast_add(&root, parse_or_if(tokens));
-		ast_add(&root, parse_command(tokens));
-		ast_add(&root, parse_pipeline(tokens));
-		ast_add(&root, parse_and_if(tokens));
-		ast_add(&root, parse_or_if(tokens));
-		ast_add(&root, parse_command(tokens));
 		printf("Size: %zu\n", tokens->num_tokens);
 		// t_ast_node	*test;
 		// t_ast_node	*test2;
@@ -138,7 +129,7 @@ int	main(int argc, char **argv, char **envp)
 		// 	system("leaks minishell");
 		// 	exit(0);
 		// }
-		ast_del_node(root);
+		// ast_del_node(root);
 		root = NULL;
 		free(lexer.input);
 		free_token_list(tokens);
