@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/26 19:26:00 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/27 00:57:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,8 +143,8 @@ void	print_tree_helper(t_ast_node *node, int level)
 		return;
 	}
 
-    // Print the right subtree
-    print_tree_helper(node->right, level + 1);
+    // Print the left subtree
+    print_tree_helper(node->left, level + 1);
 
     // Print the current node
     for (int i = 0; i < level; i++) {
@@ -161,8 +161,8 @@ void	print_tree_helper(t_ast_node *node, int level)
 		printf("%s\n", node->data.or_if.symbol);
 	else if (node->type == SUBSHELL)
 		printf("SUBSHELL\n");
-    // Print the left subtree
-    print_tree_helper(node->left, level + 1);
+    // Print the right subtree
+    print_tree_helper(node->right, level + 1);
 }
 
 void print_tree(t_ast_node *root)

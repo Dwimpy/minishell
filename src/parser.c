@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/26 19:23:17 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/27 00:59:09 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ t_ast_node	*parse_command(t_token_list *tokens)
 	int			i;
 
 	i = 0;
-	if (tokens->first->type == TOKEN_EOF)
+	if (tokens->first->type == TOKEN_EOF || tokens->first->type == TOKEN_PIPE || \
+		tokens->first->type == TOKEN_AND_IF || tokens->first->type == TOKEN_LPARENTHESIS || \
+		tokens->first->type == TOKEN_OR_IF)
 		return (NULL);
 	data.command.name = NULL;
 	data.command.arglist = NULL;
@@ -86,10 +88,11 @@ t_ast_node	*parse_subshell(t_token_list *tokens)
 			ast_add(&root, parse_pipeline(tokens));
 			ast_add(&root, parse_and_if(tokens));
 			ast_add(&root, parse_or_if(tokens));
+			ast_add(&root, parse_subshell(tokens));
 		}
-		consume_token(tokens);
 		subshell = new_node(data, SUBSHELL);
 		subshell->left = root;
+		consume_token(tokens);
 		return (subshell);
 	}
 	return (root);
