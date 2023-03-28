@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/27 00:35:44 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/28 20:40:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	main(int argc, char **argv, char **envp)
 	t_ast_node		*ast_node;
 	t_token			*token;
 	int				unexpected;
+	int				history_elements;
 
 	tokens = new_token_list();
 	// add_token(tokens, new_token(TOKEN_WORD, "FUCK OFF"));
@@ -57,25 +58,26 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		init_lexer(&lexer);
+		analyze_input(&lexer);
 		get_tokens(tokens, lexer);
 		print_tokens(tokens);
-		// if (analyze_syntax(tokens, &unexpected) != 0)
-		// {
-		// 	ft_putstr_fd("incorrect syntax near", 2);
-		// 	printf(" %d\n", unexpected);
-		// 	free(lexer.input);
-		// 	free_token_list(tokens);
-		// 	continue ;
-		// }
-		while (tokens->first->type != TOKEN_EOF)
+		if (analyze_syntax(tokens, &unexpected) != 0)
 		{
-			ast_add(&root, parse_command(tokens));
-			ast_add(&root, parse_pipeline(tokens));
-			ast_add(&root, parse_and_if(tokens));
-			ast_add(&root, parse_or_if(tokens));
-			ast_add(&root, parse_subshell(tokens));
+			ft_putstr_fd("incorrect syntax near", 2);
+			printf(" %d\n", unexpected);
+			free(lexer.input);
+			free_token_list(tokens);
+			continue ;
 		}
-		printf("Size: %zu\n", tokens->num_tokens);
+		// while (tokens->first->type != TOKEN_EOF)
+		// {
+		// 	ast_add(&root, parse_command(tokens));
+		// 	ast_add(&root, parse_pipeline(tokens));
+		// 	ast_add(&root, parse_and_if(tokens));
+		// 	ast_add(&root, parse_or_if(tokens));
+		// 	ast_add(&root, parse_subshell(tokens));
+		// }
+		// printf("Size: %zu\n", tokens->num_tokens);
 		// t_ast_node	*test;
 		// t_ast_node	*test2;
 		// t_ast_node	*test3;
@@ -105,7 +107,7 @@ int	main(int argc, char **argv, char **envp)
 		// printf("\t%c\t\t%s\n", '|', "(null)");
 		// printf("%s\t", root->left->left->data.command.name);
 		// printf("\t%s\n", root->left->right->data.command.name);
-		print_tree(root);
+		// print_tree(root);
 		// printf("%s\t\t\n", root->data.command.name);
 		// if (ast_node->data.command.prefix.assignments)
 		// 	printf("Assignment: %s\n", ast_node->data.command.prefix.assignments->first->value);

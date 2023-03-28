@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/27 00:57:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/27 15:08:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,21 +137,40 @@ void	ast_del_node(t_ast_node *node)
 	node = NULL;
 }
 
-void	print_tree_helper(t_ast_node *node, int level)
+typedef enum e_printing_branch {
+	LEFT,
+	RIGHT
+} t_printing_branch;
+
+t_ast_node *from_identidier_to_tree(t_ast_node *node, t_printing_branch branch)
+{
+	if (branch == LEFT)
+		return (node->left);
+	else
+		return (node->right);
+}
+
+void	print_identifier(t_printing_branch branch)
+{
+	if (branch == LEFT)
+		printf("L");
+	else
+		printf("R");
+}
+
+void	print_tree_helper(t_ast_node *node, int level, t_printing_branch branch)
 {
 	if (node == NULL) {
 		return;
 	}
-
-    // Print the left subtree
-    print_tree_helper(node->left, level + 1);
-
+    // Print the right subtree
+    print_tree_helper(from_identidier_to_tree(node, branch), level + 1, branch);
     // Print the current node
     for (int i = 0; i < level; i++) {
-        printf("    ");
+        printf("    .");
     }
-
-    if (node->type == COMMAND && node->data.command.name) 
+	// print_identifier(order, branch);
+    if (node->type == COMMAND && node->data.command.name)
         printf("%s\n", node->data.command.name);
     else if (node->type == PIPELINE)
         printf("|\n");
@@ -161,11 +180,12 @@ void	print_tree_helper(t_ast_node *node, int level)
 		printf("%s\n", node->data.or_if.symbol);
 	else if (node->type == SUBSHELL)
 		printf("SUBSHELL\n");
-    // Print the right subtree
-    print_tree_helper(node->right, level + 1);
+    // Print the left subtree
+    print_tree_helper(from_identidier_to_tree(node, !branch), level + ((node->type != COMMAND)), branch);
 }
 
 void print_tree(t_ast_node *root)
 {
-    print_tree_helper(root, 0);
+    print_tree_helper(root, 0, LEFT);
+	printf("--------\n");
 }

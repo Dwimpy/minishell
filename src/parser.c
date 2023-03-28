@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/27 00:59:09 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/27 15:11:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,7 @@ t_ast_node	*parse_command(t_token_list *tokens)
 	int			i;
 
 	i = 0;
-	if (tokens->first->type == TOKEN_EOF || tokens->first->type == TOKEN_PIPE || \
-		tokens->first->type == TOKEN_AND_IF || tokens->first->type == TOKEN_LPARENTHESIS || \
-		tokens->first->type == TOKEN_OR_IF)
+	if (is_prev_subshell(tokens->first))
 		return (NULL);
 	data.command.name = NULL;
 	data.command.arglist = NULL;
@@ -29,6 +27,12 @@ t_ast_node	*parse_command(t_token_list *tokens)
 	parse_cmd_word(&tokens, &data);
 	data.command.suffix = parse_suffix(&tokens);
 	return (new_node(data, COMMAND));
+}
+
+int	is_prev_subshell(t_token *token)
+{
+	return (token->type == TOKEN_PIPE || token->type == TOKEN_AND_IF || \
+		token->type == TOKEN_OR_IF || token->type == TOKEN_LPARENTHESIS);
 }
 
 t_ast_node	*parse_pipeline(t_token_list *tokens)

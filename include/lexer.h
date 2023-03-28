@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/26 15:15:52 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/28 19:16:21 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define LEXER_H
 # include "token_list.h"
 # include "ft_printf.h"
+# include <readline/history.h>
+# include <readline/readline.h>
 
 typedef struct s_lexer
 {
@@ -41,5 +43,6 @@ t_token			*tokenize_redir_output(t_lexer *lexer);
 t_token			*tokenize_braces(t_lexer *lexer);
 void			get_tokens(t_token_list *tokens, t_lexer lexer);
 t_token			*return_type(int is_literal, char *buffer, t_lexer *lexer);
+int				analyze_input(t_lexer *lexer);
 
 #endif

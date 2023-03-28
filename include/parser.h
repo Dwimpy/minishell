@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/26 18:47:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/27 15:05:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,11 @@ int				is_cmd_suffix(t_token *token);
 int				parse_io_file(t_token *token);
 void			create_and_free(t_token *token, char **filename, int io);
 int				analyze_syntax(t_token_list *tokens, int *unexpected);
+int				is_redirection(t_token *token);
+int				is_type_word(t_token **token);
+int				is_pipe(t_token *token);
+int				is_logical_op(t_token *token);
+int				is_correct_pipe_logicalop(t_token **token, int *first);
+int				is_valid_beginning(t_token *token);
+int				is_prev_subshell(t_token *token);
 #endif
