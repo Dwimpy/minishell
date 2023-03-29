@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/27 15:05:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/29 12:42:52 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <fcntl.h>
 # include "lexer.h"
 # include "ast.h"
+# include "syntax_analyzer.h"
+
 # define INPUT 0
 # define OUTPUT 1
 
@@ -45,7 +47,6 @@ int				is_cmd_word(t_token *token);
 int				is_cmd_suffix(t_token *token);
 int				parse_io_file(t_token *token);
 void			create_and_free(t_token *token, char **filename, int io);
-int				analyze_syntax(t_token_list *tokens, int *unexpected);
 int				is_redirection(t_token *token);
 int				is_type_word(t_token **token);
 int				is_pipe(t_token *token);

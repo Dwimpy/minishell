@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/28 20:40:45 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/29 13:38:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,12 +55,13 @@ int	main(int argc, char **argv, char **envp)
 	// printf("%d", hashmap_length(hashmap));
 	// printf("%s", envp[0]);
 	root = NULL;
+	unexpected = 0;
 	while (1)
 	{
 		init_lexer(&lexer);
 		analyze_input(&lexer);
 		get_tokens(tokens, lexer);
-		print_tokens(tokens);
+		// print_tokens(tokens);
 		if (analyze_syntax(tokens, &unexpected) != 0)
 		{
 			ft_putstr_fd("incorrect syntax near", 2);
