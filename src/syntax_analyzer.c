@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 13:43:59 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/29 22:28:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/30 02:23:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,18 @@ int	analyze_syntax(t_token_list *tokens, int *unexpected)
 	t_token	*token;
 
 	token = tokens->first;
-	fsm.state = IN_PREFIX;
+	fsm.state = NOTHING;
 	while (token->type != TOKEN_EOF)
 	{
 		if (fsm.state == NOTHING)
 		{
-			if (is_prefix(token))
-				fsm.state = IN_PREFIX;
-			else if (is_cmd_word(token))
+			if (is_prefix(token) || is_cmd_suffix(token))
+			{
 				fsm.state = IN_CMD;
-			else if (is_cmd_suffix(token))
-				fsm.state = IN_SUFFIX;
+				fsm.substate = IN_CMD_PREFIX;
+			}
 			else if (token->type == TOKEN_LPARENTHESIS)
-				fsm.state = IN_SUBSHELL;
+				fsm.state = IN_LPARENTHESIS;
 			else if (token->type == TOKEN_PIPE)
 				fsm.state = IN_PIPE;
 			else if (token->type == IN_AND_IF)
@@ -38,25 +37,98 @@ int	analyze_syntax(t_token_list *tokens, int *unexpected)
 			else if (token->type == IN_OR_IF)
 				fsm.state = IN_OR_IF;
 		}
-		print_token_value(token);
-		if (fsm.state == IN_PREFIX)
+		if (fsm.state == IN_CMD)
 		{
-			if (accept_prefix(&token, &fsm) == TOKEN_UNEXPECTED)
-			{
+			if (fsm.substate == IN_CMD_PREFIX && \
+					accept_prefix(&token, &fsm) == TOKEN_UNEXPECTED)
 				return (*unexpected = token->next->type);
-			}
+			if (fsm.substate == IN_CMD && \
+					accept_cmd_word(&token, &fsm) == TOKEN_UNEXPECTED)
+				return (*unexpected = token->next->type);
+			if (fsm.substate == IN_CMD_SUFFIX && \
+					accept_cmd_suffix(&token, &fsm) == TOKEN_UNEXPECTED)
+				return (*unexpected = token->next->type);
+		}
+		if (fsm.state == IN_PIPE)
+		{
+			if (accept_pipe(&token, &fsm) == TOKEN_UNEXPECTED)
+				return (*unexpected = token->next->type);
 		}
 	}
 	return (0);
+}
+
+int	accept_pipe(t_token **token, t_fsm *state)
+{
+	if (is_pipe(*token))
+	{
+		if (is_prefix((*token)->next) || is_cmd_suffix((*token)->next))
+		{
+			(*token) = (*token)->next;
+			state->state = NOTHING;
+			return (0);
+		}
+		else if (is_left_parenthesis((*token)->next))
+		{
+			(*token) = (*token)->next;
+			state->state = NOTHING;
+			return (0);
+		}
+	}
+	return (TOKEN_UNEXPECTED);
+}
+
+int	accept_cmd_suffix(t_token **token, t_fsm *state)
+{
+	if (is_input_redir(*token) || is_output_redir(*token))
+	{
+		if (is_cmd_word((*token)->next))
+		{
+			(*token) = (*token)->next;
+			(*token) = (*token)->next;
+			return (0);
+		}
+	}
+	else if (is_cmd_word(*token))
+	{
+		(*token) = (*token)->next;
+		return (0);
+	}
+	else if (is_pipe(*token) || is_logical_op(*token))
+	{
+		state->state = NOTHING;
+		return (0);
+	}
+	return (TOKEN_UNEXPECTED);
+}
+
+int	accept_cmd_word(t_token **token, t_fsm *state)
+{
+	if (is_cmd_word(*token))
+	{
+		(*token) = (*token)->next;
+		return (0);
+	}
+	else if (is_input_redir(*token) || is_output_redir(*token))
+	{
+		state->substate = IN_CMD_SUFFIX;
+		return (0);
+	}
+	else if (is_pipe(*token) || is_logical_op(*token))
+	{
+		state->state = NOTHING;
+		return (0);
+	}
+	return (TOKEN_UNEXPECTED);
 }
 
 int	accept_prefix(t_token **token, t_fsm *state)
 {
 	if (is_input_redir(*token) || is_output_redir(*token))
 	{
-		(*token) = (*token)->next;
-		if (is_cmd_word(*token))
+		if (is_cmd_word((*token)->next))
 		{
+			(*token) = (*token)->next;
 			(*token) = (*token)->next;
 			return (0);
 		}
@@ -68,10 +140,30 @@ int	accept_prefix(t_token **token, t_fsm *state)
 	}
 	else if (is_cmd_word(*token))
 	{
-		state->state = IN_CMD;
+		state->substate = IN_CMD_NAME;
+		return (0);
+	}
+	else if (is_pipe(*token) || is_logical_op(*token))
+	{
+		state->state = NOTHING;
 		return (0);
 	}
 	return (TOKEN_UNEXPECTED);
+}
+
+int	is_pipe(t_token *token)
+{
+	return (token->type == TOKEN_PIPE);
+}
+
+int	is_logical_op(t_token *token)
+{
+	return (token->type == TOKEN_AND_IF || token->type == TOKEN_OR_IF);
+}
+
+int	is_left_parenthesis(t_token *token)
+{
+	return (token->type == TOKEN_LPARENTHESIS);
 }
 
 // void	token_next(t_token **token);

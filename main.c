@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/29 13:38:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/30 01:36:25 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	main(int argc, char **argv, char **envp)
 		init_lexer(&lexer);
 		analyze_input(&lexer);
 		get_tokens(tokens, lexer);
-		// print_tokens(tokens);
+		print_tokens(tokens);
 		if (analyze_syntax(tokens, &unexpected) != 0)
 		{
 			ft_putstr_fd("incorrect syntax near", 2);
