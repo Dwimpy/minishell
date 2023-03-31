@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/30 01:36:25 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/31 22:49:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
-#include "hashmap.h"
+#include "environment_handler.h"
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -56,6 +56,8 @@ int	main(int argc, char **argv, char **envp)
 	// printf("%s", envp[0]);
 	root = NULL;
 	unexpected = 0;
+	// hashmap = load_environment(envp);
+	// printf("%s\n", hashmap_get(hashmap, "USER"));
 	while (1)
 	{
 		init_lexer(&lexer);
@@ -70,14 +72,21 @@ int	main(int argc, char **argv, char **envp)
 			free_token_list(tokens);
 			continue ;
 		}
-		// while (tokens->first->type != TOKEN_EOF)
+		// if (ft_strncmp(tokens->first->value.word.value, "exit", 5) == 0)
 		// {
-		// 	ast_add(&root, parse_command(tokens));
-		// 	ast_add(&root, parse_pipeline(tokens));
-		// 	ast_add(&root, parse_and_if(tokens));
-		// 	ast_add(&root, parse_or_if(tokens));
-		// 	ast_add(&root, parse_subshell(tokens));
+		// 	free(lexer.input);
+		// 	free_token_list(tokens);
+		// 	system("leaks minishell");
+		// 	exit(0);
 		// }
+		while (tokens->first->type != TOKEN_EOF)
+		{
+			ast_add(&root, parse_command(tokens));
+			ast_add(&root, parse_pipeline(tokens));
+			ast_add(&root, parse_and_if(tokens));
+			ast_add(&root, parse_or_if(tokens));
+			ast_add(&root, parse_subshell(tokens));
+		}
 		// printf("Size: %zu\n", tokens->num_tokens);
 		// t_ast_node	*test;
 		// t_ast_node	*test2;
@@ -108,7 +117,7 @@ int	main(int argc, char **argv, char **envp)
 		// printf("\t%c\t\t%s\n", '|', "(null)");
 		// printf("%s\t", root->left->left->data.command.name);
 		// printf("\t%s\n", root->left->right->data.command.name);
-		// print_tree(root);
+		print_tree(root);
 		// printf("%s\t\t\n", root->data.command.name);
 		// if (ast_node->data.command.prefix.assignments)
 		// 	printf("Assignment: %s\n", ast_node->data.command.prefix.assignments->first->value);
@@ -132,7 +141,7 @@ int	main(int argc, char **argv, char **envp)
 		// 	system("leaks minishell");
 		// 	exit(0);
 		// }
-		// ast_del_node(root);
+		ast_del_node(root);
 		root = NULL;
 		free(lexer.input);
 		free_token_list(tokens);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/03/30 01:34:07 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/31 22:46:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,11 +29,15 @@ void	init_lexer(t_lexer *lexer)
 		(ft_strrchr(line, '\\') + 1)[0] == '\0')
 	{
 		init_line = line;
-		trimmed = ft_strtrim(line, "\\\n");
-		free(init_line);
 		next_line = readline("> ");
-		line = ft_strjoin(trimmed, next_line);
-		free(trimmed);
+		line = ft_strjoin(line, next_line);
+		if (next_line[0] == '\0')
+		{
+			free(init_line);
+			free(next_line);
+			break ;
+		}
+		free(init_line);
 		free(next_line);
 	}
 	lexer->read_position = -1;
@@ -59,7 +63,6 @@ char	get_next_char(t_lexer *lexer)
 
 t_token	*create_next_token(t_lexer *lexer)
 {
-	char	buffer[4096];
 	int		i;
 
 	i = 0;

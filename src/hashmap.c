@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:21:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/18 12:31:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/31 21:20:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ uint32_t	table_hash(const void *key)
 
 int	compare_keys(const void *x, const void *y)
 {
-	return (x != y);
+	return (ft_strncmp((char *)x, (char *)y, ft_strlen((char *)x)) == 0);
 }
 
 int	hashmap_length(t_hashmap *hashmap)

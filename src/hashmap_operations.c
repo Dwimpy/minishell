@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 12:30:16 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/18 12:31:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/03/31 21:20:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	*hashmap_get(t_hashmap *hashmap, const void *key)
 	entry = hashmap->table[index];
 	while (entry)
 	{
-		if (hashmap->compare(key, entry->key) == 0)
+		if (hashmap->compare(key, entry->key))
 			break ;
 		entry = entry->next;
 	}
@@ -44,7 +44,7 @@ void	*hashmap_put(t_hashmap *hashmap, const void *key, void *value)
 	entry = hashmap->table[index];
 	while (entry)
 	{
-		if (hashmap->compare(key, entry->key) == 0)
+		if (hashmap->compare(key, entry->key))
 			break ;
 		entry = entry->next;
 	}
