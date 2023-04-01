@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/27 15:08:49 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:04:22 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,14 +124,21 @@ void	ast_del_node(t_ast_node *node)
 		return ;
 	ast_del_node((node)->left);
 	ast_del_node((node)->right);
-	// free_args(node->data.command.arglist);
-	// if (node->data.command.name)
-	// 	free(node->data.command.name);
-	// if (node->data.command.prefix.input.filename)
-	// 	free(node->data.command.prefix.input.filename);
-	// if (node->data.command.prefix.output.filename)
-	// 	free(node->data.command.prefix.output.filename);
-	// free_args(node->data.command.prefix.assignments);
+	if (node->type == COMMAND)
+		free_args(node->data.command.arglist);
+	if (node->type == COMMAND && node->data.command.name)
+		free(node->data.command.name);
+	if (node->type == COMMAND && node->data.command.prefix.input.filename)
+		free(node->data.command.prefix.input.filename);
+	if (node->type == COMMAND && node->data.command.prefix.output.filename)
+	{
+		free(node->data.command.prefix.output.filename);
+		free_args(node->data.command.prefix.assignments);
+	}
+	if (node->type == AND_IF)
+		free(node->data.and_if.symbol);
+	if (node->type == OR_IF)
+		free(node->data.and_if.symbol);
 	if (node)
 		free(node);
 	node = NULL;

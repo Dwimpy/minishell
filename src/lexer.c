@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/01 17:46:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:07:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,6 @@
 #include <readline/readline.h>
 #include <stdio.h>
 #include "lexer.h"
-#include <string.h>
-
-void	skip_whitespace(t_lexer *lexer);
 
 int	init_lexer(t_lexer *lexer)
 {
@@ -99,8 +96,8 @@ int	append_to_input(t_lexer *lexer, char *prompt, char **curr_history)
 		free(append_input);
 		return (1);
 	}
-	(*curr_history) = str_join_newline(*curr_history, append_input);
 	lexer->input = ft_strjoin(lexer->input, append_input);
+	(*curr_history) = str_join_newline(*curr_history, append_input);
 	free(history);
 	free(append_input);
 	free(prev_input);
@@ -121,20 +118,4 @@ char	*str_join_newline(char *s1, char *s2)
 	ft_strcat(join_newline, "\n");
 	ft_strcat(join_newline, s2);
 	return (join_newline);
-}
-
-void	history_append_with_new_line(t_lexer *lexer, \
-			char **curr_history)
-{
-	char	*history;
-	int		i;
-
-	history = *curr_history;
-	i = 0;
-	*curr_history = ft_strjoin(lexer->input, *curr_history);
-	if (history)
-		free(history);
-	while ((*curr_history)[i] != '\\')
-		i++;
-	(*curr_history)[i] = '\n';
 }

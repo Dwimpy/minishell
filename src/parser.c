@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/27 15:11:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:10:17 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,10 @@ t_ast_node	*parse_and_if(t_token_list *tokens)
 {
 	t_data		data;
 
-	data.and_if.symbol = ft_strdup("&&");
+	data.and_if.symbol = NULL;
 	if (tokens->first->type == TOKEN_AND_IF)
 	{
+		data.and_if.symbol = ft_strdup("&&");
 		consume_token(tokens);
 		return (new_node(data, AND_IF));
 	}
@@ -65,9 +66,10 @@ t_ast_node	*parse_or_if(t_token_list *tokens)
 {
 	t_data		data;
 
-	data.and_if.symbol = ft_strdup("||");
+	data.or_if.symbol = NULL;
 	if (tokens->first->type == TOKEN_OR_IF)
 	{
+		data.and_if.symbol = ft_strdup("||");
 		consume_token(tokens);
 		return (new_node(data, OR_IF));
 	}
@@ -224,9 +226,19 @@ void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
 {
 	if (is_assign_word(tokens->first))
 	{
-		prefix->assignments = new_arglist();
+		if (!prefix->assignments)
+			prefix->assignments = new_arglist();
 		new_argument(prefix->assignments, \
 			create_arg((tokens)->first));
 		consume_token(tokens);
 	}
+}
+
+void	parse_input(t_ast_node **root, t_token_list *tokens)
+{
+	ast_add(root, parse_command(tokens));
+	ast_add(root, parse_pipeline(tokens));
+	ast_add(root, parse_and_if(tokens));
+	ast_add(root, parse_or_if(tokens));
+	ast_add(root, parse_subshell(tokens));
 }
