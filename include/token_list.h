@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:23:45 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/21 12:25:44 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/01 13:56:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ t_token			*peek_token(t_token_list *list, int look_ahead_times);
 void			consume_token(t_token_list *tokens);
 int				get_nargs(t_token *token);
 void			free_token_list(t_token_list *token_list);
+t_token			*get_last_token(t_token_list *token_list);
 
 #endif
