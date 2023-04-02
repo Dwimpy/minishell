@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/26 15:15:05 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/02 23:38:54 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,10 @@ t_token_value	get_value(t_token_type type, char *value)
 		return ((t_token_value){.lparanthesis.c = '('});
 	if (type == TOKEN_RPARENTHESIS)
 		return ((t_token_value){.rparanthesis.c = ')'});
+	if (type == TOKEN_SEMICOLON)
+		return ((t_token_value){.semicolon.c = ';'});
+	if (type == TOKEN_NEWLINE)
+		return ((t_token_value){.new_line.c = '\n'});
 	return ((t_token_value){.eof = '\0'});
 }
 
@@ -90,6 +94,10 @@ void	print_token_value(t_token *token)
 		printf("\t[ %c ] (L PARENTHESIS)\n", token->value.lparanthesis.c);
 	if (token->type == TOKEN_RPARENTHESIS)
 		printf("\t[ %c ] (R PARENTHESIS)\n", token->value.rparanthesis.c);
+	if (token->type == TOKEN_SEMICOLON)
+		printf("\t[ %c ] (SEMICOLON)\n", token->value.semicolon.c);
+	if (token->type == TOKEN_NEWLINE)
+		printf("\t[ \\n ] (NEWLINE)\n");
 	if (token->type == TOKEN_EOF)
 		printf("\t[ %s ] (EOF)\n", token->value.dgreat.value);
 }

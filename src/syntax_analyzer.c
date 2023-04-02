@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 13:43:59 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/31 22:41:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/02 22:28:38 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ int	analyze_syntax(t_token_list *tokens, int *unexpected)
 	t_token	*token;
 
 	token = tokens->first;
+	if (!token)
+		return (0);
 	fsm.state = NOTHING;
 	fsm.in_paren = 0;
 	if (!is_valid_beginning(token) && token->type != TOKEN_EOF)

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/26 15:14:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/02 20:34:32 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,10 @@ typedef enum e_token_type
 	TOKEN_DGREAT = 12,
 	TOKEN_LPARENTHESIS = 13,
 	TOKEN_RPARENTHESIS = 14,
-	TOKEN_UNEXPECTED = 15,
-	TOKEN_EOF = 16
+	TOKEN_SEMICOLON = 15,
+	TOKEN_UNEXPECTED = 16,
+	TOKEN_NEWLINE = 17,
+	TOKEN_EOF = 18
 }						t_token_type;
 
 typedef struct s_token_word
@@ -98,11 +100,6 @@ typedef struct s_token_dgreat
 	char			*value;
 }				t_token_dgreat;
 
-typedef struct s_token_linebreak
-{
-	char			c;
-}				t_token_linebreak;
-
 typedef struct s_token_lbrace
 {
 	char			c;
@@ -123,6 +120,16 @@ typedef struct s_token_eof
 	char			c;
 }				t_token_eof;
 
+typedef struct s_token_newline
+{
+	char			c;
+}				t_token_newline;
+
+typedef struct s_token_semicolon
+{
+	char			c;
+}				t_token_semicolon;
+
 typedef union u_token_value
 {
 	t_token_word			word;
@@ -137,9 +144,10 @@ typedef union u_token_value
 	t_token_great			great;
 	t_token_dless			dless;
 	t_token_dgreat			dgreat;
-	t_token_linebreak		linebreak;
+	t_token_newline			new_line;
 	t_token_lparantesis		lparanthesis;
 	t_token_rparantesis		rparanthesis;
+	t_token_semicolon		semicolon;
 	t_token_eof				eof;
 }						t_token_value;
 

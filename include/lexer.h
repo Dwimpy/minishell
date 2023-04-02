@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/01 17:46:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/03 00:40:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,32 @@ typedef struct s_lexer
 	char				ch;
 }						t_lexer;
 
+typedef struct s_control
+{
+	int					is_double_quote;
+	int					is_single_quote;
+	int					parens;
+	int					parens_counter;
+	char				*history;
+}						t_control;
+
+typedef enum e_incomplete_type
+{
+	NEWLINE,
+	SQUOTE,
+	DQUOTE,
+	SUBSH
+}						t_incomplete_type;
+
 int				init_lexer(t_lexer *lexer);
-int				append_to_input(t_lexer *lexer, \
-					char *prompt, char **curr_history);
+int				append_input_pipe(t_lexer *lexer, t_token_type type);
+int				append_to_input(t_lexer *lexer, t_incomplete_type type, \
+					char **curr_history);
+int				append_to_input_special(t_lexer *lexer, \
+					t_incomplete_type type, char **curr_history);
+void			get_new_history(char *append_input, t_incomplete_type type, \
+					char **curr_history);
 char			*str_join_newline(char *s1, char *s2);
-char			*add_new_line_at_end(char *s1);
 int				match_whitespace(char c);
 int				match_digit(char c);
 int				match_symbol(char c);
@@ -45,8 +66,14 @@ t_token			*tokenize_ampersand(t_lexer *lexer);
 t_token			*tokenize_redir_input(t_lexer *lexer);
 t_token			*tokenize_redir_output(t_lexer *lexer);
 t_token			*tokenize_braces(t_lexer *lexer);
+t_token			*tokenize_semicolon(t_lexer *lexer);
+t_token			*tokenize_newline(t_lexer *lexer);
 void			get_tokens(t_token_list *tokens, t_lexer lexer);
 t_token			*return_type(int is_literal, char *buffer, t_lexer *lexer);
 int				analyze_input(t_lexer *lexer);
-
+t_control		init_control_structure(void);
+int				is_incomplete_input(t_control control, char c);
+void			handle_incomplete_input(t_control *control, char c);
+char			*get_new_input(t_incomplete_type type);
+int				get_new_lexer_input(t_lexer *lexer, t_control *control);
 #endif

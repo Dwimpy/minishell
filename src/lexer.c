@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/01 19:07:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/03 00:56:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,23 @@
 #include <stdio.h>
 #include "lexer.h"
 
+static char	*return_prompt_type(t_incomplete_type type);
+static char	*get_new_input_tok_type(t_token_type type);
+
 int	init_lexer(t_lexer *lexer)
 {
 	char	*history;
 
 	lexer->input = readline("minishell$ ");
-	if (!lexer->input)
+	if (!lexer->input || ft_strlen(lexer->input) == 0)
+	{
+		free(lexer->input);
 		return (1);
+	}
 	history = ft_strdup(lexer->input);
 	while (ft_strrchr(lexer->input, '\\') != NULL && \
 		(ft_strrchr(lexer->input, '\\') + 1)[0] == '\0')
-		if (append_to_input(lexer, "> ", &history))
+		if (append_to_input(lexer, NEWLINE, &history))
 			break ;
 	lexer->read_position = -1;
 	lexer->input_len = ft_strlen(lexer->input);
@@ -68,6 +74,10 @@ t_token	*create_next_token(t_lexer *lexer)
 		return (tokenize_redir_output(lexer));
 	if (lexer->ch == '(' || lexer->ch == ')')
 		return (tokenize_braces(lexer));
+	if (lexer->ch == ';')
+		return (tokenize_semicolon(lexer));
+	// if (lexer->ch == '\n')
+	// 	return (tokenize_newline(lexer));
 	return (NULL);
 }
 
@@ -79,20 +89,37 @@ char	look_ahead(t_lexer *lexer)
 		return ('\0');
 }
 
-int	append_to_input(t_lexer *lexer, char *prompt, char **curr_history)
+int	append_input_pipe(t_lexer *lexer, t_token_type type)
+{
+	char	*append_input;
+	char	*prev_input;
+
+	append_input = get_new_input_tok_type(type);
+	if (!append_input)
+		return (1);
+	prev_input = lexer->input;
+	lexer->input = ft_strjoin(lexer->input, append_input);
+	lexer->input_len = ft_strlen(lexer->input);
+	free(append_input);
+	free(prev_input);
+	return (0);
+}
+
+int	append_to_input(t_lexer *lexer, t_incomplete_type type, char **curr_history)
 {
 	char	*append_input;
 	char	*prev_input;
 	char	*history;
 
 	history = *curr_history;
-	append_input = readline(prompt);
+	append_input = readline(return_prompt_type(type));
 	if (!append_input)
 		return (1);
 	prev_input = lexer->input;
 	if (append_input[0] == '\0')
 	{
 		(*curr_history) = str_join_newline(*curr_history, "\n");
+		free(history);
 		free(append_input);
 		return (1);
 	}
@@ -102,6 +129,81 @@ int	append_to_input(t_lexer *lexer, char *prompt, char **curr_history)
 	free(append_input);
 	free(prev_input);
 	return (0);
+}
+
+int	append_to_input_special(t_lexer *lexer, \
+		t_incomplete_type type, char **curr_history)
+{
+	char	*append_input;
+	char	*prev_input;
+
+	if (!*curr_history)
+		(*curr_history) = ft_strdup(lexer->input);
+	prev_input = lexer->input;
+	append_input = get_new_input(type);
+	lexer->read_position--;
+	lexer->input = str_join_newline(lexer->input, append_input);
+	get_new_history(append_input, type, curr_history);
+	free(append_input);
+	free(prev_input);
+	return (ft_strlen(lexer->input));
+
+}
+
+void	get_new_history(char *append_input, t_incomplete_type type, \
+							char **curr_history)
+{
+	char	*history;
+
+	if (*curr_history && (type == SQUOTE || type == DQUOTE))
+	{
+		history = (*curr_history);
+		(*curr_history) = str_join_newline(*curr_history, append_input);
+		free(history);
+	}
+	else if (*curr_history && type == SUBSH)
+	{
+		history = (*curr_history);
+		(*curr_history) = str_join_newline(*curr_history, append_input);
+		free(history);
+	}
+}
+
+char	*get_new_input(t_incomplete_type type)
+{
+	if (type == NEWLINE)
+		return (readline(return_prompt_type(type)));
+	else if (type == SQUOTE)
+		return (readline(return_prompt_type(type)));
+	else if (type == DQUOTE)
+		return (readline(return_prompt_type(type)));
+	else if (type == SUBSH)
+		return (readline(return_prompt_type(type)));
+	return (NULL);
+}
+
+static char	*get_new_input_tok_type(t_token_type type)
+{
+	if (type == TOKEN_PIPE)
+		return (readline("pipe> "));
+	else if (type == TOKEN_AND_IF)
+		return (readline("cmdand> "));
+	else if (type == TOKEN_OR_IF)
+		return (readline("cmdor> "));
+	return (NULL);
+}
+
+static char	*return_prompt_type(t_incomplete_type type)
+{
+	if (type == NEWLINE)
+		return ("> ");
+	else if (type == SQUOTE)
+		return ("squote> ");
+	else if (type == DQUOTE)
+		return ("dquote> ");
+	else if (type == SUBSH)
+		return ("subsh> ");
+	return (NULL);
 }
 
 char	*str_join_newline(char *s1, char *s2)

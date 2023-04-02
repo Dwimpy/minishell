@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 12:30:16 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/01 19:18:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/02 20:50:23 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	*hashmap_remove(t_hashmap *hashmap, const void *key)
 	i = 0;
 	while (entry_ptr && (*entry_ptr))
 	{
-		if (hashmap->compare(key, entry_ptr->key))
+		if (hashmap->compare(key, (*entry_ptr)->key))
 		{
 			entry = (*entry_ptr);
 			value = entry->value;
@@ -120,6 +120,13 @@ void	**hashmap_toarray(t_hashmap	*hashmap, void *end)
 	array[j] = end;
 	return (array);
 }
+
+// char	**hashmap_buildenv(t_hashmap *hashmap, void *end)
+// {
+// 	int		i;
+// 	int		j;
+// 	char	**array;
+// }
 
 void	hashmap_free(t_hashmap **hashmap)
 {
