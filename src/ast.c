@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/01 19:04:22 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/04 19:17:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,19 @@ void	ast_set_type(t_ast_node *node, t_node_type type)
 	node->type = type;
 }
 
+void	free_cmd_args(char **args)
+{
+	int	i;
+
+	i = 0;
+	while (args[i])
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+}
+
 void	ast_del_node(t_ast_node *node)
 {
 	if (!node)
@@ -125,15 +138,17 @@ void	ast_del_node(t_ast_node *node)
 	ast_del_node((node)->left);
 	ast_del_node((node)->right);
 	if (node->type == COMMAND)
-		free_args(node->data.command.arglist);
-	if (node->type == COMMAND && node->data.command.name)
-		free(node->data.command.name);
-	if (node->type == COMMAND && node->data.command.prefix.input.filename)
-		free(node->data.command.prefix.input.filename);
-	if (node->type == COMMAND && node->data.command.prefix.output.filename)
 	{
-		free(node->data.command.prefix.output.filename);
-		free_args(node->data.command.prefix.assignments);
+		if (node->data.command.cmd.name_path)
+			free(node->data.command.cmd.name_path);
+		if (node->data.command.cmd.assignments)
+			free_args(node->data.command.cmd.assignments);
+		if (node->data.command.input.filename)
+			free(node->data.command.input.filename);
+		if (node->data.command.output.filename)
+			free(node->data.command.output.filename);
+		if (node->data.command.cmd.args)
+			free_cmd_args(node->data.command.cmd.args);
 	}
 	if (node->type == AND_IF)
 		free(node->data.and_if.symbol);
@@ -143,11 +158,6 @@ void	ast_del_node(t_ast_node *node)
 		free(node);
 	node = NULL;
 }
-
-typedef enum e_printing_branch {
-	LEFT,
-	RIGHT
-} t_printing_branch;
 
 t_ast_node *from_identidier_to_tree(t_ast_node *node, t_printing_branch branch)
 {
@@ -177,8 +187,8 @@ void	print_tree_helper(t_ast_node *node, int level, t_printing_branch branch)
         printf("    .");
     }
 	// print_identifier(order, branch);
-    if (node->type == COMMAND && node->data.command.name)
-        printf("%s\n", node->data.command.name);
+    if (node->type == COMMAND && node->data.command.cmd.name_path)
+        printf("%s\n", node->data.command.cmd.name_path);
     else if (node->type == PIPELINE)
         printf("|\n");
 	else if (node->type == AND_IF)

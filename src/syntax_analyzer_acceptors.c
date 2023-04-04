@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/31 17:35:08 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/02 15:15:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/04 17:16:27 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ int	accept_cmd_suffix(t_token **token, t_fsm *state)
 			return (0);
 		}
 	}
-	else if (is_cmd_word(*token))
+	else if (is_cmd_word(*token) || is_assign_word((*token)))
 	{
 		(*token) = (*token)->next;
 		if (is_right_parenthesis(*token))
@@ -62,7 +62,7 @@ int	accept_cmd_suffix(t_token **token, t_fsm *state)
 
 int	accept_cmd_word(t_token **token, t_fsm *state)
 {
-	if (is_cmd_word(*token))
+	if (is_cmd_word(*token) || is_assign_word(*token))
 	{
 		(*token) = (*token)->next;
 		if (is_right_parenthesis(*token))

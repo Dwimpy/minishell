@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 12:30:16 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/02 20:50:23 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/03 12:58:16 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	*hashmap_put(t_hashmap *hashmap, const void *key, void *value)
 	if (!entry)
 	{
 		entry = (t_entry *)malloc(sizeof(t_entry));
-		entry->key = key;
-		entry->value = value;
+		entry->key = ft_strdup((char *)key);
+		entry->value = (char *)value;
 		entry->next = hashmap->table[index];
 		hashmap->table[index] = entry;
 		hashmap->length++;
@@ -60,7 +60,7 @@ void	*hashmap_put(t_hashmap *hashmap, const void *key, void *value)
 	}
 	else
 		prev = entry->value;
-	entry->value = value;
+	entry->value = (char *)value;
 	return (prev);
 }
 
@@ -84,7 +84,6 @@ void	*hashmap_remove(t_hashmap *hashmap, const void *key)
 			entry = (*entry_ptr);
 			value = entry->value;
 			(*entry_ptr) = entry->next;
-			free(entry);
 			hashmap->length--;
 			return (value);
 		}

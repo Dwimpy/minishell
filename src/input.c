@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/03 01:02:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/04 19:18:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ static int	is_valid_string(t_input *input);
 void	parse_all_input(t_input *input)
 {
 	while (input->tokens->first->type != TOKEN_EOF)
-		parse_input(&input->root, input->tokens);
+		parse_input(&input->root, input->tokens, input);
 	if (input->root && input->root->type == COMMAND && \
-		ft_strncmp(input->root->data.command.name, "exit", 5) == 0)
+		ft_strncmp(input->root->data.command.cmd.name_path, "exit", 5) == 0)
 	{
 		free (input->lexer.input);
 		clear_history();
@@ -31,6 +31,7 @@ void	parse_all_input(t_input *input)
 		system("leaks minishell");
 		exit (0);
 	}
+	print_tree(input->root);
 	ast_del_node(input->root);
 	input->root = NULL;
 	free(input->lexer.input);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 09:57:09 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 18:42:07 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/04 17:14:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ int	is_cmd_suffix(t_token *token)
 {
 	return (is_cmd_word(token) || \
 			is_input_redir(token) || \
-				is_output_redir(token));
+				is_output_redir(token) || \
+					is_assign_word(token));
 }
 
 int	is_input_redir(t_token *token)

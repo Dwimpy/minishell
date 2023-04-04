@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/23 17:20:33 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/04 18:21:39 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,18 @@ t_arg	*create_arg(t_token *token)
 	arg->value = ft_strdup(get_token_value(token));
 	arg->next = NULL;
 	return (arg);
+}
+
+t_arg	*copy_arg(t_arg *arg)
+{
+	t_arg	*copy;
+
+	copy = (t_arg *)malloc(sizeof(t_arg));
+	if (!copy)
+		return (NULL);
+	copy->value = ft_strdup(arg->value);
+	copy->next = NULL;
+	return (copy);
 }
 
 char	*get_token_value(t_token *token)

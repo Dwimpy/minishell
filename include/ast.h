@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/31 19:20:22 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/04 18:08:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 # include "arglist.h"
 
 typedef struct s_ast_node	t_ast_node;
+
+
+typedef enum e_printing_branch
+{
+	LEFT,
+	RIGHT
+}				t_printing_branch;
 
 typedef enum e_node_type
 {
@@ -46,13 +53,27 @@ typedef struct s_cmd_suffix
 	t_arglist		*arglist;
 }				t_cmd_suffix;
 
-typedef struct s_command
+typedef struct s_command_info
 {
 	char			*name;
 	t_arglist		*arglist;
 	t_cmd_prefix	prefix;
 	t_cmd_suffix	suffix;
 	t_node_type		type;
+}				t_command_info;
+
+typedef struct s_cmd
+{
+	char		*name_path;
+	char		**args;
+	t_arglist	*assignments;
+}				t_cmd;
+
+typedef struct s_command
+{
+	t_cmd			cmd;
+	t_io_redirect	input;
+	t_io_redirect	output;
 }				t_command;
 
 typedef struct s_subshell

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/03 01:04:57 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/03 13:13:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,16 @@
 int	main(int argc, char **argv, char **envp)
 {
 	t_input			input;
-
+	char			**arr;
 
 	init_input(&input, envp);
+	// free(hashmap_put(input.hashmap, "USER", ft_strdup("HELLO")));
+	// arr = hashmap_tochar(input.hashmap);
+	// while (*arr)
+	// {
+	// 	printf("%s\n", *arr);
+	// 	arr++;
+	// }
 	while (1)
 	{
 		if (generate_input(&input) != 0)
