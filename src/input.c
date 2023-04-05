@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/05 15:37:31 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 00:15:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	parse_all_input(t_input *input)
 		exit (0);
 	}
 	print_tree(input->root);
+	// printf("PRINT: %s\n", input->root->left->data.and_if.symbol);
 	ast_del_node(input->root);
 	input->root = NULL;
 	free(input->lexer.input);
@@ -43,6 +44,10 @@ void	init_input(t_input	*input, char **envp)
 	input->tokens = new_token_list();
 	input->hashmap = load_environment(envp);
 	input->root = NULL;
+	input->lexer.ch = '\0';
+	input->lexer.input = NULL;
+	input->lexer.input_len = 0;
+	input->lexer.read_position = 0;
 	input->unexpected = 0;
 	return ;
 }
@@ -61,9 +66,9 @@ int	generate_input(t_input *input)
 		token = get_last_token(input->tokens);
 		if (token && append_input_pipe(&input->lexer, token->type))
 			break ;
+
 		input->lexer.read_position = -1;
 	}
-	print_tokens(input->tokens);
 	if (analyze_syntax(input->tokens, &input->unexpected) != 0)
 	{
 		ft_putstr_fd("incorrect syntax near", 2);
@@ -72,6 +77,7 @@ int	generate_input(t_input *input)
 		free_token_list(input->tokens);
 		return (2);
 	}
+	print_tokens(input->tokens);
 	return (0);
 }
 

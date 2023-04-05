@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/05 15:40:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/05 23:45:59 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,7 +254,8 @@ void	parse_input(t_ast_node **root, t_token_list *tokens, t_input *input)
 
 void	convert_info_to_cmd(t_command_info info, t_data *data, t_input *input)
 {
-	data->command.cmd.name_path = ft_strdup(info.name);
+	if (info.name)
+		data->command.cmd.name_path = ft_strdup(info.name);
 	data->command.input = get_input_file(info);
 	data->command.output = get_output_file(info);
 	get_cmd_args(info, data);
@@ -341,7 +342,8 @@ void	get_cmd_args(t_command_info info, t_data *data)
 		arg = arg->next;
 		i++;
 	}
-	data->command.cmd.args[i] = NULL;
+	if (data->command.cmd.args)
+		data->command.cmd.args[i] = NULL;
 }
 
 void	free_cmd_info(t_command_info info)

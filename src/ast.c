@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/04 19:17:41 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 00:27:11 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -189,6 +189,8 @@ void	print_tree_helper(t_ast_node *node, int level, t_printing_branch branch)
 	// print_identifier(order, branch);
     if (node->type == COMMAND && node->data.command.cmd.name_path)
         printf("%s\n", node->data.command.cmd.name_path);
+	else if (node->type == COMMAND && !node->data.command.cmd.name_path && node->data.command.cmd.assignments)
+        printf("A: %s!\n", node->data.command.cmd.assignments->first->value);
     else if (node->type == PIPELINE)
         printf("|\n");
 	else if (node->type == AND_IF)
