@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/04 19:13:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/05 15:40:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
 
 	subshell = NULL;
 	root = NULL;
-	data.subshell.input = NULL;
 	if (accept(tokens->first, TOKEN_LPARENTHESIS))
 	{
 		consume_token(tokens);
@@ -106,10 +105,9 @@ t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
 			ast_add(&root, parse_or_if(tokens));
 			ast_add(&root, parse_subshell(tokens, input));
 		}
-		subshell = new_node(data, SUBSHELL);
-		subshell->left = root;
+		root->is_subshell = 1;
 		consume_token(tokens);
-		return (subshell);
+		return (root);
 	}
 	return (root);
 }

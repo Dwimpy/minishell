@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 15:06:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/03 12:37:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/05 14:40:32 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void		**hashmap_toarray(t_hashmap	*hashmap, void *end);
 int			compare_keys(const void *x, const void *y);
 void		*hashmap_get(t_hashmap *hashmap, const void *key);
 uint32_t	table_hash(const void *key);
-	char		**hashmap_tochar(t_hashmap *hashmap);
+char		**hashmap_tochar(t_hashmap *hashmap);
 void		hashmap_free(t_hashmap **hashmap);
 
 #endif

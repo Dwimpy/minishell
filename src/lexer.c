@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/03 00:56:06 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/05 15:37:59 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@ int	init_lexer(t_lexer *lexer)
 	char	*history;
 
 	lexer->input = readline("minishell$ ");
+	lexer->read_position = 0;
+	while (lexer->input[lexer->read_position++] == ' ')
+		if (lexer->input[lexer->read_position + 1] == '\0')
+			return (1);
 	if (!lexer->input || ft_strlen(lexer->input) == 0)
 	{
 		free(lexer->input);

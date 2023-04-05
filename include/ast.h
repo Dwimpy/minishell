@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/04 18:08:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/05 15:40:19 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ typedef struct s_command
 
 typedef struct s_subshell
 {
-	char		*input;
+	t_ast_node	*root;
 }				t_subshell;
 
 typedef struct s_pipeline
@@ -107,6 +107,7 @@ typedef union u_data
 
 typedef struct s_ast_node
 {
+	int				is_subshell;
 	t_node_type		type;
 	t_data			data;
 	t_ast_node		*parent;
