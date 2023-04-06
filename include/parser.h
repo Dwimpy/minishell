@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/04 19:05:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 19:34:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,11 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include "lexer.h"
-# include "ast.h"
-# include "hashmap.h"
 # include "syntax_analyzer.h"
 
 # define INPUT 0
 # define OUTPUT 1
 
-typedef struct s_input
-{
-	t_token_list	*tokens;
-	t_lexer			lexer;
-	t_hashmap		*hashmap;
-	t_ast_node		*root;
-	int				unexpected;
-}				t_input;
 
 int				accept(t_token *token, t_token_type type);
 int				expect(t_token *token, t_token_type type);

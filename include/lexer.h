@@ -6,24 +6,37 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/05 23:37:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 19:37:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LEXER_H
 # define LEXER_H
 # include "token_list.h"
-# include "ft_printf.h"
 # include <readline/history.h>
 # include <readline/readline.h>
+# include "hashmap.h"
+# include "ast.h"
 
 typedef struct s_lexer
 {
 	char				*input;
 	int					read_position;
+	int					tok_position;
 	int					input_len;
 	char				ch;
+	char				tok_ch;
 }						t_lexer;
+
+typedef struct s_input
+{
+	t_token_list	*tokens;
+	t_lexer			lexer;
+	t_hashmap		*hashmap;
+	t_ast_node		*root;
+	int				unexpected;
+}				t_input;
+
 
 typedef struct s_control
 {
@@ -36,13 +49,13 @@ typedef struct s_control
 
 typedef enum e_incomplete_type
 {
-	NEW_LINE,
+	NEWLINE,
 	SQUOTE,
 	DQUOTE,
 	SUBSH
 }						t_incomplete_type;
 
-int				init_lexer(t_lexer *lexer);
+int				init_lexer(t_lexer	*lexer);
 int				append_input_pipe(t_lexer *lexer, t_token_type type);
 int				append_to_input(t_lexer *lexer, t_incomplete_type type, \
 					char **curr_history);

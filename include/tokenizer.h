@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   input_handler.c                                    :+:      :+:    :+:   */
+/*   tokenizer.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/18 12:33:51 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 15:57:07 by arobu            ###   ########.fr       */
+/*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
+/*   Updated: 2023/04/06 22:10:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "token_list.h"
-#include "lexer.h"
+#ifndef TOKENIZER_H
+# define TOKENIZER_H
 
-void	get_tokens(t_token_list *tokens, t_lexer lexer)
-{
-	t_token	*token;
+# include "lexer.h"
+# include "fsm.h"
 
-	while (lexer.read_position < lexer.input_len)
-	{
-		token = create_next_token(&lexer);
-		add_token(tokens, token);
-	}
-}
+int		gen_input(t_input *input);
+void	get_the_input(t_input *input, t_fsm *fsm);
+void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm);
+void	do_squote(t_lexer *lexer, t_fsm *fsm);
+void	do_dquote(t_lexer *lexer, t_fsm *fsm);
+void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
+#endif

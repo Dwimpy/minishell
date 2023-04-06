@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/06 00:13:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 19:37:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <readline/readline.h>
 #include <stdio.h>
 #include "lexer.h"
+#include "fsm.h"
 
 static char	*return_prompt_type(t_incomplete_type type);
 static char	*get_new_input_tok_type(t_token_type type);
@@ -21,31 +22,32 @@ static char	*get_new_input_tok_type(t_token_type type);
 int	init_lexer(t_lexer *lexer)
 {
 	char	*history;
+	t_fsm	fsm;
 
-	lexer->input = readline("minishell$ ");
-	lexer->read_position = 0;
-	while (lexer->input[lexer->read_position] == ' ')
-		get_next_char(lexer);
-	if (lexer->input[lexer->read_position] == '\0')
-	{
-		free(lexer->input);
-		return (1);
-	}
-	if (!lexer->input || ft_strlen(lexer->input) == 0)
-	{
-		free(lexer->input);
-		return (1);
-	}
-	history = ft_strdup(lexer->input);
-	while (ft_strrchr(lexer->input, '\\') != NULL && \
-		(ft_strrchr(lexer->input, '\\') + 1)[0] == '\0')
-		if (append_to_input(lexer, NEWLINE, &history))
-			break ;
-	lexer->read_position = -1;
-	lexer->input_len = ft_strlen(lexer->input);
-	add_history(history);
-	free(history);
-	lexer->ch = '\0';
+	// lexer->input = readline("minishell$ ");
+	// lexer->read_position = 0;
+	// while (lexer->input[lexer->read_position] == ' ')
+	// 	get_next_char(lexer);
+	// if (lexer->input[lexer->read_position] == '\0')
+	// {
+	// 	free(lexer->input);
+	// 	return (1);
+	// }
+	// if (!lexer->input || ft_strlen(lexer->input) == 0)
+	// {
+	// 	free(lexer->input);
+	// 	return (1);
+	// }
+	// history = ft_strdup(lexer->input);
+	// while (ft_strrchr(lexer->input, '\\') != NULL && \
+	// 	(ft_strrchr(lexer->input, '\\') + 1)[0] == '\0')
+	// 	if (append_to_input(lexer, NEWLINE, &history))
+	// 		break ;
+	// lexer->read_position = -1;
+	// lexer->input_len = ft_strlen(lexer->input);
+	// add_history(history);
+	// free(history);
+	// lexer->ch = '\0';
 	return (0);
 }
 
@@ -62,6 +64,20 @@ char	get_next_char(t_lexer *lexer)
 	return (lexer->ch);
 }
 
+char	get_next_char_tok(t_lexer *lexer)
+{
+	lexer->tok_position++;
+	if (lexer->tok_position >= lexer->input_len)
+	{
+		lexer->ch = '\0';
+		return (lexer->tok_ch);
+	}
+	else
+		lexer->tok_ch = lexer->input[lexer->tok_position];
+	return (lexer->tok_ch);
+}
+
+
 t_token	*create_next_token(t_lexer *lexer)
 {
 	int		i;
@@ -70,19 +86,19 @@ t_token	*create_next_token(t_lexer *lexer)
 	get_next_char(lexer);
 	if (lexer->ch == '\0')
 		return (new_token(TOKEN_EOF, NULL));
-	if (match_word(lexer->ch))
+	else if (match_word(lexer->ch))
 		return (tokenize_word(lexer));
-	if (lexer->ch == '|')
+	else if (lexer->ch == '|')
 		return (tokenize_pipe(lexer));
-	if (lexer->ch == '&')
+	else if (lexer->ch == '&')
 		return (tokenize_ampersand(lexer));
-	if (lexer->ch == '<')
+	else if (lexer->ch == '<')
 		return (tokenize_redir_input(lexer));
-	if (lexer->ch == '>')
+	else if (lexer->ch == '>')
 		return (tokenize_redir_output(lexer));
-	if (lexer->ch == '(' || lexer->ch == ')')
+	else if (lexer->ch == '(' || lexer->ch == ')')
 		return (tokenize_braces(lexer));
-	if (lexer->ch == ';')
+	else if (lexer->ch == ';')
 		return (tokenize_semicolon(lexer));
 	// if (lexer->ch == '\n')
 	// 	return (tokenize_newline(lexer));
@@ -103,6 +119,7 @@ int	append_input_pipe(t_lexer *lexer, t_token_type type)
 	char	*prev_input;
 
 	append_input = get_new_input_tok_type(type);
+	printf("Type: %d\n", type);
 	if (!append_input)
 		return (1);
 	prev_input = lexer->input;

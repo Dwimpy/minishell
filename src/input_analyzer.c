@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/28 15:41:35 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/02 14:16:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 15:58:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ void	analze_quotes(t_lexer *lexer)
 		}
 	}
 	update_history(control);
-	lexer->read_position = -1;
 	return ;
 }
 

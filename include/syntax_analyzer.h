@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:32:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/31 17:10:45 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 17:19:43 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,31 +14,7 @@
 # define SYNTAX_ANALYZER_H
 
 # include "token_list.h"
-
-typedef enum e_syntax_type
-{
-	NOTHING,
-	IN_CMD,
-	IN_LPARENTHESIS,
-	IN_RPARENTHESIS,
-	IN_PIPE,
-	IN_AND_IF,
-	IN_OR_IF
-}				t_syntax_type;
-
-typedef enum e_substate_type
-{
-	IN_CMD_PREFIX,
-	IN_CMD_NAME,
-	IN_CMD_SUFFIX
-}				t_substate_type;
-
-typedef struct s_fsm
-{
-	int				in_paren;
-	t_syntax_type	state;
-	t_substate_type	substate;
-}					t_fsm;
+# include "fsm.h"
 
 int		analyze_syntax(t_token_list *tokens, int *unexpected);
 void	update_state(t_token *token, t_fsm *fsm);
