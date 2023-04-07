@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/31 19:42:26 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/03 12:58:18 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/07 15:29:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	load_data(t_hashmap *hashmap, char **envp)
 	size_t			len;
 
 	env = envp;
-	while (*env)
+	while (env && *env)
 	{
 		len = ft_strlen(*env);
 		equal = ft_strnstr(*env, "=", len);

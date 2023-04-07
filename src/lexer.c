@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/06 19:37:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/07 18:24:13 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ char	get_next_char_tok(t_lexer *lexer)
 	lexer->tok_position++;
 	if (lexer->tok_position >= lexer->input_len)
 	{
-		lexer->ch = '\0';
+		lexer->tok_ch = '\0';
 		return (lexer->tok_ch);
 	}
 	else
@@ -83,25 +83,27 @@ t_token	*create_next_token(t_lexer *lexer)
 	int		i;
 
 	i = 0;
-	get_next_char(lexer);
-	if (lexer->ch == '\0')
-		return (new_token(TOKEN_EOF, NULL));
-	else if (match_word(lexer->ch))
+	
+	while (match_whitespace(get_next_char_tok(lexer)))
+		;
+	// if (lexer->tok_ch == '\0')
+	// 	return (new_token(TOKEN_EOF, NULL));
+	if (match_word(lexer->tok_ch))
 		return (tokenize_word(lexer));
-	else if (lexer->ch == '|')
+	else if (lexer->tok_ch == '|')
 		return (tokenize_pipe(lexer));
-	else if (lexer->ch == '&')
+	else if (lexer->tok_ch == '&')
 		return (tokenize_ampersand(lexer));
-	else if (lexer->ch == '<')
+	else if (lexer->tok_ch == '<')
 		return (tokenize_redir_input(lexer));
-	else if (lexer->ch == '>')
+	else if (lexer->tok_ch == '>')
 		return (tokenize_redir_output(lexer));
-	else if (lexer->ch == '(' || lexer->ch == ')')
+	else if (lexer->tok_ch == '(' || lexer->tok_ch == ')')
 		return (tokenize_braces(lexer));
-	else if (lexer->ch == ';')
+	else if (lexer->tok_ch == ';')
 		return (tokenize_semicolon(lexer));
-	// if (lexer->ch == '\n')
-	// 	return (tokenize_newline(lexer));
+	if (lexer->ch == '\n')
+		return (tokenize_newline(lexer));
 	return (NULL);
 }
 
@@ -109,6 +111,14 @@ char	look_ahead(t_lexer *lexer)
 {
 	if (lexer->read_position < lexer->input_len)
 		return (lexer->input[lexer->read_position + 1]);
+	else
+		return ('\0');
+}
+
+char	look_ahead_tok(t_lexer *lexer)
+{
+	if (lexer->tok_position < lexer->input_len)
+		return (lexer->input[lexer->tok_position + 1]);
 	else
 		return ('\0');
 }

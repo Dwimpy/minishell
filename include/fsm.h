@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 20:35:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/07 15:34:36 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,25 +28,27 @@ typedef enum e_input_state
 	IN_LINEBR,
 	IN_SQUOTE,
 	IN_DQUOTE,
+	IN_SUBSH,
 	INPUT_COMPLETE
 }				t_input_state;
 
 typedef enum e_tokenizer_state
 {
 	N_TOKENIZER,
-	IN_CMD,
-	IN_LPARENTHESIS,
-	IN_RPARENTHESIS,
-	IN_PIPE,
-	IN_AND_IF,
-	IN_OR_IF,
+	TOK_CMD,
+	TOK_LPARENTHESIS,
+	TOK_RPARENTHESIS,
+	TOK_PIPE,
+	TOK_AND_IF,
+	TOK_OR_IF,
+	TOK_COMPLETE
 }				t_tokenizer_state;
 
 typedef enum e_cmd_substate
 {
-	IN_CMD_PREFIX,
-	IN_CMD_NAME,
-	IN_CMD_SUFFIX
+	TOK_CMD_PREFIX,
+	TOK_CMD_NAME,
+	TOK_CMD_SUFFIX
 }				t_cmd_substate;
 
 typedef struct s_fsm

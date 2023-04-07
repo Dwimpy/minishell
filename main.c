@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/06 20:41:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/07 18:04:08 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	main(int argc, char **argv, char **envp)
 		// if (generate_input(&input) != 0)
 		// 	continue ;
 		// parse_all_input(&input);
+		free_token_list(input.tokens);
 		free(input.lexer.input);
 	}
 	return (0);
