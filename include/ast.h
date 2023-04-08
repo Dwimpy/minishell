@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/05 15:40:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/07 18:50:55 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef enum e_printing_branch
 
 typedef enum e_node_type
 {
-	COMMAND	,
+	COMMAND,
 	PIPELINE,
 	AND_IF,
 	OR_IF,
@@ -127,5 +127,6 @@ int			has_parent(t_ast_node *root);
 void		ast_set_type(t_ast_node *node, t_node_type type);
 void		ast_del_node(t_ast_node	*node);
 void 		print_tree(t_ast_node *root);
+void		print_node(t_ast_node *node);
 
 #endif

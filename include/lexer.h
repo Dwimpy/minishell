@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/05 23:37:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 14:05:41 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ typedef struct s_control
 
 typedef enum e_incomplete_type
 {
-	NEW_LINE,
+	NEWLINE,
 	SQUOTE,
 	DQUOTE,
 	SUBSH

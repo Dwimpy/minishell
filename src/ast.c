@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ast.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 00:27:11 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 14:29:47 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,4 +207,18 @@ void print_tree(t_ast_node *root)
 {
     print_tree_helper(root, 0, LEFT);
 	printf("--------\n");
+}
+
+void	print_node(t_ast_node *node)
+{
+	if (node->type == COMMAND && node->data.command.cmd.name_path)
+		printf("%s\n", node->data.command.cmd.name_path);
+	else if (node->type == COMMAND && node->data.command.cmd.assignments)
+		printf("%s\n", node->data.command.cmd.assignments->first->value);
+	else if (node->type == PIPELINE)
+		printf("%c\n", node->data.pipeline.symbol);
+	else if (node->type == AND_IF)
+		printf("%s\n", node->data.and_if.symbol);
+	else if (node->type == OR_IF)
+		printf("%s\n", node->data.or_if.symbol);
 }

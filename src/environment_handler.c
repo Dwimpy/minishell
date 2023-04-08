@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   environment_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/31 19:42:26 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/03 12:58:18 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/08 10:46:54 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "environment_handler.h"
-
+#include <string.h>
+#include <stdio.h>
 t_hashmap	*load_environment(char **envp)
 {
 	t_hashmap	*hashmap;
@@ -55,7 +56,8 @@ char	**hashmap_tochar(t_hashmap *hashmap)
 	j = 0;
 	if (!hashmap && !hashmap->table)
 		return (NULL);
-	arr = (char **)malloc(sizeof(char *) * hashmap->length);
+	arr = (char **)malloc(sizeof(char *) * (hashmap->length + 1));
+	//printf("\nLEN: %d\n", hashmap->length);
 	if (!arr)
 		return (NULL);
 	while (i < hashmap->size)
@@ -73,5 +75,6 @@ char	**hashmap_tochar(t_hashmap *hashmap)
 		}
 		i++;
 	}
+	arr[j] = NULL;
 	return (arr);
 }

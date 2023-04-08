@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   hashmap_operations.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 12:30:16 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/05 15:31:05 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/07 16:05:28 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,10 @@ void	*hashmap_remove(t_hashmap *hashmap, const void *key)
 			value = entry->value;
 			(*entry_ptr) = entry->next;
 			hashmap->length--;
-			return (value);
+			free((void *)(entry->key));
+			free((void *)(value));
+			free((void *)(entry));
+			return (NULL);
 		}
 		entry_ptr = &(*entry_ptr)->next;
 	}

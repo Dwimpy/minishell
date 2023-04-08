@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   input.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 00:15:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/08 14:11:33 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,24 +19,8 @@ void	parse_all_input(t_input *input)
 {
 	while (input->tokens->first->type != TOKEN_EOF)
 		parse_input(&input->root, input->tokens, input);
-	if (input->root && input->root->type == COMMAND && \
-		ft_strncmp(input->root->data.command.cmd.name_path, "exit", 5) == 0)
-	{
-		free (input->lexer.input);
-		clear_history();
-		free_token_list(input->tokens);
-		free(input->tokens);
-		ast_del_node(input->root);
-		hashmap_free(&input->hashmap);
-		system("leaks minishell");
-		exit (0);
-	}
-	print_tree(input->root);
-	// printf("PRINT: %s\n", input->root->left->data.and_if.symbol);
-	ast_del_node(input->root);
-	input->root = NULL;
-	free(input->lexer.input);
-	free_token_list(input->tokens);
+
+
 }
 
 void	init_input(t_input	*input, char **envp)
