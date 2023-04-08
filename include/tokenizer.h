@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/07 18:35:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/08 20:40:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,10 @@ void	do_subsh(t_lexer *lexer, t_fsm *fsm);
 void	do_in_pipe(t_lexer *lexer, t_fsm *fsm);
 void	do_in_cmdand(t_lexer *lexer, t_fsm *fsm);
 void	do_in_cmdor(t_lexer *lexer, t_fsm *fsm);
+int		is_valid_beginning(t_token *token);
+int		is_prefix(t_token *token);
+int		is_cmd_suffix(t_token *token);
+int		is_tokenizer_ending(t_input	*input);
 void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
 void	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
 void	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm);

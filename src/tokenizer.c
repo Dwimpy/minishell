@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/07 19:38:31 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/08 20:39:43 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ int	gen_input(t_input *input)
 	input->lexer.input_len = ft_strlen(input->lexer.input);
 	input->lexer.read_position = -1;
 	input->lexer.tok_position = -1;
+	input->unexpected = 0;
 	while (fsm.state != COMPLETE && fsm.state != ERROR)
 	{
 		get_the_input(input, &fsm);
@@ -36,30 +37,28 @@ int	gen_input(t_input *input)
 
 void	tokenize(t_input *input, t_fsm *fsm)
 {
-	t_lexer	*lexer;
-	t_token	*token;
+	t_lexer			*lexer;
+	t_token			*token;
+	t_token_list	*tokens;
 
 	lexer = &input->lexer;
 	fsm->state = GET_TOKENS;
 	token = NULL;
+	tokens = input->tokens;
 	while (fsm->tok_state != TOK_COMPLETE && \
 			fsm->tok_state != INCOMPLETE && fsm->state != ERROR)
 	{
 		token = create_next_token(lexer);
 		if (!token)
 		{
-			if (input->tokens->last->type != TOKEN_WORD && \
-				input->tokens->last->type != TOKEN_SEMICOLON && \
-				input->tokens->last->type != TOKEN_SQUOTE && \
-				input->tokens->last->type != TOKEN_DQUOTE && \
-				input->tokens->last->type != TOKEN_RPARENTHESIS)
+			if (is_tokenizer_ending(input))
 			{
 				fsm->state = INCOMPLETE;
-				if (input->tokens->last->type == TOKEN_PIPE)
+				if (tokens->last->type == TOKEN_PIPE)
 					fsm->tok_state = TOK_PIPE;
-				else if (input->tokens->last->type == TOKEN_AND_IF)
+				else if (tokens->last->type == TOKEN_AND_IF)
 					fsm->tok_state = TOK_AND_IF;
-				else if (input->tokens->last->type == TOKEN_OR_IF)
+				else if (tokens->last->type == TOKEN_OR_IF)
 					fsm->tok_state = TOK_OR_IF;
 				return ;
 			}
@@ -67,15 +66,75 @@ void	tokenize(t_input *input, t_fsm *fsm)
 			{
 				fsm->tok_state = TOK_COMPLETE;
 				fsm->state = COMPLETE;
-				print_tokens(input->tokens);
+				print_tokens(tokens);
 			}
 		}
 		else
 		{
-			
+			if (input->tokens->num_tokens == 0)
+			{
+				if (!is_valid_beginning(token))
+				{
+					fsm->state = ERROR;
+					input->unexpected = token->type;
+					break ;
+				}
+			}
+			if (fsm->tok_state == N_TOKENIZER)
+			{
+				if (is_prefix(token) || is_cmd_suffix(token))
+				{
+					fsm->tok_state = TOK_CMD;
+					fsm->cmd_state = TOK_CMD_PREFIX;
+				}
+				else if (is_token_lparen(token))
+					fsm->tok_state = TOK_LPARENTHESIS;
+				else if (is_token_rparen(token))
+					fsm->tok_state = TOK_RPARENTHESIS;
+				else if (is_token_pipe(token))
+					fsm->tok_state = TOK_PIPE;
+				else if (is_token_cmdand(token))
+					fsm->tok_state = TOK_AND_IF;
+				else if (is_token_cmdor(token))
+					fsm->tok_state = TOK_OR_IF;
+			}
 		}
-		add_token(input->tokens, token);
+		add_token(tokens, token);
 	}
+}
+
+int	is_token_lparen(t_token *token)
+{
+	return (token->type == TOKEN_LPARENTHESIS);
+}
+
+int	is_token_rparen(t_token *token)
+{
+	return (token->type == TOKEN_RPARENTHESIS);
+}
+
+int	is_token_pipe(t_token *token)
+{
+	return (token->type == TOKEN_PIPE);
+}
+
+int	is_token_cmdand(t_token *token)
+{
+	return (token->type == TOKEN_AND_IF);
+}
+
+int	is_token_cmdor(t_token *token)
+{
+	return (token->type == TOKEN_OR_IF);
+}
+
+int	is_tokenizer_ending(t_input	*input)
+{
+	return (input->tokens->last->type != TOKEN_WORD && \
+			input->tokens->last->type != TOKEN_SEMICOLON && \
+			input->tokens->last->type != TOKEN_SQUOTE && \
+			input->tokens->last->type != TOKEN_DQUOTE && \
+			input->tokens->last->type != TOKEN_RPARENTHESIS);
 }
 
 void	get_the_input(t_input *input, t_fsm *fsm)

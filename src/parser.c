@@ -6,10 +6,11 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/05 23:45:59 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/08 20:41:22 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "tokenizer.h"
 #include "parser.h"
 
 t_ast_node	*parse_command(t_token_list *tokens, t_input *input)
