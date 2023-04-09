@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/08 20:39:43 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 01:46:08 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				{
 					fsm->tok_state = TOK_CMD;
 					fsm->cmd_state = TOK_CMD_PREFIX;
+					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
 				}
 				else if (is_token_lparen(token))
 					fsm->tok_state = TOK_LPARENTHESIS;
@@ -99,8 +100,165 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->tok_state = TOK_OR_IF;
 			}
 		}
+		if (fsm->tok_state == TOK_CMD)
+		{
+			if (fsm->cmd_state == TOK_CMD_PREFIX)
+			{
+				if (is_token_redir(token) && \
+					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
+					fsm->cmd_p_substate = TOK_CMD_PREFIX_REDIR;
+				else if (fsm->cmd_p_substate == TOK_CMD_PREFIX_REDIR)
+				{
+					if (!is_token_word_literal(token))
+					{
+						fsm->state = ERROR;
+						input->unexpected = token->type;
+					}
+					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
+				}
+				else if (is_token_assignment(token) && \
+					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
+				{
+					add_token(tokens, token);
+					continue ;
+				}
+				else if (is_token_word_literal(token) && \
+					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
+					fsm->cmd_state = TOK_CMD_NAME;
+				else if (is_token_logical_op(token) && \
+					fsm->cmd_state == TOK_CMD_PREFIX_NONE)
+				{
+					add_token(tokens, token);
+					if (token->type == TOKEN_PIPE)
+						fsm->tok_state = TOK_PIPE;
+					else if (token->type == TOKEN_AND_IF)
+						fsm->tok_state = TOK_AND_IF;
+					else if (token->type == TOKEN_OR_IF)
+						fsm->tok_state = TOK_OR_IF;
+					continue ;
+				}
+				else
+				{
+					fsm->state = ERROR;
+					input->unexpected = token->type;
+				}
+			}
+			if (fsm->cmd_state == TOK_CMD_NAME)
+			{
+				if (is_token_word_literal(token))
+				{
+					add_token(tokens, token);
+					continue ;
+				}
+				else if (is_token_redir(token))
+				{
+					fsm->cmd_state = TOK_CMD_SUFFIX;
+					fsm->cmd_p_substate = TOK_CMD_SUFFIX_NONE;
+				}
+				else if (is_token_logical_op(token) && \
+					fsm->cmd_state == TOK_CMD_PREFIX_NONE)
+				{
+					add_token(tokens, token);
+					if (token->type == TOKEN_PIPE)
+						fsm->tok_state = TOK_PIPE;
+					else if (token->type == TOKEN_AND_IF)
+						fsm->tok_state = TOK_AND_IF;
+					else if (token->type == TOKEN_OR_IF)
+						fsm->tok_state = TOK_OR_IF;
+					continue ;
+				}
+				else
+				{
+					fsm->state = ERROR;
+					input->unexpected = token->type;
+				}
+			}
+			if (fsm->cmd_state == TOK_CMD_SUFFIX)
+			{
+				if (is_token_redir(token) && \
+					fsm->cmd_p_substate == TOK_CMD_SUFFIX_NONE)
+				{
+					fsm->cmd_p_substate = TOK_CMD_SUFFIX_REDIR;
+				}
+				else if (fsm->cmd_p_substate == TOK_CMD_SUFFIX_REDIR)
+				{
+					if (!is_token_word_literal(token))
+					{
+						fsm->state = ERROR;
+						input->unexpected = token->type;
+					}
+					fsm->cmd_p_substate = TOK_CMD_SUFFIX_NONE;
+				}
+				else if (is_token_word_literal(token))
+				{
+					add_token(tokens, token);
+					continue ;
+				}
+				else if (is_token_logical_op(token) && \
+					fsm->cmd_state == TOK_CMD_SUFFIX_NONE)
+				{
+					add_token(tokens, token);
+					if (token->type == TOKEN_PIPE)
+						fsm->tok_state = TOK_PIPE;
+					else if (token->type == TOKEN_AND_IF)
+						fsm->tok_state = TOK_AND_IF;
+					else if (token->type == TOKEN_OR_IF)
+						fsm->tok_state = TOK_OR_IF;
+					continue ;
+				}
+				else 
+				{
+					fsm->state = ERROR;
+					input->unexpected = token->type;
+				}
+			}
+		}
+		else if (fsm->tok_state == TOK_PIPE)
+		{
+			if (is_token_redir(token))
+			{
+				add_token(tokens, token);
+				fsm->tok_state = TOK_CMD;
+				fsm->cmd_state = TOK_CMD_PREFIX;
+				fsm->cmd_p_substate = TOK_CMD_PREFIX_REDIR;
+			}
+			else
+			{
+				fsm->state = ERROR;
+				input->unexpected = token->type;
+			}
+		}
 		add_token(tokens, token);
 	}
+}
+
+int	is_token_logical_op(t_token *token)
+{
+	return (token->type == TOKEN_AND_IF || \
+		token->type == TOKEN_OR_IF || \
+		token->type == TOKEN_PIPE);
+}
+
+int is_token_word(t_token *token)
+{
+	return (token->type == TOKEN_WORD);
+}
+
+int	is_token_word_literal(t_token *token)
+{
+	return (token->type == TOKEN_WORD || token->type == SQUOTE || \
+		token->type == DQUOTE);
+}
+
+int	is_token_redir(t_token *token)
+{
+	return (token->type == TOKEN_LESS || token->type == TOKEN_GREAT || \
+		token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT);
+}
+
+int	is_token_assignment(t_token *token)
+{
+	return (token->type == TOKEN_ASSIGN_WORD);
 }
 
 int	is_token_lparen(t_token *token)
@@ -134,7 +292,8 @@ int	is_tokenizer_ending(t_input	*input)
 			input->tokens->last->type != TOKEN_SEMICOLON && \
 			input->tokens->last->type != TOKEN_SQUOTE && \
 			input->tokens->last->type != TOKEN_DQUOTE && \
-			input->tokens->last->type != TOKEN_RPARENTHESIS);
+			input->tokens->last->type != TOKEN_RPARENTHESIS && \
+			input->tokens->last->type != TOKEN_ASSIGN_WORD);
 }
 
 void	get_the_input(t_input *input, t_fsm *fsm)
@@ -249,7 +408,6 @@ void	do_in_pipe(t_lexer *lexer, t_fsm *fsm)
 	readline_pipe(lexer, "pipe> ", fsm);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
-	fsm->tok_state = N_TOKENIZER;
 }
 
 void	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
@@ -257,7 +415,6 @@ void	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
 	readline_pipe(lexer, "cmdand> ", fsm);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
-	fsm->tok_state = N_TOKENIZER;
 }
 
 void	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
@@ -265,7 +422,6 @@ void	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
 	readline_pipe(lexer, "cmdor> ", fsm);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
-	fsm->tok_state = N_TOKENIZER;
 }
 
 int	is_empty(char *str)

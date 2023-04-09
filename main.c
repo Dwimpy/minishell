@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/08 20:23:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 00:23:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	main(int argc, char **argv, char **envp)
 		if (input.unexpected != 0)
 			printf("syntax error near: %d\n", input.unexpected);
 		// if (generate_input(&input) != 0)
-		// 	continue ;
+			// continue ;
 		// parse_all_input(&input);
 		free_token_list(input.tokens);
 		free(input.lexer.input);

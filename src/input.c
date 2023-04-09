@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 21:28:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 00:05:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	init_input(t_input	*input, char **envp)
 
 int	generate_input(t_input *input)
 {
-	// t_token		*token;
+	t_token		*token;
 
 	// if (init_lexer(input))
 	// 	return (1);
@@ -77,7 +77,7 @@ int	generate_input(t_input *input)
 	// 	free_token_list(input->tokens);
 	// 	return (2);
 	// }
-	// print_tokens(input->tokens);
+	print_tokens(input->tokens);
 	return (0);
 }
 

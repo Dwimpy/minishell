@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/07 14:22:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 00:06:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ typedef struct s_input
 	t_ast_node		*root;
 	int				unexpected;
 }				t_input;
-
 
 typedef struct s_control
 {

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/07 18:24:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 00:04:46 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static char	*get_new_input_tok_type(t_token_type type);
 
 int	init_lexer(t_lexer *lexer)
 {
-	char	*history;
-	t_fsm	fsm;
+	// char	*history;
+	// t_fsm	fsm;
 
 	// lexer->input = readline("minishell$ ");
 	// lexer->read_position = 0;

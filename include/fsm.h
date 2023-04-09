@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/08 20:34:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 00:57:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,15 +48,24 @@ typedef enum e_cmd_substate
 {
 	TOK_CMD_PREFIX,
 	TOK_CMD_NAME,
-	TOK_CMD_SUFFIX
+	TOK_CMD_SUFFIX,
 }				t_cmd_substate;
+
+typedef enum e_cmd_p_substates
+{
+	TOK_CMD_PREFIX_NONE,
+	TOK_CMD_PREFIX_REDIR,
+	TOK_CMD_SUFFIX_NONE,
+	TOK_CMD_SUFFIX_REDIR
+}				t_cmd_p_substates;
 
 typedef struct s_fsm
 {
-	t_parse_state		state;
-	t_input_state		input_state;
-	t_tokenizer_state	tok_state;
-	t_cmd_substate		cmd_state;
+	t_parse_state			state;
+	t_input_state			input_state;
+	t_tokenizer_state		tok_state;
+	t_cmd_substate			cmd_state;
+	t_cmd_p_substates		cmd_p_substate;
 }					t_fsm;
 
 #endif
