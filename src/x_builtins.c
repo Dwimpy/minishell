@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/07 16:03:23 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/09 21:05:31 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 	return (prev);
 }
 
-void	ft_unset(char **str_arr, t_input *input)
+int	ft_unset(char **str_arr, t_input *input)
 {
 	size_t	i;
 	size_t	j;
@@ -59,6 +59,7 @@ void	ft_unset(char **str_arr, t_input *input)
 	if (str_arr[1] == NULL)
 	{
 		write(2, "unset: not enough arguments\n", 29);
+		return (1);
 	}
 	i = 1;
 	while (str_arr[i] != NULL)
@@ -71,13 +72,14 @@ void	ft_unset(char **str_arr, t_input *input)
 			ft_putstr_fd("unset: ", 2);
 			ft_putstr_fd(str_arr[i], 2);
 			ft_putstr_fd(" invalid parameter name", 2);
-			return ;
+			return (1);
 		}
 		hashmap_remove(input->hashmap, str_arr[i++]);
 	}
+	return (0);
 }
 
-void	ft_export(char **str_arr, t_input *input)
+int	ft_export(char **str_arr, t_input *input)
 {
 	size_t	i;
 	size_t	j;
@@ -86,7 +88,7 @@ void	ft_export(char **str_arr, t_input *input)
 	str = NULL;
 	i = 1;
 	if (str_arr[1] == NULL)
-		ft_env(str_arr, input);
+		return (ft_env(str_arr, input));
 	else
 	{
 		while (str_arr[i] != NULL)
@@ -105,6 +107,7 @@ void	ft_export(char **str_arr, t_input *input)
 			{
 				ft_putstr_fd("export: not valid in this context: ", 2);
 				ft_putstr_fd(str_arr[i], 2);
+				return (1);
 			}
 			else
 			{
@@ -112,10 +115,11 @@ void	ft_export(char **str_arr, t_input *input)
 			}
 			i++;
 		}
+		return (0);
 	}
 }
 
-void	ft_env(char **str_arr, t_input *input)
+int	ft_env(char **str_arr, t_input *input)
 {
 	char	**arr;
 	size_t	i;
@@ -129,20 +133,30 @@ void	ft_env(char **str_arr, t_input *input)
 		i++;
 	}
 	free(arr);
+	return (0);
 }
 
 
-void	ft_echo(char **str_arr, int fd)
+int	ft_echo(char **str_arr, int fd)
 {
 	int		n_flag;
 	size_t	i;
+	size_t	j;
 
 	i = 1;
 	n_flag = 0;
-	while (str_arr[i] != NULL && !ft_memcmp(str_arr[i], "-n", 3))
+	while (str_arr[i] != NULL && !ft_memcmp(str_arr[i], "-n", 2))
 	{
-		i++;
-		n_flag = 1;
+		j = 1;
+		while (str_arr[i][j] == 'n')
+			j++;
+		if (str_arr[i][j] == '\0')
+		{
+			i++;
+			n_flag = 1;
+		}
+		else
+			break ;
 	}
 	while (str_arr[i++] != NULL)
 	{
@@ -152,14 +166,36 @@ void	ft_echo(char **str_arr, int fd)
 	}
 	if (!n_flag)
 		write(fd, "\n", 1);
+	return (0);
 }
 
-void	ft_exit(char **str_arr, t_input *input)
+int	ft_exit(char **str_arr, t_input *input)
 {
+	unsigned char	c;
+	size_t			i;
+
+	i = 0;
+	c = 0;
 	if (str_arr[1] != NULL)
 	{
-		printf("exit: too many arguments");
-		return ;
+		if (str_arr[2] != NULL)
+		{
+			ft_putstr_fd("exit: too many arguments\n" ,2);
+			return (1);
+		}
+		while (str_arr[1][i] == '-' || str_arr[1][i] == '+')
+			i++;
+		while (str_arr[1][i] != '\0')
+		{
+			
+			if (!(ft_isdigit(str_arr[1][i++])))
+			{
+				ft_putstr_fd("exit: that's not a number\n" ,2);
+				return (1);
+			}	
+		}
+		c = ft_atoi(str_arr[1]);
+		printf("%d", c);
 	}
 	free (input->lexer.input);
 	clear_history();
@@ -168,10 +204,10 @@ void	ft_exit(char **str_arr, t_input *input)
 	ast_del_node(input->root);
 	hashmap_free(&input->hashmap);
 	system("leaks minishell");
-	exit (0);
+	exit (c);
 }
 
-void	ft_cd(char **str_arr, t_input *input)
+int	ft_cd(char **str_arr, t_input *input)
 {
 	char	**arr;
 	char	*str;
@@ -189,19 +225,25 @@ void	ft_cd(char **str_arr, t_input *input)
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd(str, 2);
 				ft_putstr_fd("\n", 2);
+				return (1);
 			}
 	}
 	else
 	{
 		if (chdir(str_arr[1]) == -1)
+		{
 			printf("Error\n");
+			return (1);
+		}
+		
 		path = getcwd(NULL, 0);
 		free(hashmap_put(input->hashmap, "PWD", ft_strdup(path)));
 		free(path);
 	}
+	return (0);
 }
 
-void	ft_pwd(char **str_arr)
+int	ft_pwd(char **str_arr)
 {
 	char	*path;
 
@@ -214,5 +256,7 @@ void	ft_pwd(char **str_arr)
 	else
 	{
 		write(2, "pwd: too many arguments\n", 25);
+		return (1);
 	}
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/08 11:37:36 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/09 13:32:57 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@
 
 int	ft_command(char **str_arr, t_input *input);
 
-void	ft_cd(char **str_arr, t_input *input);
-void	ft_pwd(char **str_arr);
-void	ft_echo(char **str_arr, int fd);
-void	ft_exit(char **str_arr, t_input *input);
-void	ft_env(char **str_arr, t_input *input);
-void	ft_export(char **str_arr, t_input *input);
-void	ft_unset(char **str_arr, t_input *input);
+int	ft_cd(char **str_arr, t_input *input);
+int	ft_pwd(char **str_arr);
+int	ft_echo(char **str_arr, int fd);
+int	ft_exit(char **str_arr, t_input *input);
+int	ft_env(char **str_arr, t_input *input);
+int	ft_export(char **str_arr, t_input *input);
+int	ft_unset(char **str_arr, t_input *input);
 
 #endif

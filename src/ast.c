@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 14:29:47 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/09 20:43:17 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ void	ast_add_right(t_ast_node *root, t_ast_node *right_child)
 	{
 		curr_node = root;
 		curr_node->right = right_child;
+		right_child->parent = curr_node;
 	}
 }
 
@@ -87,7 +88,9 @@ void	ast_add(t_ast_node **root, t_ast_node *add_node)
 	else if (has_left_child(*root) && \
 				!has_parent(*root) && \
 					!has_right_child(*root))
+	{
 		ast_add_right(*root, add_node);
+	}
 	else if (has_left_child(*root) && has_right_child(*root))
 		ast_add_parent(root, add_node);
 	return ;

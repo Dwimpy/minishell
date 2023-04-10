@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/08 14:25:18 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/10 12:28:52 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,19 @@
 
 #include "x_execution.h"
 #include "get_next_line.h"
-int	ft_execute(t_input *input, t_ast_node *root, int fd);
+int	ft_execute(t_input *input, t_ast_node *root, int *fd, int *ptr);
+int	ft_pipe(t_input *input, t_ast_node *root, int *fd, int last);
 
 int	main(int argc, char **argv, char **envp)
 {
-	t_input			input;
-	int				fd;
-	char			*str;
+	t_input				input;
+	int					fd;
+	char				*str;
+	int					exit_code;
+	struct sigaction	sa;
 
+
+	//ft_signals(&sa);
 	init_input(&input, envp);
 	while (1)
 	{
@@ -35,24 +40,12 @@ int	main(int argc, char **argv, char **envp)
 		parse_all_input(&input);
 
 		// my part
-		fd = ft_execute(&input, input.root, -1);
-		if (fd)
+		fd = -1;
+		exit_code = ft_execute(&input, input.root, &fd, NULL);
+		if (fd != -1)
 		{
-			str = get_next_line(fd);
-			while (str)
-			{
-				printf("%s", str);
-				free(str);
-				str = get_next_line(fd);
-			}
-			//close(fd);
+			close(fd);
 		}
-		//write(1, "lol", 4);
-		//int	i = 0;
-		// while (envp[i] != NULL)
-		// 	printf("%s\n", envp[i++]);
-		// my part end
-
 		//print_tree(input.root);
 		// printf("PRINT: %s\n", input->root->left->data.and_if.symbol);
 		ast_del_node(input.root);
@@ -63,148 +56,105 @@ int	main(int argc, char **argv, char **envp)
 	return (0);
 }
 
-int	ft_execute(t_input *input, t_ast_node *root, int fd)
+// int	ft_signals(struct sigaction *sa)
+// {
+// 	sa->sa_flags = SA_SIGINFO;
+// 	sa->sa_sigaction = ft_signal_handler;
+// 	if (sigaction(SIGINT, &sa, NULL) != 0
+// 		|| sigaction(SIGQUIT, &sa, NULL) != 0)
+// 	{
+// 		write(2, "sigaction error\n", 16);
+// 		return (1);
+// 	}
+// }
+
+// void	ft_signal_handler(int sig, siginfo_t *info, void *context)
+// {
+// 	(void)context ;
+	
+// }
+
+
+int	ft_execute(t_input *input, t_ast_node *root, int *fd, int *ptr)
 {
 	char			**arr;
-	int 			pid;
-	int				new_fd[2];
-		
-	char *str;
-	// if (fd != -1)
-	// {
-	// 	str = get_next_line(fd);
-	// 	while (str)
-	// 	{
-	// 		printf("%s", str);
-	// 		free(str);
-	// 		str = get_next_line(fd);
-	// 		write(1, "\nwohoo\n\n", 9);
-	// 	}
-	// 	//close(fd);
-	// }
+	int 			status;
+	int				permission;
 
-	if (root == NULL)
-		return (0);
-	if (!(root->right) && !(root->left) && !(root->parent) && fd == -1) // only one thing to execute
-	{
-		// if (root->type == COMMAND && root->data.command.cmd.name_path == NULL)
-		// 	if (root->data.command.cmd.assignments)
-		// 		return(0);
-		ft_command(root->data.command.cmd.args, input);
-		return (0);
-	}
-	
-	//ft_execute(input, root->left);
+	permission = 0;
+	if (ptr == NULL)
+		ptr = &permission;
+	if (root->type == COMMAND && root == input->root) // only one thing to execute
+		return (ft_command(root->data.command.cmd.args, input));
 	if (root->left)
 	{
-		fd = ft_execute(input, root->left, fd);
-		
-		// if (fd != -1)
-		// {
-		// 	str = get_next_line(fd);
-		// 	while (str)
-		// 	{
-		// 		printf("%s", str);
-		// 		free(str);
-		// 		str = get_next_line(fd);
-		// 	}
-		// 	write(1, "\nwahoo\n\n", 9);
-		// 	//close(fd);
-		// }
-		// if (root->type == AND_IF)
-		// 	printf("and if %s\n", (root->data.and_if.symbol));
-		// if (root->type == COMMAND)
-		// 	printf("command %s\n", (root->data.command.cmd.name_path));
-		// if (root->type == OR_IF)
-		// 	printf("or if %s\n", (root->data.or_if.symbol));
-		// if (root->type == PIPELINE)
-		// 	printf("pipe %c\n", (root->data.pipeline.symbol));
-		fd = ft_execute(input, root->right, fd);
-		return (fd);
-		// if (root->type == SUBSHELL)
-		// 	printf("subshell %s\n", (root->data.subshell.root.));
-		// else if (!(ft_memcmp("||", *(root->data.command.cmd.args), 3)))
-		// 	printf("pipe pipe\n");
-		// else if (!(ft_memcmp("&&", *(root->data.command.cmd.args), 3)))
-		// 	printf("and and\n");
-		// else
-		// 	printf("no thing");
+		status = ft_execute(input, root->left, fd, ptr);
+		if ((root->type == OR_IF && status == 0) || (root->type == AND_IF && status != 0))
+		{
+			*ptr = 1;
+			return(status);
+		}
+		if (*ptr == 1)
+			if (root->type == PIPELINE)
+				return (status);
+		return (ft_execute(input, root->right, fd, ptr));
+	}
+	else if (root->is_subshell == 1)
+	{
+		// if subshell
 
-		
+		// is not done
+		return (status);
+	}
+	else if (root->parent && ((root->parent->left == root && (root->parent->type == AND_IF || root->parent->type == OR_IF))))
+	{
+		return (ft_command(root->data.command.cmd.args, input));
+	}
+	else if (root->parent && (root->parent->parent && (root->parent->left != root && (root->parent->parent->type == AND_IF || root->parent->parent->type == OR_IF))))
+	{
+		if (root->parent->type == AND_IF || root->parent->type == OR_IF)
+			return (ft_command(root->data.command.cmd.args, input));
+		else
+			return (ft_pipe(input, root, fd, 1));
+	}
+	else
+		return (ft_pipe(input, root, fd, 0));
+}
 
-		
-		//ft_command(root->data.command.cmd.args, input);
+int	ft_pipe(t_input *input, t_ast_node *root, int *fd, int last)
+{
+	int				new_fd[2];
+	int 			pid;
+	int 			status;
 
-
-
-		
-		// if (root->left->parent->type == PIPELINE)
-		// 	printf("REDIRECT INPUT to child 2\n");
-		// print_node(root->left);
-		// printf("left\n");
+	if (pipe(new_fd) == -1)
+		return (1);
+	pid = fork();
+	if (pid == -1)
+		return (-1);
+	if (pid == 0)
+	{
+		close(new_fd[0]);
+		if (!last)
+			if (input->root->right != root)
+				dup2(new_fd[1], STDOUT_FILENO);
+		dup2(*fd, STDIN_FILENO);
+		status = ft_command(root->data.command.cmd.args, input);
+		close(new_fd[1]);
+		exit(status);
 	}
 	else
 	{
-		// int 			pid;
-		// int				new_fd[2];
-		
-		if (root->type != COMMAND)
-			exit (0);
-		if (root->type == COMMAND && root->data.command.cmd.name_path == NULL)
-			if (root->data.command.cmd.assignments)
-				exit(1);
-		if (pipe(new_fd) == -1)
-			return (1);
-		pid = fork();
-		if (pid == -1)
-			return (-1);
-		if (pid == 0)
+		close(new_fd[1]);
+		waitpid(pid, &status, 0);
+		if (*fd != -1)
+			close(*fd);
+		*fd = new_fd[0];
+		if (input->root->right == root)
 		{
-			close(new_fd[0]);
-			dup2(new_fd[1], STDOUT_FILENO);
-			dup2(fd, STDIN_FILENO);
-			ft_command(root->data.command.cmd.args, input);
-			close(new_fd[1]);
-			exit(0);
+			close(*fd);	
+			*fd = -1;
 		}
-		else
-		{
-			close(new_fd[1]);
-			//read(fd[0], name, 1000);
-			//close(fd[0]);
-			waitpid(pid, NULL, 0);
-			if (fd != -1)
-				close(fd);
-			// if (new_fd[0] != -1)
-			// {
-			// 	str = get_next_line(new_fd[0]);
-			// 	while (str)
-			// 	{
-			// 		printf("%s", str);
-			// 		free(str);
-			// 		str = get_next_line(new_fd[0]);
-			// 	}
-			// 	write(1, "\nwahoo\n\n", 9);
-			// 	//close(fd);
-			// }
-			if (fd != -1)
-				close(fd);
-			return (new_fd[0]);
-		}
+		return (status);
 	}
-	// if (root->right)
-	// {
-	// 	// print_node(root->right);
-	// 	// printf("right\n");
-	// }
-	
-	// if ((root->right) && (root->left))
-	// {
-	// 	print_node(root);
-	// 	printf("parent\n");
-	// }
-	
-	// else
-	// 	printf("\nno\n");
-	//ft_execute(input, root->right);
 }
