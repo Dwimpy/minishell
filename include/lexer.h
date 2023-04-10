@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/10 00:06:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 23:39:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct s_control
 
 typedef enum e_incomplete_type
 {
-	NEWLINE,
+	NEW_LINE,
 	SQUOTE,
 	DQUOTE,
 	SUBSH

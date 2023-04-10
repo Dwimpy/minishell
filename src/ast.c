@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/09 21:12:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 23:49:00 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,6 @@ void	ast_add_left(t_ast_node *root, t_ast_node *left_child)
 
 	if (!root || !left_child)
 		return ;
-	if (!root)
-		root = left_child;
 	else
 	{
 		curr_node = root;
@@ -69,8 +67,6 @@ void	ast_add_right(t_ast_node *root, t_ast_node *right_child)
 
 	if (!root || !right_child)
 		return ;
-	if (!root)
-		root = right_child;
 	else
 	{
 		curr_node = root;
@@ -136,7 +132,6 @@ void	ast_del_node(t_ast_node *node)
 	if (!node)
 		return ;
 	ast_del_node((node)->left);
-	ast_del_node((node)->right);
 	if (node->type == COMMAND)
 	{
 		if (node->data.command.cmd.name_path)
@@ -154,6 +149,7 @@ void	ast_del_node(t_ast_node *node)
 		free(node->data.and_if.symbol);
 	if (node->type == OR_IF)
 		free(node->data.and_if.symbol);
+	ast_del_node((node)->right);
 	if (node)
 		free(node);
 	node = NULL;

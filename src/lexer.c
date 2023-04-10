@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/10 00:04:46 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 23:49:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,38 +18,6 @@
 
 static char	*return_prompt_type(t_incomplete_type type);
 static char	*get_new_input_tok_type(t_token_type type);
-
-int	init_lexer(t_lexer *lexer)
-{
-	// char	*history;
-	// t_fsm	fsm;
-
-	// lexer->input = readline("minishell$ ");
-	// lexer->read_position = 0;
-	// while (lexer->input[lexer->read_position] == ' ')
-	// 	get_next_char(lexer);
-	// if (lexer->input[lexer->read_position] == '\0')
-	// {
-	// 	free(lexer->input);
-	// 	return (1);
-	// }
-	// if (!lexer->input || ft_strlen(lexer->input) == 0)
-	// {
-	// 	free(lexer->input);
-	// 	return (1);
-	// }
-	// history = ft_strdup(lexer->input);
-	// while (ft_strrchr(lexer->input, '\\') != NULL && \
-	// 	(ft_strrchr(lexer->input, '\\') + 1)[0] == '\0')
-	// 	if (append_to_input(lexer, NEWLINE, &history))
-	// 		break ;
-	// lexer->read_position = -1;
-	// lexer->input_len = ft_strlen(lexer->input);
-	// add_history(history);
-	// free(history);
-	// lexer->ch = '\0';
-	return (0);
-}
 
 char	get_next_char(t_lexer *lexer)
 {
@@ -207,7 +175,7 @@ void	get_new_history(char *append_input, t_incomplete_type type, \
 
 char	*get_new_input(t_incomplete_type type)
 {
-	if (type == NEWLINE)
+	if (type == NEW_LINE)
 		return (readline(return_prompt_type(type)));
 	else if (type == SQUOTE)
 		return (readline(return_prompt_type(type)));
@@ -231,7 +199,7 @@ static char	*get_new_input_tok_type(t_token_type type)
 
 static char	*return_prompt_type(t_incomplete_type type)
 {
-	if (type == NEWLINE)
+	if (type == NEW_LINE)
 		return ("> ");
 	else if (type == SQUOTE)
 		return ("squote> ");

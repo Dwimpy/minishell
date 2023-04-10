@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 00:57:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 22:47:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef enum e_cmd_substate
 typedef enum e_cmd_p_substates
 {
 	TOK_CMD_PREFIX_NONE,
+	TOK_CMD_NAME_NONE,
 	TOK_CMD_PREFIX_REDIR,
 	TOK_CMD_SUFFIX_NONE,
 	TOK_CMD_SUFFIX_REDIR

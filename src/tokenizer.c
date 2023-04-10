@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 01:46:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 23:37:53 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,24 @@ int	gen_input(t_input *input)
 {
 	t_fsm	fsm;
 	char	*prompt;
+	int		i;
 
 	fsm.state = GET_INPUT;
 	fsm.input_state = N_INPUT;
 	fsm.tok_state = N_TOKENIZER;
+	fsm.cmd_state = TOK_CMD_PREFIX;
+	fsm.cmd_p_substate = TOK_CMD_PREFIX_NONE;
+	i = 0;
 	input->lexer.input = read_from_stdin();
 	input->lexer.input_len = ft_strlen(input->lexer.input);
+	while (input->lexer.input && input->lexer.input[i] == ' ' || \
+		input->lexer.input[i] == '\t')
+		i++;
+	if (i == input->lexer.input_len)
+	{
+		free(input->lexer.input);
+		return (1);
+	}
 	input->lexer.read_position = -1;
 	input->lexer.tok_position = -1;
 	input->unexpected = 0;
@@ -29,9 +41,9 @@ int	gen_input(t_input *input)
 	{
 		get_the_input(input, &fsm);
 		tokenize(input, &fsm);
-		printf("State: [%d]\t Substate: [%d]\n", fsm.state, fsm.tok_state);
 	}
-	// printf("%s\n", input->lexer.input);
+	if (fsm.state == COMPLETE)
+		add_token(input->tokens, new_token(TOKEN_EOF, NULL));
 	return (0);
 }
 
@@ -51,6 +63,11 @@ void	tokenize(t_input *input, t_fsm *fsm)
 		token = create_next_token(lexer);
 		if (!token)
 		{
+			if (!tokens->last)
+			{
+				fsm->state = COMPLETE;
+				return ;
+			}
 			if (is_tokenizer_ending(input))
 			{
 				fsm->state = INCOMPLETE;
@@ -155,8 +172,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->cmd_state = TOK_CMD_SUFFIX;
 					fsm->cmd_p_substate = TOK_CMD_SUFFIX_NONE;
 				}
-				else if (is_token_logical_op(token) && \
-					fsm->cmd_state == TOK_CMD_PREFIX_NONE)
+				else if (is_token_logical_op(token))
 				{
 					add_token(tokens, token);
 					if (token->type == TOKEN_PIPE)
@@ -194,33 +210,37 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					add_token(tokens, token);
 					continue ;
 				}
-				else if (is_token_logical_op(token) && \
-					fsm->cmd_state == TOK_CMD_SUFFIX_NONE)
+				else if (is_token_logical_op(token))
 				{
-					add_token(tokens, token);
 					if (token->type == TOKEN_PIPE)
 						fsm->tok_state = TOK_PIPE;
 					else if (token->type == TOKEN_AND_IF)
 						fsm->tok_state = TOK_AND_IF;
 					else if (token->type == TOKEN_OR_IF)
 						fsm->tok_state = TOK_OR_IF;
-					continue ;
 				}
-				else 
+				else
 				{
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 				}
 			}
 		}
-		else if (fsm->tok_state == TOK_PIPE)
+		else if (is_tok_state_pipe_lop(fsm))
 		{
-			if (is_token_redir(token))
+			if (is_prefix(token) || is_cmd_suffix(token))
 			{
-				add_token(tokens, token);
 				fsm->tok_state = TOK_CMD;
+				if (is_token_redir(token))
+				{
 				fsm->cmd_state = TOK_CMD_PREFIX;
 				fsm->cmd_p_substate = TOK_CMD_PREFIX_REDIR;
+				}
+				else
+				{
+					fsm->cmd_state = TOK_CMD_PREFIX;
+					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
+				}
 			}
 			else
 			{
@@ -237,6 +257,13 @@ int	is_token_logical_op(t_token *token)
 	return (token->type == TOKEN_AND_IF || \
 		token->type == TOKEN_OR_IF || \
 		token->type == TOKEN_PIPE);
+}
+
+int	is_tok_state_pipe_lop(t_fsm *fsm)
+{
+	return (fsm->tok_state == TOK_PIPE || \
+		fsm->tok_state == TOK_AND_IF || \
+		fsm->tok_state == TOK_OR_IF);
 }
 
 int is_token_word(t_token *token)
@@ -362,14 +389,9 @@ char	*read_from_stdin(void)
 void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm)
 {
 	if (c == '\0' && !lexer->input_len)
-	{
-		fsm->input_state = INPUT_COMPLETE;
 		fsm->state = COMPLETE;
-	}
 	else if (c == '\0')
-	{
 		fsm->input_state = INPUT_COMPLETE;
-	}
 	if (c == '\\' && look_ahead(lexer) == '\0')
 		fsm->input_state = IN_LINEBR;
 	if (c == '\'')

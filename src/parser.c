@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/09 16:15:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 23:51:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,7 @@ t_ast_node	*parse_command(t_token_list *tokens, t_input *input)
 {
 	t_command_info	cmd;
 	t_data			data;
-	int				i;
 
-	i = 0;
 	if (is_prev_subshell(tokens->first))
 		return (NULL);
 	data.command.cmd.args = NULL;
@@ -90,10 +88,7 @@ t_ast_node	*parse_or_if(t_token_list *tokens)
 t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
 {
 	t_ast_node	*root;
-	t_ast_node	*subshell;
-	t_data		data;
 
-	subshell = NULL;
 	root = NULL;
 	if (accept(tokens->first, TOKEN_LPARENTHESIS))
 	{
@@ -106,7 +101,8 @@ t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
 			ast_add(&root, parse_or_if(tokens));
 			ast_add(&root, parse_subshell(tokens, input));
 		}
-		root->is_subshell = 1;
+		if (root)
+			root->is_subshell = 1;
 		consume_token(tokens);
 		return (root);
 	}
@@ -268,7 +264,7 @@ t_io_redirect	get_input_file(t_command_info info)
 	t_io_redirect	input;
 
 	if (info.suffix.input.filename)
-		input.filename = ft_strdup(info.prefix.input.filename);
+		input.filename = ft_strdup(info.suffix.input.filename);
 	else if (info.prefix.input.filename)
 		input.filename = ft_strdup(info.prefix.input.filename);
 	else
@@ -281,7 +277,7 @@ t_io_redirect	get_output_file(t_command_info info)
 	t_io_redirect	output;
 
 	if (info.suffix.output.filename)
-		output.filename = ft_strdup(info.prefix.output.filename);
+		output.filename = ft_strdup(info.suffix.output.filename);
 	else if (info.prefix.output.filename)
 		output.filename = ft_strdup(info.prefix.output.filename);
 	else
@@ -357,10 +353,21 @@ void	free_cmd_info(t_command_info info)
 		free(info.prefix.input.filename);
 	if (info.prefix.output.filename)
 		free(info.prefix.output.filename);
+	if (info.suffix.input.filename)
+		free(info.suffix.input.filename);
 	if (info.suffix.output.filename)
 		free(info.suffix.output.filename);
 	if (info.prefix.assignments)
 		free_args(info.prefix.assignments);
 	if (info.suffix.arglist)
 		free_args(info.suffix.arglist);
+}
+
+int	is_valid_beginning(t_token *token)
+{
+	return (is_cmd_word(token) || \
+			is_input_redir(token) || \
+				is_output_redir(token) || \
+					token->type == TOKEN_LPARENTHESIS || \
+						token->type == TOKEN_ASSIGN_WORD);
 }

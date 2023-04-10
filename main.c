@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/10 00:23:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/10 23:34:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,25 @@ int	main(int argc, char **argv, char **envp)
 	// }
 	while (1)
 	{
-		gen_input(&input);
+		if (gen_input(&input) == 1)
+			continue ;
 		if (input.unexpected != 0)
+		{
 			printf("syntax error near: %d\n", input.unexpected);
-		// if (generate_input(&input) != 0)
-			// continue ;
-		// parse_all_input(&input);
-		free_token_list(input.tokens);
-		free(input.lexer.input);
+			print_tree(input.root);
+			ast_del_node(input.root);
+			input.root = NULL;
+			free(input.lexer.input);
+			free_token_list(input.tokens);
+		}
+		else
+		{
+			parse_all_input(&input);
+			ast_del_node(input.root);
+			input.root = NULL;
+			free(input.lexer.input);
+			free_token_list(input.tokens);
+		}
 	}
 	return (0);
 }
