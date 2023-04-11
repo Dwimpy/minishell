@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 23:37:53 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/11 18:29:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ int	gen_input(t_input *input)
 
 	fsm.state = GET_INPUT;
 	fsm.input_state = N_INPUT;
-	fsm.tok_state = N_TOKENIZER;
 	fsm.cmd_state = TOK_CMD_PREFIX;
 	fsm.cmd_p_substate = TOK_CMD_PREFIX_NONE;
+	fsm.in_subshell = 0;
 	i = 0;
 	input->lexer.input = read_from_stdin();
 	input->lexer.input_len = ft_strlen(input->lexer.input);
@@ -44,6 +44,8 @@ int	gen_input(t_input *input)
 	}
 	if (fsm.state == COMPLETE)
 		add_token(input->tokens, new_token(TOKEN_EOF, NULL));
+	print_tokens(input->tokens);
+
 	return (0);
 }
 
@@ -55,12 +57,17 @@ void	tokenize(t_input *input, t_fsm *fsm)
 
 	lexer = &input->lexer;
 	fsm->state = GET_TOKENS;
+	fsm->tok_state = N_TOKENIZER;
 	token = NULL;
 	tokens = input->tokens;
 	while (fsm->tok_state != TOK_COMPLETE && \
-			fsm->tok_state != INCOMPLETE && fsm->state != ERROR)
+			fsm->state != INCOMPLETE && \
+			fsm->state != COMPLETE && \
+			fsm->state != ERROR)
 	{
 		token = create_next_token(lexer);
+		// print_token_value(token);
+
 		if (!token)
 		{
 			if (!tokens->last)
@@ -83,7 +90,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 			{
 				fsm->tok_state = TOK_COMPLETE;
 				fsm->state = COMPLETE;
-				print_tokens(tokens);
+				return ;
 			}
 		}
 		else
@@ -92,6 +99,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 			{
 				if (!is_valid_beginning(token))
 				{
+					printf("ERROR IN STATE %d\n", fsm->tok_state);
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 					break ;
@@ -128,6 +136,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				{
 					if (!is_token_word_literal(token))
 					{
+					printf("ERROR IN STATE %d\n", fsm->tok_state);
+					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
 						fsm->state = ERROR;
 						input->unexpected = token->type;
 					}
@@ -156,6 +166,9 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 				else
 				{
+					printf("ERROR IN STATE %d\n", fsm->tok_state);
+					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 				}
@@ -185,6 +198,9 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 				else
 				{
+					printf("ERROR IN STATE %d\n", fsm->tok_state);
+					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 				}
@@ -221,6 +237,9 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 				else
 				{
+					printf("ERROR IN STATE %d\n", fsm->tok_state);
+					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 				}
@@ -243,6 +262,33 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 			}
 			else
+			{
+					printf("ERROR IN STATE %d\n", fsm->tok_state);
+
+				fsm->state = ERROR;
+				input->unexpected = token->type;
+			}
+		}
+		else if (fsm->tok_state == TOK_LPARENTHESIS)
+		{
+			if (token->type == TOKEN_LPARENTHESIS)
+			{
+				add_token(tokens, token);
+				continue ;
+			}
+			else if (is_token_redir(token))
+			{
+				fsm->tok_state = TOK_CMD;
+				fsm->cmd_state = TOK_CMD_PREFIX;
+				fsm->cmd_p_substate = TOK_CMD_PREFIX_REDIR;
+			}
+			else if (is_token_word_literal(token))
+			{
+				fsm->tok_state = TOK_CMD;
+				fsm->cmd_state = TOK_CMD_PREFIX;
+				fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
+			}
+			else 
 			{
 				fsm->state = ERROR;
 				input->unexpected = token->type;
@@ -332,6 +378,8 @@ void	get_the_input(t_input *input, t_fsm *fsm)
 	fsm->input_state = N_INPUT;
 	while (fsm->input_state != INPUT_COMPLETE)
 	{
+		// printf("%d\t%d\t%d\n", fsm->input_state, fsm->state, fsm->tok_state);
+
 		if (fsm->state == GET_INPUT)
 		{
 			c = get_next_char(lexer);
@@ -399,7 +447,10 @@ void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm)
 	if (c == '"')
 		fsm->input_state = IN_DQUOTE;
 	if (c == '(')
+	{
 		fsm->input_state = IN_SUBSH;
+		fsm->in_subshell = 1;
+	}
 }
 
 void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
@@ -462,6 +513,8 @@ void	do_squote(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
 		readline_new_line(lexer, "squote> ", fsm);
+	else if (lexer->ch == '\'' && fsm->in_subshell)
+		fsm->input_state = IN_SUBSH;
 	else if (lexer->ch == '\'')
 		fsm->input_state = N_INPUT;
 }
@@ -470,6 +523,8 @@ void	do_dquote(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
 		readline_new_line(lexer, "dquote> ", fsm);
+	else if (lexer->ch == '\"' && fsm->in_subshell)
+		fsm->input_state = IN_SUBSH;
 	else if (lexer->ch == '\"')
 		fsm->input_state = N_INPUT;
 }
@@ -478,8 +533,15 @@ void	do_subsh(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
 		readline_no_new_line(lexer, "subsh> ", fsm);
+	else if (lexer->ch == '\'')
+		fsm->input_state = IN_SQUOTE;
+	else if (lexer->ch == '\"')
+		fsm->input_state = IN_DQUOTE;
 	else if (lexer->ch == ')')
+	{
 		fsm->input_state = N_INPUT;
+		fsm->in_subshell = 0;
+	}
 }
 
 void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)

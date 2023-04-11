@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 22:47:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/11 18:26:21 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef enum e_cmd_p_substates
 
 typedef struct s_fsm
 {
+	int						in_subshell;
 	t_parse_state			state;
 	t_input_state			input_state;
 	t_tokenizer_state		tok_state;
