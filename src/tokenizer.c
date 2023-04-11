@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/11 18:29:41 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/11 20:09:24 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,7 +168,6 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				{
 					printf("ERROR IN STATE %d\n", fsm->tok_state);
 					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
-
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 				}
@@ -298,68 +297,68 @@ void	tokenize(t_input *input, t_fsm *fsm)
 	}
 }
 
-int	is_token_logical_op(t_token *token)
+inline int	is_token_logical_op(t_token *token)
 {
 	return (token->type == TOKEN_AND_IF || \
 		token->type == TOKEN_OR_IF || \
 		token->type == TOKEN_PIPE);
 }
 
-int	is_tok_state_pipe_lop(t_fsm *fsm)
+inline int	is_tok_state_pipe_lop(t_fsm *fsm)
 {
 	return (fsm->tok_state == TOK_PIPE || \
 		fsm->tok_state == TOK_AND_IF || \
 		fsm->tok_state == TOK_OR_IF);
 }
 
-int is_token_word(t_token *token)
+inline int is_token_word(t_token *token)
 {
 	return (token->type == TOKEN_WORD);
 }
 
-int	is_token_word_literal(t_token *token)
+inline int	is_token_word_literal(t_token *token)
 {
-	return (token->type == TOKEN_WORD || token->type == SQUOTE || \
-		token->type == DQUOTE);
+	return (token->type == TOKEN_WORD || token->type == TOKEN_SQUOTE || \
+		token->type == TOKEN_DQUOTE);
 }
 
-int	is_token_redir(t_token *token)
+inline int	is_token_redir(t_token *token)
 {
 	return (token->type == TOKEN_LESS || token->type == TOKEN_GREAT || \
 		token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT);
 }
 
-int	is_token_assignment(t_token *token)
+inline int	is_token_assignment(t_token *token)
 {
 	return (token->type == TOKEN_ASSIGN_WORD);
 }
 
-int	is_token_lparen(t_token *token)
+inline int	is_token_lparen(t_token *token)
 {
 	return (token->type == TOKEN_LPARENTHESIS);
 }
 
-int	is_token_rparen(t_token *token)
+inline int	is_token_rparen(t_token *token)
 {
 	return (token->type == TOKEN_RPARENTHESIS);
 }
 
-int	is_token_pipe(t_token *token)
+inline int	is_token_pipe(t_token *token)
 {
 	return (token->type == TOKEN_PIPE);
 }
 
-int	is_token_cmdand(t_token *token)
+inline int	is_token_cmdand(t_token *token)
 {
 	return (token->type == TOKEN_AND_IF);
 }
 
-int	is_token_cmdor(t_token *token)
+inline int	is_token_cmdor(t_token *token)
 {
 	return (token->type == TOKEN_OR_IF);
 }
 
-int	is_tokenizer_ending(t_input	*input)
+inline int	is_tokenizer_ending(t_input	*input)
 {
 	return (input->tokens->last->type != TOKEN_WORD && \
 			input->tokens->last->type != TOKEN_SEMICOLON && \
