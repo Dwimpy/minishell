@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 16:26:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 00:23:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	get_the_input(t_input *input, t_fsm *fsm);
 void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm);
 void	do_squote(t_lexer *lexer, t_fsm *fsm);
 void	do_dquote(t_lexer *lexer, t_fsm *fsm);
-void	do_subsh(t_lexer *lexer, t_fsm *fsm);
+void	do_subsh(t_input *input, t_fsm *fsm);
 void	do_in_pipe(t_lexer *lexer, t_fsm *fsm);
 void	do_in_cmdand(t_lexer *lexer, t_fsm *fsm);
 void	do_in_cmdor(t_lexer *lexer, t_fsm *fsm);

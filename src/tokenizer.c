@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/11 20:09:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 00:52:20 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ int	gen_input(t_input *input)
 	fsm.cmd_state = TOK_CMD_PREFIX;
 	fsm.cmd_p_substate = TOK_CMD_PREFIX_NONE;
 	fsm.in_subshell = 0;
+	fsm.paren = 0;
 	i = 0;
 	input->lexer.input = read_from_stdin();
 	input->lexer.input_len = ft_strlen(input->lexer.input);
@@ -56,6 +57,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 	t_token_list	*tokens;
 
 	lexer = &input->lexer;
+	if (fsm->state == ERROR)
+		return ;
 	fsm->state = GET_TOKENS;
 	fsm->tok_state = N_TOKENIZER;
 	token = NULL;
@@ -67,7 +70,6 @@ void	tokenize(t_input *input, t_fsm *fsm)
 	{
 		token = create_next_token(lexer);
 		// print_token_value(token);
-
 		if (!token)
 		{
 			if (!tokens->last)
@@ -152,6 +154,13 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				else if (is_token_word_literal(token) && \
 					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
 					fsm->cmd_state = TOK_CMD_NAME;
+				else if (is_token_rparen(token) && \
+					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
+				{
+					add_token(tokens, token);
+					fsm->tok_state = TOK_RPARENTHESIS;
+					continue ;
+				}
 				else if (is_token_logical_op(token) && \
 					fsm->cmd_state == TOK_CMD_PREFIX_NONE)
 				{
@@ -195,6 +204,12 @@ void	tokenize(t_input *input, t_fsm *fsm)
 						fsm->tok_state = TOK_OR_IF;
 					continue ;
 				}
+				else if (is_token_rparen(token))
+				{
+					add_token(tokens, token);
+					fsm->tok_state = TOK_RPARENTHESIS;
+					continue ;
+				}
 				else
 				{
 					printf("ERROR IN STATE %d\n", fsm->tok_state);
@@ -234,6 +249,12 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					else if (token->type == TOKEN_OR_IF)
 						fsm->tok_state = TOK_OR_IF;
 				}
+				else if (is_token_rparen(token))
+				{
+					add_token(tokens, token);
+					fsm->tok_state = TOK_RPARENTHESIS;
+					continue ;
+				}
 				else
 				{
 					printf("ERROR IN STATE %d\n", fsm->tok_state);
@@ -260,6 +281,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
 				}
 			}
+			else if (is_token_lparen(token))
+				fsm->tok_state = TOK_LPARENTHESIS;
 			else
 			{
 					printf("ERROR IN STATE %d\n", fsm->tok_state);
@@ -288,6 +311,28 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
 			}
 			else 
+			{
+				fsm->state = ERROR;
+				input->unexpected = token->type;
+			}
+		}
+		else if (fsm->tok_state == TOK_RPARENTHESIS)
+		{
+			if (is_token_logical_op(token))
+			{
+				if (token->type == TOKEN_PIPE)
+					fsm->tok_state = TOK_PIPE;
+				else if (token->type == TOKEN_AND_IF)
+					fsm->tok_state = TOK_AND_IF;
+				else if (token->type == TOKEN_OR_IF)
+					fsm->tok_state = TOK_OR_IF;
+			}
+			else if (fsm->tok_state == TOK_RPARENTHESIS)
+			{
+				add_token(tokens, token);
+				continue ;
+			}
+			else
 			{
 				fsm->state = ERROR;
 				input->unexpected = token->type;
@@ -391,7 +436,7 @@ void	get_the_input(t_input *input, t_fsm *fsm)
 			else if (fsm->input_state == IN_DQUOTE)
 				do_dquote(lexer, fsm);
 			else if (fsm->input_state == IN_SUBSH)
-				do_subsh(lexer, fsm);
+				do_subsh(input, fsm);
 		}
 		else if (fsm->state == INCOMPLETE)
 		{
@@ -437,6 +482,15 @@ void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm)
 {
 	if (c == '\0' && !lexer->input_len)
 		fsm->state = COMPLETE;
+	else if (c == '\0' && fsm->paren < 0)
+	{
+		fsm->input_state = INPUT_COMPLETE;
+		fsm->state = ERROR;
+	}
+	else if (c == '\0' && fsm->paren > 0)
+	{
+		fsm->input_state = IN_SUBSH;
+	}
 	else if (c == '\0')
 		fsm->input_state = INPUT_COMPLETE;
 	if (c == '\\' && look_ahead(lexer) == '\0')
@@ -448,7 +502,13 @@ void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm)
 	if (c == '(')
 	{
 		fsm->input_state = IN_SUBSH;
+		fsm->paren += 1;
 		fsm->in_subshell = 1;
+	}
+	if(c == ')')
+	{
+		fsm->input_state = IN_SUBSH;
+		fsm->paren -= 1;
 	}
 }
 
@@ -528,18 +588,39 @@ void	do_dquote(t_lexer *lexer, t_fsm *fsm)
 		fsm->input_state = N_INPUT;
 }
 
-void	do_subsh(t_lexer *lexer, t_fsm *fsm)
+void	do_subsh(t_input *input, t_fsm *fsm)
 {
-	if (lexer->ch == '\0')
+	t_lexer	*lexer;
+
+	lexer = &input->lexer;
+	if (fsm->paren < 0)
+	{
+		fsm->input_state = INPUT_COMPLETE;
+		fsm->state = ERROR;
+		input->unexpected = TOKEN_RPARENTHESIS;
+	}
+	else if (lexer->ch == '\0')
 		readline_no_new_line(lexer, "subsh> ", fsm);
 	else if (lexer->ch == '\'')
 		fsm->input_state = IN_SQUOTE;
 	else if (lexer->ch == '\"')
 		fsm->input_state = IN_DQUOTE;
+	else if (lexer->ch == ')' && fsm->paren > 0)
+	{
+		printf("WTF\n\n");
+		fsm->input_state = N_INPUT;
+		fsm->paren -= 1;
+	}
 	else if (lexer->ch == ')')
 	{
 		fsm->input_state = N_INPUT;
+		fsm->paren -= 1;
 		fsm->in_subshell = 0;
+	}
+	else if (lexer->ch == '(')
+	{
+		fsm->paren += 1;
+		fsm->input_state = N_INPUT;
 	}
 }
 

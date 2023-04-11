@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/11 17:39:23 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/11 22:11:43 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		if (input.unexpected != 0)
 			printf("syntax error near: %d\n", input.unexpected);
-
 		else
 			parse_all_input(&input);
 		ast_del_node(input.root);
