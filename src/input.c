@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 23:30:11 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 17:31:23 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	parse_all_input(t_input *input)
 {
 	while (input->tokens->first->type != TOKEN_EOF)
 		parse_input(&input->root, input->tokens, input);
-	if (input->root->type == COMMAND && ft_strncmp(input->root->data.command.cmd.name_path, "exit", 5) == 0)
+	if (input->root->type == COMMAND && input->root->data.command.cmd.name_path && ft_strncmp(input->root->data.command.cmd.name_path, "exit", 5) == 0)
 	{
 		ast_del_node(input->root);
 		input->root = NULL;
