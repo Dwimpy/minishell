@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/08 20:40:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 19:58:27 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define TOKEN_H
 # include <stdlib.h>
 # include <stdio.h>
+# include "quote_list.h"
 # include "ft_printf.h"
 
 typedef struct s_token	t_token;
@@ -21,23 +22,22 @@ typedef struct s_token	t_token;
 typedef enum e_token_type
 {
 	TOKEN_WORD = 1,
-	TOKEN_SQUOTE = 2,
-	TOKEN_DQUOTE = 3,
-	TOKEN_ASSIGN_WORD = 4,
-	TOKEN_PIPE = 5,	
-	TOKEN_OR_IF = 6,
-	TOKEN_AND = 7,
-	TOKEN_AND_IF = 8,
-	TOKEN_LESS = 9,
-	TOKEN_GREAT = 10,
-	TOKEN_DLESS = 11,
-	TOKEN_DGREAT = 12,
-	TOKEN_LPARENTHESIS = 13,
-	TOKEN_RPARENTHESIS = 14,
-	TOKEN_SEMICOLON = 15,
-	TOKEN_UNEXPECTED = 16,
-	TOKEN_NEWLINE = 17,
-	TOKEN_EOF = 18
+	TOKEN_QUOTE = 2,
+	TOKEN_ASSIGN_WORD = 3,
+	TOKEN_PIPE = 4,
+	TOKEN_OR_IF = 5,
+	TOKEN_AND = 6,
+	TOKEN_AND_IF = 7,
+	TOKEN_LESS = 8,
+	TOKEN_GREAT = 9,
+	TOKEN_DLESS = 10,
+	TOKEN_DGREAT = 11,
+	TOKEN_LPARENTHESIS = 12,
+	TOKEN_RPARENTHESIS = 13,
+	TOKEN_SEMICOLON = 14,
+	TOKEN_UNEXPECTED = 15,
+	TOKEN_NEWLINE = 16,
+	TOKEN_EOF = 17
 }						t_token_type;
 
 typedef struct s_token_word
@@ -45,15 +45,12 @@ typedef struct s_token_word
 	char			*value;
 }						t_token_word;
 
-typedef struct s_token_squote
-{
-	char			*value;
-}						t_token_squote;
 
-typedef struct s_token_dquote
+typedef struct s_token_quote
 {
 	char			*value;
-}						t_token_dquote;
+	t_quotelist		*quotes;
+}						t_token_quote;
 
 typedef struct s_token_assign_word
 {
@@ -133,8 +130,7 @@ typedef struct s_token_semicolon
 typedef union u_token_value
 {
 	t_token_word			word;
-	t_token_squote			squote;
-	t_token_dquote			dquote;
+	t_token_quote			quote;
 	t_token_assign_word		assign_word;
 	t_token_pipe			pipe;
 	t_token_and				and;

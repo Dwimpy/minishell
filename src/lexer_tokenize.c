@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/11 22:47:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 19:54:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,20 +82,20 @@ t_token	*return_type(int is_literal, char *buffer, t_lexer *lexer)
 	lexer->tok_position--;
 	if (is_literal == 1 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\'') > 0)
-		return (new_token(TOKEN_SQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	else if (is_literal == 1 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\'') < 0)
 		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	else if (is_literal == 2 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\"') > 0)
-		return (new_token(TOKEN_DQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	else if (is_literal == 2 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\"') < 0)
 		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	else if (is_literal == 1)
-		return (new_token(TOKEN_SQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	else if (is_literal == 2)
-		return (new_token(TOKEN_DQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	if (ft_strchr(buffer, '=') != NULL && buffer[0] != '=')
 		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	return (new_token(TOKEN_WORD, buffer));

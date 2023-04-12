@@ -6,12 +6,13 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 17:31:23 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 22:43:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "environment_handler.h"
+#include "quote_list.h"
 
 static int	is_valid_string(t_input *input);
 

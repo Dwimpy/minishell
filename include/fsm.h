@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/11 22:06:18 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 20:12:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ typedef enum e_input_state
 {
 	N_INPUT,
 	IN_LINEBR,
+	REGULAR,
 	IN_SQUOTE,
 	IN_DQUOTE,
 	IN_SUBSH,

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/04 18:21:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 22:37:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_arglist	*new_arglist(void)
 	return (arglist);
 }
 
-t_arg	*create_arg(t_token *token)
+t_arg	*create_arg(t_token *token, t_arg_type type)
 {
 	t_arg	*arg;
 
@@ -35,6 +35,7 @@ t_arg	*create_arg(t_token *token)
 	if (!arg)
 		return (NULL);
 	arg->value = ft_strdup(get_token_value(token));
+	arg->type = type;
 	arg->next = NULL;
 	return (arg);
 }
@@ -55,10 +56,8 @@ char	*get_token_value(t_token *token)
 {
 	if (token->type == TOKEN_WORD)
 		return (token->value.word.value);
-	if (token->type == TOKEN_SQUOTE)
-		return (token->value.squote.value);
-	if (token->type == TOKEN_DQUOTE)
-		return (token->value.dquote.value);
+	if (token->type == TOKEN_QUOTE)
+		return (token->value.quote.value);
 	if (token->type == TOKEN_ASSIGN_WORD)
 		return (token->value.assign_word.value);
 	return (NULL);

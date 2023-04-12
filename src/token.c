@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 23:04:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/12 21:22:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,8 @@ t_token_value	get_value(t_token_type type, char *value)
 {
 	if (type == TOKEN_WORD)
 		return ((t_token_value){.word.value = ft_strdup(value)});
-	if (type == TOKEN_SQUOTE)
-		return ((t_token_value){.assign_word.value = ft_strdup(value)});
-	if (type == TOKEN_DQUOTE)
-		return ((t_token_value){.assign_word.value = ft_strdup(value)});
+	if (type == TOKEN_QUOTE)
+		return ((t_token_value){.quote.value = ft_strdup(value), .quote.quotes = create_list(value)});
 	if (type == TOKEN_ASSIGN_WORD)
 		return ((t_token_value){.assign_word.value = ft_strdup(value)});
 	if (type == TOKEN_PIPE)
@@ -68,10 +66,8 @@ void	print_token_value(t_token *token)
 {
 	if (token->type == TOKEN_WORD)
 		printf("\t[ %s ] (WORD)\n", token->value.word.value);
-	if (token->type == TOKEN_SQUOTE)
-		printf("\t[ %s ] (SQUOTE)\n", token->value.word.value);
-	if (token->type == TOKEN_DQUOTE)
-		printf("\t[ %s ] (DQUOTE)\n", token->value.word.value);
+	if (token->type == TOKEN_QUOTE)
+		printf("\t[ %s ] (QUOTE)\n", token->value.word.value);
 	if (token->type == TOKEN_ASSIGN_WORD)
 		printf("\t[ %s ] (ASSIGNMENT WORD)\n", token->value.assign_word.value);
 	if (token->type == TOKEN_PIPE)
@@ -106,9 +102,7 @@ void	free_token(t_token *token)
 {
 	if (token->type == TOKEN_WORD)
 		free(token->value.word.value);
-	if (token->type == TOKEN_SQUOTE)
-		free(token->value.word.value);
-	if (token->type == TOKEN_DQUOTE)
+	if (token->type == TOKEN_QUOTE)
 		free(token->value.word.value);
 	if (token->type == TOKEN_ASSIGN_WORD)
 		free(token->value.word.value);
