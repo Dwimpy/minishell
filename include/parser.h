@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 23:38:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 17:42:30 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void			convert_info_to_cmd(t_command_info info, t_data *data, \
 t_io_redirect	get_input_file(t_command_info info);
 t_io_redirect	get_output_file(t_command_info info);
 void			get_assignments(t_command_info info, t_data *data);
+char			*expand_env_var(char *value, t_input *input);
 void			get_cmd_args(t_command_info info, t_data *data);
 void			free_cmd_info(t_command_info info);
 #endif

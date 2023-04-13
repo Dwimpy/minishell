@@ -6,12 +6,14 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/10 23:49:00 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 18:02:57 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ast.h"
 #include "ft_printf.h"
+#include "quote_list.h"
+#include "fsm.h"
 
 t_ast_node	*new_node(t_data data, t_node_type type)
 {
@@ -153,6 +155,71 @@ void	ast_del_node(t_ast_node *node)
 	if (node)
 		free(node);
 	node = NULL;
+}
+
+t_arglist	*expand_vars(char	*value)
+{
+	t_quotelist	*quotelist;
+	t_quote		*quote;
+	t_arglist	*arglist;
+	t_fsm		fsm;
+	int			i;
+	int			start;
+
+	if (!value)
+		return (NULL);
+	quotelist = create_list(value);
+	arglist = new_arglist();
+	quote = quotelist->first;
+	fsm.input_state = N_INPUT;
+	i = 0;
+	start = 0;
+	while (quote)
+	{
+		while (fsm.input_state != INPUT_COMPLETE && quote->type != QUOTE_SQUOTE)
+		{
+			if (quote->value[i] == '\0')
+			{
+				fsm.input_state = INPUT_COMPLETE;
+				break ;
+			}
+			if (fsm.input_state == N_INPUT)
+			{
+				if (quote->value[i] == '$')
+				{
+					fsm.input_state = EXPAND_VAR;
+					start = i;
+				}
+			}
+			else if (fsm.input_state == EXPAND_VAR)
+			{
+				if (quote->type == QUOTE_REGULAR)
+				{
+					if (ft_isspace3(quote->value[i + 1]) || quote->value[i + 1] == '\0' || \
+						quote->value[i + 1] == '$' || quote->value[i + 1] == ':')
+					{
+						new_argument(arglist, create_expand_arg(quote->value, start + 1, i - start));
+						fsm.input_state = N_INPUT;
+					}
+				}
+				else if (quote->type == QUOTE_DQUOTE)
+				{
+					if (quote->value[i + 1] == '\"' || ft_isspace3(quote->value[i + 1]) || \
+						quote->value[i + 1] == '$' || quote->value[i + 1] == ':')
+					{
+						new_argument(arglist, create_expand_arg(quote->value, start + 1, i - start));
+						fsm.input_state = N_INPUT;
+					}
+				}
+			}
+			i++;
+		}
+		quote = quote->next;
+	}
+	printf("THE ARGS: \n");
+	print_args(arglist);
+	free_quotelist(quotelist);
+	return (arglist);
 }
 
 t_ast_node *from_identidier_to_tree(t_ast_node *node, t_printing_branch branch)

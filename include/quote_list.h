@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 19:34:58 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 21:23:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 13:37:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,5 @@ t_quote			*new_quote_elem(char *value, t_quote_type type);
 t_quotelist		*create_list(char *value);
 void			print_quotelist(t_quotelist *list);
 void			add_quote_element(t_quotelist *list, t_quote *quote);
-
+void			free_quotelist(t_quotelist *list);
 #endif

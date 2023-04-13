@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/05 15:40:19 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 17:42:19 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # include "arglist.h"
 
 typedef struct s_ast_node	t_ast_node;
-
 
 typedef enum e_printing_branch
 {
@@ -127,5 +126,6 @@ int			has_parent(t_ast_node *root);
 void		ast_set_type(t_ast_node *node, t_node_type type);
 void		ast_del_node(t_ast_node	*node);
 void 		print_tree(t_ast_node *root);
+t_arglist	*expand_vars(char *value);
 
 #endif

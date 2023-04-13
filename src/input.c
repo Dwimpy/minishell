@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/13 04:08:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 19:26:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ static int	is_valid_string(t_input *input);
 void	parse_all_input(t_input *input)
 {
 	t_token	*token;
-
+	char	*exp;
 	token = input->tokens->first;
 	while (token)
 	{
@@ -40,8 +40,76 @@ void	parse_all_input(t_input *input)
 		system("leaks minishell");
 		exit(0);
 	}
-	print_tree(input->root);
+	if (input->root->type == COMMAND && input->root->data.command.cmd.name_path)
+	{
+		exp = expand_env_var(input->root->data.command.cmd.name_path, input);
+		printf("%s\n", exp);
+		free(exp);
+	}
+	// print_tree(input->root);
 	// printf("PRINT: %s\n", input->root->left->data.and_if.symbol);
+}
+
+void	expand_command_node(t_ast_node *root, t_input *input)
+{
+	if (root->data.command.cmd.name_path)
+		root->data.command.cmd.name_path = expand_env_var(root->data.command.cmd.name_path, input);
+}
+
+char	*expand_env_var(char *value, t_input *input)
+{
+	t_arglist	*list;
+	t_arg		*arg;
+	size_t		new_len;
+	char		*new_value;
+	char		*entry;
+	int			prev_index;
+
+	if (value)
+	{
+		list = expand_vars(value);
+		new_len = ft_strlen(value);
+	}
+	else
+		return (ft_strdup(""));
+	if (!arg)
+	{
+		free_args(list);
+		return (NULL);
+	}
+	arg = list->first;
+	while (arg)
+	{
+		new_len -= arg->len;
+		entry = (char *)hashmap_get(input->hashmap, arg->value);
+		if (entry)
+			new_len += ft_strlen(entry);
+		else
+			new_len += 0;
+		arg = arg->next;
+	}
+	new_value = (char *)malloc(sizeof(char) * ((new_len) + 1));
+	if (!new_value)
+		return (NULL);
+	arg = list->first;
+	if (arg && arg->start_pos != 0)
+		ft_strlcat(new_value, &value[0], arg->start_pos + 1);
+	while (arg)
+	{
+		prev_index = arg->start_pos + arg->len;
+		entry = (char *)hashmap_get(input->hashmap, arg->value);
+		if (entry)
+			ft_strcat(new_value, entry);
+		else
+			ft_strcat(new_value, "");
+		arg = arg->next;
+		if (arg)
+			ft_strncat(new_value, &value[prev_index], arg->start_pos - prev_index);
+	}
+	if (prev_index < ft_strlen(value))
+		ft_strncat(new_value, &value[prev_index], ft_strlen(value) - prev_index);
+	free_args(list);
+	return (new_value);
 }
 
 void	init_input(t_input	*input, char **envp)

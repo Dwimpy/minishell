@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 19:36:15 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 21:36:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 13:39:34 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,4 +137,21 @@ void	print_quotelist(t_quotelist *list)
 		arg = arg->next;
 	}
 	printf("\n");
+}
+
+void	free_quotelist(t_quotelist *list)
+{
+	t_quote	*quote;
+	t_quote	*prev;
+
+	if (!list)
+		return ;
+	while (quote)
+	{
+		prev = quote;
+		quote = quote->next;
+		free(prev->value);
+		free(prev);
+	}
+	free(list);
 }
