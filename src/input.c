@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 22:43:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 04:08:55 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,15 @@ static int	is_valid_string(t_input *input);
 
 void	parse_all_input(t_input *input)
 {
+	t_token	*token;
+
+	token = input->tokens->first;
+	while (token)
+	{
+		if (token->type == TOKEN_QUOTE)
+			print_quotelist(token->value.quote.quotes);
+		token = token->next;
+	}
 	while (input->tokens->first->type != TOKEN_EOF)
 		parse_input(&input->root, input->tokens, input);
 	if (input->root->type == COMMAND && input->root->data.command.cmd.name_path && ft_strncmp(input->root->data.command.cmd.name_path, "exit", 5) == 0)

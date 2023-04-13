@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 19:54:45 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 04:35:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 		if (!token)
 		{
 			if (!tokens->last)
-			{
 				fsm->state = COMPLETE;
-				return ;
-			}
-			if (is_tokenizer_ending(input))
+			else if (is_tokenizer_ending(input))
 			{
 				fsm->state = INCOMPLETE;
 				if (tokens->last->type == TOKEN_PIPE)
@@ -86,14 +83,13 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->tok_state = TOK_AND_IF;
 				else if (tokens->last->type == TOKEN_OR_IF)
 					fsm->tok_state = TOK_OR_IF;
-				return ;
 			}
 			else
 			{
 				fsm->tok_state = TOK_COMPLETE;
 				fsm->state = COMPLETE;
-				return ;
 			}
+			return ;
 		}
 		else
 		{
@@ -147,10 +143,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 				else if (is_token_assignment(token) && \
 					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
-				{
-					add_token(tokens, token);
-					continue ;
-				}
+					;
 				else if (is_token_word_literal(token) && \
 					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
 					fsm->cmd_state = TOK_CMD_NAME;
@@ -164,14 +157,12 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				else if (is_token_logical_op(token) && \
 					fsm->cmd_state == TOK_CMD_PREFIX_NONE)
 				{
-					add_token(tokens, token);
 					if (token->type == TOKEN_PIPE)
 						fsm->tok_state = TOK_PIPE;
 					else if (token->type == TOKEN_AND_IF)
 						fsm->tok_state = TOK_AND_IF;
 					else if (token->type == TOKEN_OR_IF)
 						fsm->tok_state = TOK_OR_IF;
-					continue ;
 				}
 				else
 				{
@@ -181,13 +172,10 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					input->unexpected = token->type;
 				}
 			}
-			if (fsm->cmd_state == TOK_CMD_NAME)
+			else if (fsm->cmd_state == TOK_CMD_NAME)
 			{
 				if (is_token_word_literal(token) || is_token_assignment(token))
-				{
-					add_token(tokens, token);
-					continue ;
-				}
+					;
 				else if (is_token_redir(token))
 				{
 					fsm->cmd_state = TOK_CMD_SUFFIX;
@@ -205,11 +193,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					continue ;
 				}
 				else if (is_token_rparen(token))
-				{
-					add_token(tokens, token);
 					fsm->tok_state = TOK_RPARENTHESIS;
-					continue ;
-				}
 				else
 				{
 					printf("ERROR IN STATE %d\n", fsm->tok_state);
@@ -219,7 +203,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					input->unexpected = token->type;
 				}
 			}
-			if (fsm->cmd_state == TOK_CMD_SUFFIX)
+			else if (fsm->cmd_state == TOK_CMD_SUFFIX)
 			{
 				if (is_token_redir(token) && \
 					fsm->cmd_p_substate == TOK_CMD_SUFFIX_NONE)
@@ -236,10 +220,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->cmd_p_substate = TOK_CMD_SUFFIX_NONE;
 				}
 				else if (is_token_word_literal(token) || is_token_assignment(token))
-				{
-					add_token(tokens, token);
-					continue ;
-				}
+					;
 				else if (is_token_logical_op(token))
 				{
 					if (token->type == TOKEN_PIPE)
@@ -294,10 +275,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 		else if (fsm->tok_state == TOK_LPARENTHESIS)
 		{
 			if (token->type == TOKEN_LPARENTHESIS)
-			{
-				add_token(tokens, token);
-				continue ;
-			}
+				;
 			else if (is_token_redir(token))
 			{
 				fsm->tok_state = TOK_CMD;
