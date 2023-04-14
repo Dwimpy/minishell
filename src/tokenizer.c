@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/13 04:35:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 14:44:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,13 @@ int	gen_input(t_input *input)
 	{
 		get_the_input(input, &fsm);
 		tokenize(input, &fsm);
+	}
+	if (fsm.state == ERROR)
+	{
+		free(input->lexer.input);
+		free_token_list(input->tokens);
+		printf("unexpected syntax near token '%d'\n", input->unexpected);
+		return (1);
 	}
 	if (fsm.state == COMPLETE)
 		add_token(input->tokens, new_token(TOKEN_EOF, NULL));
@@ -585,7 +592,6 @@ void	do_subsh(t_input *input, t_fsm *fsm)
 		fsm->input_state = IN_DQUOTE;
 	else if (lexer->ch == ')' && fsm->paren > 0)
 	{
-		printf("WTF\n\n");
 		fsm->input_state = N_INPUT;
 		fsm->paren -= 1;
 	}

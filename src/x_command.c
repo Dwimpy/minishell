@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_command.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/14 12:24:10 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/14 14:46:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 		free(paths);
 		if (status == -1)
 		{
-			ft_putstr_fd("zsh: command not found: ", 2);
+			ft_putstr_fd("minishell: command not found: ", 2);
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd("\n", 2);
 		}

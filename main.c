@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/14 14:21:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 14:45:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	main(int argc, char **argv, char **envp)
 	init_input(&input, envp);
 	while (1)
 	{
-		if (gen_input(&input) == 1)
+		if (gen_input(&input))
 			continue ;
 		parse_all_input(&input);
 
