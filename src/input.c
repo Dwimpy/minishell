@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/13 19:26:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 14:05:27 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ char	*expand_env_var(char *value, t_input *input)
 			new_len += 0;
 		arg = arg->next;
 	}
-	new_value = (char *)malloc(sizeof(char) * ((new_len) + 1));
+	new_value = (char *)ft_calloc(new_len + 1, sizeof(char));
 	if (!new_value)
 		return (NULL);
 	arg = list->first;
