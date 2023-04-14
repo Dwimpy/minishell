@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/08 14:10:40 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/12 17:05:31 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,7 +267,7 @@ t_io_redirect	get_input_file(t_command_info info)
 	t_io_redirect	input;
 
 	if (info.suffix.input.filename)
-		input.filename = ft_strdup(info.prefix.input.filename);
+		input.filename = ft_strdup(info.suffix.input.filename);
 	else if (info.prefix.input.filename)
 		input.filename = ft_strdup(info.prefix.input.filename);
 	else
@@ -280,7 +280,7 @@ t_io_redirect	get_output_file(t_command_info info)
 	t_io_redirect	output;
 
 	if (info.suffix.output.filename)
-		output.filename = ft_strdup(info.prefix.output.filename);
+		output.filename = ft_strdup(info.suffix.output.filename);
 	else if (info.prefix.output.filename)
 		output.filename = ft_strdup(info.prefix.output.filename);
 	else

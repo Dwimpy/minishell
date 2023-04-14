@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/09 21:05:31 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/13 21:06:01 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,6 @@ int	ft_exit(char **str_arr, t_input *input)
 			}	
 		}
 		c = ft_atoi(str_arr[1]);
-		printf("%d", c);
 	}
 	free (input->lexer.input);
 	clear_history();
@@ -216,6 +215,10 @@ int	ft_cd(char **str_arr, t_input *input)
 	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 2)))
 	{
 		str = (char *)hashmap_get(input->hashmap, "HOME");
+		if (!str)
+		{
+			str = getcwd(NULL, 0);
+		}
 		free(hashmap_put(input->hashmap, "PWD", ft_strdup(str)));
 		if (str)
 			if (chdir(str) == -1)
