@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/14 09:09:31 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/14 11:45:51 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,12 @@
 #include <curses.h>
 #include <term.h>
 int		ft_execute(t_input *input, t_ast_node *root, int *fd);
-int		ft_execute_tree(t_input *input, t_ast_node *root, int *fd);
+int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell);
 
 int		ft_pipe(t_input *input, t_ast_node *root, int *fd);
 int		ft_and_if(t_input *input, t_ast_node *root, int *fd, int *status);
 int		ft_or_if(t_input *input, t_ast_node *root, int *fd, int *status);
 
-int	ft_subshell(t_input *input, t_ast_node *root, int *fd, int last);
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -40,8 +39,6 @@ int	main(int argc, char **argv, char **envp)
 	//ft_signals(&sa);
 	//input.root->is_subshell_start = 0;
 
-
-	
 	init_input(&input, envp);
 	while (1)
 	{
@@ -82,7 +79,7 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	}
 	while (root->left != NULL)
 		root = root->left;
-	exit_code = ft_execute_tree(input, root, fd);
+	exit_code = ft_execute_tree(input, root, fd, 0);
 
 	pid = 1;
 	while (pid != -1)
@@ -92,22 +89,72 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	return (exit_code);
 }
 
-int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd)
+// int	ft_subshell(t_input *input, t_ast_node *root, int *fd, int *pid)
+// {
+// 	int				new_fd[2];
+// 	int 			pid;
+// 	int 			status;
+
+// 	status = 0;
+// 	if (pipe(new_fd) == -1)
+// 		return (-1);
+// 	pid = fork();
+// 	if (pid == -1)
+// 		return (-1);
+// 	if (pid == 0)
+// 	{
+// 		close(new_fd[0]);
+// 		dup2(new_fd[1], STDOUT_FILENO);
+// 		close(new_fd[1]);
+// 		status = ft_execute_tree(input, root, fd, 1);
+// 		exit(status);
+// 	}
+// 	else
+// 	{
+// 		close(new_fd[1]);
+// 		*fd = new_fd[0];
+// 		if ((!root->parent->parent && root->parent->left != root) || !((root->parent->parent && (root->parent->parent->type == PIPELINE)) || (root->parent->left == root && root->parent->type == PIPELINE)))
+// 			waitpid(pid, &status, 0);
+// 		*pid = pid;
+// 		return (status);
+// 	}
+// }
+
+// int	ft_subshell_end(t_input *input, t_ast_node *root, int *fd)
+// {
+// 	exit
+// }
+
+int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 {
 	int				exit_code;
 	int				status;
 	int				stdin_cp;
 	t_node_type		type;
+	int 			pid;
+
 
 	status = 1;
+	pid = 0;
+	exit_code = 0;
 	while (root)
 	{
-		// if (root->is_subshell == 1)
+		printf("subshell :%d\n", root->is_subshell);
+		if (root->is_subshell == 1)
+			printf("subshell\n");
 		// {
-			
+		// 	if (subshell == 0)
+		// 	{
+		// 		//subshell = 1;
+		// 		exit_code = ft_subshell(input, root, fd, &pid);
+		// 	}
 		// }
-		//  		continue ;
-		// 	exit_code = ft_subshell();
+		// else if (subshell == 1)
+		// {
+		// 	if (pid == 0)
+		// 		exit(exit_code);
+		// 	//subshell = 0;
+		// }
 
 		if (root->parent->left == root)
 			type = root->parent->type;
@@ -142,6 +189,7 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd)
 			root = root->parent->right;
 		else
 			root = root->parent->parent->right;
+		
 	}
 	return (exit_code);
 }
