@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 00:23:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 20:20:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,4 +42,5 @@ void	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm);
 char	*get_prompt_dir(void);
 char	*read_from_stdin(void);
 void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm);
+void	print_syntax_error(int unexpected);
 #endif

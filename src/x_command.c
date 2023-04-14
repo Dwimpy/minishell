@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/14 14:46:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 01:09:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 static int	ft_execute(char *path, char **str_arr, t_input *input);
 static int	ft_executable(char **str_arr, t_input *input);
-static void	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
+static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 
 int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
@@ -34,7 +34,8 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 		return (1);
 	stdin_cp = -1;
 	stdout_cp = -1;
-	ft_redirect(root, &stdin_cp, &stdout_cp);
+	if (ft_redirect(root, &stdin_cp, &stdout_cp))
+		return (1);
 	if (!(ft_memcmp("cd", str_arr[0], 3)))
 		status = ft_cd(str_arr, input);
 	else if (!(ft_memcmp("pwd", str_arr[0], 4)))
@@ -54,33 +55,42 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	else
 	{
 		status = -1;
-		path = hashmap_get(input->hashmap, "PATH");
-		paths = ft_split(path, ':');
 		i = 0;
-		while (paths && paths[i])
+		if (access(str_arr[0], F_OK) == 0)
 		{
-			ptr = ft_strjoin(paths[i], "/");
-			free(paths[i]);
-			path = ft_strjoin(ptr, str_arr[0]);
-			free(ptr);
-			if (status == -1)
-				status = ft_execute(path, str_arr, input);
-			free(path);
-			i++;
+			status = ft_execute(str_arr[0], str_arr, input);
 		}
-		free(paths);
+		else
+		{
+			path = hashmap_get(input->hashmap, "PATH");
+			paths = ft_split(path, ':');
+			while (paths && paths[i])
+			{
+				ptr = ft_strjoin(paths[i], "/");
+				free(paths[i]);
+				path = ft_strjoin(ptr, str_arr[0]);
+				free(ptr);
+				if (status == -1)
+					status = ft_execute(path, str_arr, input);
+				free(path);
+				i++;
+			}
+			free(paths);
+		}
 		if (status == -1)
 		{
+
 			ft_putstr_fd("minishell: command not found: ", 2);
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd("\n", 2);
+			return (-2);
 		}
 	}
 	ft_redirect_back(root, &stdin_cp, &stdout_cp);
 	return (status);
 }
 
-void	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
+int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 {
 	int		fd;
 
@@ -88,7 +98,7 @@ void	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 	{
 		fd = open(root->data.command.output.filename, O_TRUNC | O_WRONLY, 0644);
 		if (fd < 0)
-			ft_putstr_fd("error output", 2);
+			return (1);
 		else
 		{
 			*stdout_cp = dup(STDOUT_FILENO);
@@ -101,7 +111,7 @@ void	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 	{
 		fd = open(root->data.command.input.filename, O_RDONLY);
 		if (fd < 0)
-			ft_putstr_fd("error input", 2);
+			return (1);
 		else
 		{
 			*stdin_cp = dup(STDIN_FILENO);
@@ -110,6 +120,7 @@ void	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 			close(fd);
 		}
 	}
+	return (0);
 }
 
 void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_builtins.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/13 21:06:01 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/15 00:40:34 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ int	ft_echo(char **str_arr, int fd)
 
 	i = 1;
 	n_flag = 0;
+
 	while (str_arr[i] != NULL && !ft_memcmp(str_arr[i], "-n", 2))
 	{
 		j = 1;
@@ -173,28 +174,40 @@ int	ft_exit(char **str_arr, t_input *input)
 {
 	unsigned char	c;
 	size_t			i;
-
+	char			*trim;
 	i = 0;
 	c = 0;
+
+	trim = NULL;
 	if (str_arr[1] != NULL)
 	{
+		if (str_arr[1][0] == '"')
+			trim = ft_strtrim(str_arr[1], "\"");
+		else if (str_arr[1][0] == '\'')
+			trim = ft_strtrim(str_arr[1], "'");
+		else
+			trim = ft_strdup(str_arr[1]);
 		if (str_arr[2] != NULL)
 		{
-			ft_putstr_fd("exit: too many arguments\n" ,2);
+			ft_putstr_fd("minishell: exit: too many arguments\n" ,2);
 			return (1);
 		}
-		while (str_arr[1][i] == '-' || str_arr[1][i] == '+')
+		if (trim[0] == '-' || trim[0] == '+')
 			i++;
-		while (str_arr[1][i] != '\0')
+		while (trim[i] != '\0')
 		{
-			
-			if (!(ft_isdigit(str_arr[1][i++])))
+
+			if (!(ft_isdigit(trim[i++])))
 			{
-				ft_putstr_fd("exit: that's not a number\n" ,2);
-				return (1);
+				ft_putstr_fd("minishell: exit: ", 2);
+				ft_putstr_fd(trim, 2);
+				ft_putstr_fd(": ", 2);
+				ft_putstr_fd("numeric argument required\n", 2);
+				exit(255);
 			}	
 		}
-		c = ft_atoi(str_arr[1]);
+			c = ft_atoi(trim);
+			free(trim);
 	}
 	free (input->lexer.input);
 	clear_history();
@@ -254,7 +267,7 @@ int	ft_pwd(char **str_arr)
 	{
 		path = getcwd(NULL, 0);
 		printf("%s\n", path);
-		free(path);
+		// free(path);
 	}
 	else
 	{

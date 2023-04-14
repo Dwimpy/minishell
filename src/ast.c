@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:17:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 00:21:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,8 +219,8 @@ t_arglist	*expand_vars(char	*value)
 		}
 		quote = quote->next;
 	}
-	printf("THE ARGS: \n");
-	print_args(arglist);
+	// printf("THE ARGS: \n");
+	// print_args(arglist);
 	free_quotelist(quotelist);
 	return (arglist);
 }
@@ -287,4 +287,31 @@ void	print_node(t_ast_node *node)
 		printf("%s\n", node->data.and_if.symbol);
 	else if (node->type == OR_IF)
 		printf("%s\n", node->data.or_if.symbol);
+}
+
+void	print_syntax_error(int unexpected)
+{
+	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+	if (unexpected == TOKEN_EOF)
+		ft_putstr_fd("newline'\n", 2);
+	else if (unexpected == TOKEN_PIPE)
+		ft_putstr_fd("|'\n", 2);
+	else if (unexpected == TOKEN_LESS)
+		ft_putstr_fd("<'\n", 2);
+	else if (unexpected == TOKEN_GREAT)
+		ft_putstr_fd(">'\n", 2);
+	else if (unexpected == TOKEN_DLESS)
+		ft_putstr_fd("<<'\n", 2);
+	else if (unexpected == TOKEN_DGREAT)
+		ft_putstr_fd(">>'\n", 2);
+	else if (unexpected == TOKEN_AND)
+		ft_putstr_fd("&'\n", 2);
+	else if (unexpected == TOKEN_AND_IF)
+		ft_putstr_fd("&&'\n", 2);
+	else if (unexpected == TOKEN_OR_IF)
+		ft_putstr_fd("||'\n", 2);
+	else if (unexpected == TOKEN_RPARENTHESIS)
+		ft_putstr_fd(")'\n", 2);
+	else if (unexpected == TOKEN_LPARENTHESIS)
+		ft_putstr_fd("('\n", 2);
 }

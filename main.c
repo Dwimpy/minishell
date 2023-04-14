@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/14 14:45:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 00:59:42 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 #include <curses.h>
 #include <term.h>
 int		ft_execute(t_input *input, t_ast_node *root, int *fd);
-int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell);
+int		ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell);
 
 int		ft_pipe(t_input *input, t_ast_node *root, int *fd);
 int		ft_and_if(t_input *input, t_ast_node *root, int *fd, int *status);
@@ -47,7 +47,7 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		parse_all_input(&input);
 
-		// my part
+		// // my part
 		fd = 0;
 		exit_code = ft_execute(&input, input.root, &fd);
 
@@ -55,8 +55,10 @@ int	main(int argc, char **argv, char **envp)
 		input.root = NULL;
 		free(input.lexer.input);
 		free_token_list(input.tokens);
+		// system("leaks minishell");
+		// exit(0);
 	}
-	return (0);
+	return (exit_code);
 }
 
 int	ft_execute(t_input *input, t_ast_node *root, int *fd)
@@ -65,15 +67,19 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	pid_t		pid;
 	int			status;
 
-	
-	
+
+
 	if (root->type == COMMAND) // only one thing to execute
 	{
+		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
+		// expand_node_cmds(root->data.command.cmd.args, input);
 		if (root->is_subshell != 1)
+		{
 			exit_code = ft_command(root->data.command.cmd.args, input, root);
+		}
 		else
 		{
-		//	exit_code = ft_subshell();
+			// exit_code = ft_subshell();
 			return (exit_code);
 		}
 		return (exit_code);
@@ -140,9 +146,9 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 	exit_code = 0;
 	while (root)
 	{
-		printf("subshell :%d\n", root->is_subshell);
-		if (root->is_subshell == 1)
-			printf("subshell\n");
+		// printf("subshell :%d\n", root->is_subshell);
+		// if (root->is_subshell == 1)
+		// 	printf("subshell\n");
 		// {
 		// 	if (subshell == 0)
 		// 	{
@@ -173,6 +179,8 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 				exit_code = ft_command(root->data.command.cmd.args, input, root);
 				dup2(stdin_cp, STDIN_FILENO);
 				close(stdin_cp);
+				if (exit_code == -2)
+					exit_code = 127;
 				return (exit_code);
 			}
 			return (ft_command(root->data.command.cmd.args, input, root));
@@ -190,7 +198,6 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 			root = root->parent->right;
 		else
 			root = root->parent->parent->right;
-		
 	}
 	return (exit_code);
 }

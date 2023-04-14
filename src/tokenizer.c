@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:44:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 23:24:18 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 int	gen_input(t_input *input)
 {
 	t_fsm	fsm;
+	pid_t	pid;
 	char	*prompt;
 	int		i;
+	int		status;
 
 	fsm.state = GET_INPUT;
 	fsm.input_state = N_INPUT;
@@ -26,6 +28,10 @@ int	gen_input(t_input *input)
 	fsm.paren = 0;
 	i = 0;
 	input->lexer.input = read_from_stdin();
+	if (!input->lexer.input)
+	{
+		exit(0);
+	}
 	input->lexer.input_len = ft_strlen(input->lexer.input);
 	while (input->lexer.input && input->lexer.input[i] == ' ' || \
 		input->lexer.input[i] == '\t')
@@ -47,13 +53,39 @@ int	gen_input(t_input *input)
 	{
 		free(input->lexer.input);
 		free_token_list(input->tokens);
-		printf("unexpected syntax near token '%d'\n", input->unexpected);
-		return (1);
+		print_syntax_error(input->unexpected);
+		pid = fork();
+		if (pid == 0)
+			exit(2);
+		else
+		{
+			waitpid(pid, &status, 0);
+			if (WIFEXITED(status))
+				WEXITSTATUS(status);
+			return (1);
+		}
 	}
+	// if (!ft_strncmp(input->tokens->first->value.word.value, "../", 4) &&
+	// 	ft_strlen(input->tokens->first->value.word.value) == 3)
+	// {
+	// 	input->unexpected = '.';
+	// 	ft_putstr_fd("bash: .: filename argument required\n", 2);
+	// 	ft_putstr_fd(input->tokens->first->value.word.value, 2);
+	// 	ft_putstr_fd(": usage: . filename [arguments]\n", 2);
+	// 	return (1);
+	// }
+	// else if (!ft_strncmp(input->tokens->first->value.word.value, ".", 2) &&
+	// 	ft_strlen(input->tokens->first->value.word.value) == 1)
+	// {
+	// 	input->unexpected = 21;
+	// 	ft_putstr_fd("bash: .: filename argument required\n", 3);
+	// 	ft_putstr_fd(input->tokens->first->value.word.value, 2);
+	// 	ft_putstr_fd(": usage: . filename [arguments]\n", 2);
+	// 	return (1);
+	// }
 	if (fsm.state == COMPLETE)
 		add_token(input->tokens, new_token(TOKEN_EOF, NULL));
-	print_tokens(input->tokens);
-
+	// print_tokens(input->tokens);
 	return (0);
 }
 
@@ -76,6 +108,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 			fsm->state != ERROR)
 	{
 		token = create_next_token(lexer);
+
 		// print_token_value(token);
 		if (!token)
 		{
@@ -90,6 +123,11 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->tok_state = TOK_AND_IF;
 				else if (tokens->last->type == TOKEN_OR_IF)
 					fsm->tok_state = TOK_OR_IF;
+				else if (is_token_redir(tokens->last))
+				{
+					fsm->state = ERROR;
+					input->unexpected = TOKEN_EOF;
+				}
 			}
 			else
 			{
@@ -104,7 +142,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 			{
 				if (!is_valid_beginning(token))
 				{
-					printf("ERROR IN STATE %d\n", fsm->tok_state);
+					// printf("ERROR IN STATE %d\n", fsm->tok_state);
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 					break ;
@@ -141,8 +179,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				{
 					if (!is_token_word_literal(token))
 					{
-					printf("ERROR IN STATE %d\n", fsm->tok_state);
-					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+					// printf("ERROR IN STATE %d\n", fsm->tok_state);
+					// printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
 						fsm->state = ERROR;
 						input->unexpected = token->type;
 					}
@@ -173,8 +211,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 				else
 				{
-					printf("ERROR IN STATE %d\n", fsm->tok_state);
-					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+					// printf("ERROR IN STATE %d\n", fsm->tok_state);
+					// printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
 					fsm->state = ERROR;
 					input->unexpected = token->type;
 				}
@@ -186,7 +224,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				else if (is_token_redir(token))
 				{
 					fsm->cmd_state = TOK_CMD_SUFFIX;
-					fsm->cmd_p_substate = TOK_CMD_SUFFIX_NONE;
+					fsm->cmd_p_substate = TOK_CMD_SUFFIX_REDIR;
 				}
 				else if (is_token_logical_op(token))
 				{
@@ -203,8 +241,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->tok_state = TOK_RPARENTHESIS;
 				else
 				{
-					printf("ERROR IN STATE %d\n", fsm->tok_state);
-					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+					// printf("ERROR IN STATE %d\n", fsm->tok_state);
+					// printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
 
 					fsm->state = ERROR;
 					input->unexpected = token->type;
@@ -245,8 +283,8 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				}
 				else
 				{
-					printf("ERROR IN STATE %d\n", fsm->tok_state);
-					printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
+					// printf("ERROR IN STATE %d\n", fsm->tok_state);
+					// printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
 
 					fsm->state = ERROR;
 					input->unexpected = token->type;
@@ -273,7 +311,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				fsm->tok_state = TOK_LPARENTHESIS;
 			else
 			{
-					printf("ERROR IN STATE %d\n", fsm->tok_state);
+					// printf("ERROR IN STATE %d\n", fsm->tok_state);
 
 				fsm->state = ERROR;
 				input->unexpected = token->type;

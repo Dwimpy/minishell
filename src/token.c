@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 21:22:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 21:58:46 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,10 @@ void	free_token(t_token *token)
 	if (token->type == TOKEN_WORD)
 		free(token->value.word.value);
 	if (token->type == TOKEN_QUOTE)
-		free(token->value.word.value);
+	{
+		free_quotelist(token->value.quote.quotes);
+		free(token->value.quote.value);
+	}
 	if (token->type == TOKEN_ASSIGN_WORD)
 		free(token->value.word.value);
 	if (token->type == TOKEN_OR_IF)

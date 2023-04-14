@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/13 19:27:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 00:19:08 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ t_arg	*create_expand_arg(char *value, unsigned int start, size_t len)
 	arg->value = ft_substr(value, start, len);
 	arg->len = len + 1;
 	arg->start_pos = start - 1;
-	printf("IN FUNC: %s\n", arg->value);
+	// printf("IN FUNC: %s\n", arg->value);
 	arg->next = NULL;
 	return (arg);
 }

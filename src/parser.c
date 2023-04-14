@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:40:31 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 23:49:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ t_ast_node	*parse_command(t_token_list *tokens, t_input *input)
 	cmd.type = COMMAND;
 	parse_cmd_word(&tokens, &cmd);
 	cmd.suffix = parse_suffix(&tokens);
-	print_args(cmd.arglist);
-	print_args(cmd.suffix.arglist);
+	// print_args(cmd.arglist);
+	// print_args(cmd.suffix.arglist);
 	convert_info_to_cmd(cmd, &data, input);
 	free_cmd_info(cmd);
 	return (new_node(data, COMMAND));

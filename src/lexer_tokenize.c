@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/13 17:09:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/14 23:15:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ int		is_correct_word(char c, int squote, int dquote);
 
 t_token	*tokenize_word(t_lexer *lexer)
 {
-	char	buffer[2000000];
+	char	buffer[100000];
 	int		i;
 	int		dquote;
 	int		squote;
 	int		literal;
 
 	init_word_parms(&i, &dquote, &squote, &literal);
-	ft_memset(buffer, '\0', 2000000);
+	ft_memset(buffer, '\0', 100000);
 	while (is_correct_word(lexer->tok_ch, squote, dquote))
 	{
 		if ((lexer->input_len <= lexer->tok_position))

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:39:47 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 00:42:57 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,26 @@ static int	is_valid_string(t_input *input);
 
 void	parse_all_input(t_input *input)
 {
+	char	*prev;
+	char	*exx;
 	while (input->tokens->first->type != TOKEN_EOF)
 		parse_input(&input->root, input->tokens, input);
+}
+
+void	expand_node_cmds(char **arr, t_input *input)
+{
+	int	i;
+
+	if (arr && arr[0])
+	{
+		arr[0] = expand_env_var(arr[0], input);
+	}
+	i++;
+	while (arr && arr[i])
+	{
+		arr[i] = expand_env_var(arr[i], input);
+		i++;
+	}
 }
 
 void	init_input(t_input	*input, char **envp)
@@ -34,6 +52,64 @@ void	init_input(t_input	*input, char **envp)
 	input->lexer.tok_position = -1;
 	input->unexpected = 0;
 	return ;
+}
+
+char	*expand_env_var(char *value, t_input *input)
+{
+	t_arglist	*list;
+	t_arg		*arg;
+	size_t		new_len;
+	char		*new_value;
+	char		*entry;
+	int			prev_index;
+
+	if (value)
+	{
+		list = expand_vars(value);
+		new_len = ft_strlen(value);
+
+	}
+	else
+		return (ft_strdup(""));
+	if (!arg)
+	{
+		free_args(list);
+		return (NULL);
+	}
+	arg = list->first;
+	while (arg)
+	{
+		new_len -= arg->len;
+		entry = (char *)hashmap_get(input->hashmap, arg->value);
+		if (entry)
+			new_len += ft_strlen(entry);
+		else
+			new_len += 0;
+		arg = arg->next;
+	}
+	new_value = (char *)ft_calloc(new_len + 1, sizeof(char));
+	if (!new_value)
+		return (NULL);
+	arg = list->first;
+	if (arg && arg->start_pos != 0)
+		ft_strlcat(new_value, &value[0], arg->start_pos + 1);
+	while (arg)
+	{
+		prev_index = arg->start_pos + arg->len;
+		entry = (char *)hashmap_get(input->hashmap, arg->value);
+		if (entry)
+			ft_strcat(new_value, entry);
+		else
+			ft_strcat(new_value, "");
+		arg = arg->next;
+		if (arg)
+			ft_strncat(new_value, &value[prev_index], arg->start_pos - prev_index);
+	}
+	if (prev_index < ft_strlen(value))
+		ft_strncat(new_value, &value[prev_index], ft_strlen(value) - prev_index);
+	free_args(list);
+
+	return (new_value);
 }
 
 int	generate_input(t_input *input)
