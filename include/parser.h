@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/04 19:05:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 17:42:30 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,21 +16,10 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include "lexer.h"
-# include "ast.h"
-# include "hashmap.h"
-# include "syntax_analyzer.h"
 
 # define INPUT 0
 # define OUTPUT 1
 
-typedef struct s_input
-{
-	t_token_list	*tokens;
-	t_lexer			lexer;
-	t_hashmap		*hashmap;
-	t_ast_node		*root;
-	int				unexpected;
-}				t_input;
 
 int				accept(t_token *token, t_token_type type);
 int				expect(t_token *token, t_token_type type);
@@ -51,12 +40,10 @@ void			parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix);
 void			parse_cmd_word(t_token_list	**tokens, t_command_info *data);
 t_cmd_prefix	parse_prefix(t_token_list **tokens);
 t_cmd_suffix	parse_suffix(t_token_list **tokens);
-int				is_prefix(t_token *token);
 int				is_input_redir(t_token *token);
 int				is_output_redir(t_token *token);
 int				is_assign_word(t_token *token);
 int				is_cmd_word(t_token *token);
-int				is_cmd_suffix(t_token *token);
 void			create_and_free(t_token *token, char **filename, int io);
 int				is_pipe(t_token *token);
 int				is_logical_op(t_token *token);
@@ -69,6 +56,7 @@ void			convert_info_to_cmd(t_command_info info, t_data *data, \
 t_io_redirect	get_input_file(t_command_info info);
 t_io_redirect	get_output_file(t_command_info info);
 void			get_assignments(t_command_info info, t_data *data);
+char			*expand_env_var(char *value, t_input *input);
 void			get_cmd_args(t_command_info info, t_data *data);
 void			free_cmd_info(t_command_info info);
 #endif

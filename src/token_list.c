@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/02 22:12:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/06 13:54:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,10 @@ t_token	*get_last_token(t_token_list *token_list)
 	if (!token)
 		return (NULL);
 	while (token->next->type != TOKEN_EOF)
+	{
+		print_token_value(token);
 		token = token->next;
+	}
 	return (token);
 }
 

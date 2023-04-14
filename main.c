@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/14 11:45:51 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/14 14:21:30 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
+#include "tokenizer.h"
 #include "environment_handler.h"
 
 #include "x_execution.h"
@@ -42,7 +43,7 @@ int	main(int argc, char **argv, char **envp)
 	init_input(&input, envp);
 	while (1)
 	{
-		if (generate_input(&input) != 0)
+		if (gen_input(&input) == 1)
 			continue ;
 		parse_all_input(&input);
 

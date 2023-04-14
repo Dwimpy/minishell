@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/02 19:29:46 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/13 17:09:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,20 @@ int		is_correct_word(char c, int squote, int dquote);
 
 t_token	*tokenize_word(t_lexer *lexer)
 {
-	char	buffer[4096];
+	char	buffer[2000000];
 	int		i;
 	int		dquote;
 	int		squote;
 	int		literal;
 
 	init_word_parms(&i, &dquote, &squote, &literal);
-	ft_memset(buffer, '\0', 4096);
-	while (is_correct_word(lexer->ch, squote, dquote))
+	ft_memset(buffer, '\0', 2000000);
+	while (is_correct_word(lexer->tok_ch, squote, dquote))
 	{
-		if (lexer->input_len == lexer->read_position)
+		if ((lexer->input_len <= lexer->tok_position))
 			break ;
-		treat_squote(lexer->ch, &squote, &dquote, &literal);
-		treat_dquote(lexer->ch, &squote, &dquote, &literal);
+		treat_squote(lexer->tok_ch, &squote, &dquote, &literal);
+		treat_dquote(lexer->tok_ch, &squote, &dquote, &literal);
 		advance_input(lexer, buffer, &i);
 	}
 	return (return_type(literal, buffer, lexer));
@@ -41,8 +41,8 @@ t_token	*tokenize_word(t_lexer *lexer)
 
 void	advance_input(t_lexer *lexer, char *buffer, int *index)
 {
-	(buffer)[*index] = lexer->ch;
-	get_next_char(lexer);
+	(buffer)[*index] = lexer->tok_ch;
+	get_next_char_tok(lexer);
 	(*index)++;
 }
 
@@ -79,23 +79,23 @@ void	treat_dquote(char c, int *squote, int *dquote, int *literal)
 
 t_token	*return_type(int is_literal, char *buffer, t_lexer *lexer)
 {
-	lexer->read_position--;
+	lexer->tok_position--;
 	if (is_literal == 1 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\'') > 0)
-		return (new_token(TOKEN_SQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	else if (is_literal == 1 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\'') < 0)
 		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	else if (is_literal == 2 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\"') > 0)
-		return (new_token(TOKEN_DQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	else if (is_literal == 2 && ft_strchr(buffer, '=') != NULL && \
 		ft_strchr(buffer, '=') - ft_strchr(buffer, '\"') < 0)
 		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	else if (is_literal == 1)
-		return (new_token(TOKEN_SQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	else if (is_literal == 2)
-		return (new_token(TOKEN_DQUOTE, buffer));
+		return (new_token(TOKEN_QUOTE, buffer));
 	if (ft_strchr(buffer, '=') != NULL && buffer[0] != '=')
 		return (new_token(TOKEN_ASSIGN_WORD, buffer));
 	return (new_token(TOKEN_WORD, buffer));
@@ -103,9 +103,9 @@ t_token	*return_type(int is_literal, char *buffer, t_lexer *lexer)
 
 t_token	*tokenize_pipe(t_lexer *lexer)
 {
-	if (look_ahead(lexer) == '|')
+	if (look_ahead_tok(lexer) == '|')
 	{
-		get_next_char(lexer);
+		get_next_char_tok(lexer);
 		return (new_token(TOKEN_OR_IF, NULL));
 	}
 	return (new_token(TOKEN_PIPE, NULL));
@@ -113,9 +113,9 @@ t_token	*tokenize_pipe(t_lexer *lexer)
 
 t_token	*tokenize_ampersand(t_lexer *lexer)
 {
-	if (look_ahead(lexer) == '&')
+	if (look_ahead_tok(lexer) == '&')
 	{
-		get_next_char(lexer);
+		get_next_char_tok(lexer);
 		return (new_token(TOKEN_AND_IF, NULL));
 	}
 	return (new_token(TOKEN_AND, NULL));
@@ -123,9 +123,9 @@ t_token	*tokenize_ampersand(t_lexer *lexer)
 
 t_token	*tokenize_redir_input(t_lexer *lexer)
 {
-	if (look_ahead(lexer) == '<')
+	if (look_ahead_tok(lexer) == '<')
 	{
-		get_next_char(lexer);
+		get_next_char_tok(lexer);
 		return (new_token(TOKEN_DLESS, NULL));
 	}
 	return (new_token(TOKEN_LESS, NULL));
@@ -133,12 +133,12 @@ t_token	*tokenize_redir_input(t_lexer *lexer)
 
 t_token	*tokenize_redir_output(t_lexer *lexer)
 {
-	if (look_ahead(lexer) == '>')
+	if (look_ahead_tok(lexer) == '>')
 	{
-		get_next_char(lexer);
+		get_next_char_tok(lexer);
 		return (new_token(TOKEN_DGREAT, NULL));
 	}
-	if (look_ahead(lexer) == '|')
+	if (look_ahead_tok(lexer) == '|')
 		return (new_token(TOKEN_GREAT, NULL));
 	return (new_token(TOKEN_GREAT, NULL));
 }

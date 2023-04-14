@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment_handler.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/31 19:42:26 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/08 10:46:54 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/14 14:18:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	load_data(t_hashmap *hashmap, char **envp)
 	size_t			len;
 
 	env = envp;
-	while (*env)
+	while (env && *env)
 	{
 		len = ft_strlen(*env);
 		equal = ft_strnstr(*env, "=", len);

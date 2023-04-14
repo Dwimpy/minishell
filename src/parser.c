@@ -3,22 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 12:27:42 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/14 14:16:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "tokenizer.h"
 #include "parser.h"
 
 t_ast_node	*parse_command(t_token_list *tokens, t_input *input)
 {
 	t_command_info	cmd;
 	t_data			data;
-	int				i;
 
-	i = 0;
 	if (is_prev_subshell(tokens->first))
 		return (NULL);
 	data.command.cmd.args = NULL;
@@ -89,10 +88,7 @@ t_ast_node	*parse_or_if(t_token_list *tokens)
 t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
 {
 	t_ast_node	*root;
-	t_ast_node	*subshell;
-	t_data		data;
 
-	subshell = NULL;
 	root = NULL;
 	if (accept(tokens->first, TOKEN_LPARENTHESIS))
 	{
@@ -105,7 +101,8 @@ t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
 			ast_add(&root, parse_or_if(tokens));
 			ast_add(&root, parse_subshell(tokens, input));
 		}
-		root->is_subshell = 1;
+		if (root)
+			root->is_subshell = 1;
 		consume_token(tokens);
 		return (root);
 	}
@@ -123,9 +120,19 @@ void	parse_cmd_word(t_token_list	**tokens, t_command_info *data)
 		{
 			if (!data->arglist)
 				data->arglist = new_arglist();
-			new_argument(data->arglist, \
-				create_arg((*tokens)->first));
-			consume_token(*tokens);
+			if ((*tokens)->first->type == TOKEN_WORD || \
+				(*tokens)->first->type == TOKEN_ASSIGN_WORD)
+			{
+				new_argument(data->arglist, \
+					create_arg((*tokens)->first, NORMAL));
+				consume_token(*tokens);	
+			}
+			else if ((*tokens)->first->type == TOKEN_QUOTE)
+			{
+				new_argument(data->arglist, \
+					create_arg((*tokens)->first, QUOTED_ARG));
+				consume_token(*tokens);
+			}
 		}
 	}
 }
@@ -166,9 +173,19 @@ void	parse_suffix_words(t_token_list *tokens, t_cmd_suffix *suffix)
 	{
 		if (!suffix->arglist)
 			suffix->arglist = new_arglist();
-		new_argument(suffix->arglist, \
-			create_arg((tokens)->first));
-		consume_token(tokens);
+		if ((tokens)->first->type == TOKEN_WORD || \
+			(tokens)->first->type == TOKEN_ASSIGN_WORD)
+		{
+			new_argument(suffix->arglist, \
+				create_arg((tokens)->first, NORMAL));
+			consume_token(tokens);	
+		}
+		else if ((tokens)->first->type == TOKEN_QUOTE)
+		{
+			new_argument(suffix->arglist, \
+				create_arg((tokens)->first, QUOTED_ARG));
+			consume_token(tokens);
+		}
 	}
 }
 
@@ -238,7 +255,7 @@ void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
 		if (!prefix->assignments)
 			prefix->assignments = new_arglist();
 		new_argument(prefix->assignments, \
-			create_arg((tokens)->first));
+			create_arg((tokens)->first, NORMAL));
 		consume_token(tokens);
 	}
 }
@@ -356,10 +373,21 @@ void	free_cmd_info(t_command_info info)
 		free(info.prefix.input.filename);
 	if (info.prefix.output.filename)
 		free(info.prefix.output.filename);
+	if (info.suffix.input.filename)
+		free(info.suffix.input.filename);
 	if (info.suffix.output.filename)
 		free(info.suffix.output.filename);
 	if (info.prefix.assignments)
 		free_args(info.prefix.assignments);
 	if (info.suffix.arglist)
 		free_args(info.suffix.arglist);
+}
+
+int	is_valid_beginning(t_token *token)
+{
+	return (is_cmd_word(token) || \
+			is_input_redir(token) || \
+				is_output_redir(token) || \
+					token->type == TOKEN_LPARENTHESIS || \
+						token->type == TOKEN_ASSIGN_WORD);
 }

@@ -6,7 +6,7 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/03/18 13:49:28 by arobu            ###   ########.fr        #
+#    Updated: 2023/04/11 19:59:26 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,8 @@ SRCS	:=	$(wildcard $(SRC_DIR)/*.c)
 OBJS	:= 	$(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 # Rules
-all:	libft $(NAME)
+all:  libft
+	@${MAKE} $(NAME) -j
 
 $(NAME): $(OBJS) $(MAIN_FILE)
 	@$(CC) $(INCLUDE) $(FRAMEWORK) $(ASAN) $(OBJS) $(MAIN_FILE) -o $@ $(LDLFLAGS)
