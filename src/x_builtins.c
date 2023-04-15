@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/15 00:40:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 03:34:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int	ft_env(char **str_arr, t_input *input)
 	arr = hashmap_tochar(input->hashmap);
 	while (arr[i] != NULL)
 	{
-		printf("%s\n", arr[i]);
+		// printf("%s\n", arr[i]);
 		free(arr[i]);
 		i++;
 	}
@@ -215,7 +215,7 @@ int	ft_exit(char **str_arr, t_input *input)
 	free(input->tokens);
 	ast_del_node(input->root);
 	hashmap_free(&input->hashmap);
-	system("leaks minishell");
+	// system("leaks minishell");
 	exit (c);
 }
 
@@ -267,7 +267,7 @@ int	ft_pwd(char **str_arr)
 	{
 		path = getcwd(NULL, 0);
 		printf("%s\n", path);
-		// free(path);
+		free(path);
 	}
 	else
 	{

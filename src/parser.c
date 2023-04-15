@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 23:49:49 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 16:41:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,7 +341,7 @@ void	get_cmd_args(t_command_info info, t_data *data)
 			if (info.suffix.arglist)
 				size += info.suffix.arglist->arg_count;
 		}
-		data->command.cmd.args = (char **)malloc(sizeof(char *) * (size + 1));
+		data->command.cmd.args = (char **)ft_calloc(size + 1, sizeof(char *));
 		data->command.cmd.args[i] = ft_strdup(data->command.cmd.name_path);
 		i++;
 	}
@@ -359,8 +359,6 @@ void	get_cmd_args(t_command_info info, t_data *data)
 		arg = arg->next;
 		i++;
 	}
-	if (data->command.cmd.args)
-		data->command.cmd.args[i] = NULL;
 }
 
 void	free_cmd_info(t_command_info info)

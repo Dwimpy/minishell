@@ -6,11 +6,13 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 23:24:18 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 03:27:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
+#include <sys/wait.h>
+
 
 int	gen_input(t_input *input)
 {

@@ -6,12 +6,14 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/15 01:09:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 16:34:18 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "x_execution.h"
+#include "sys/types.h"
+#include "sys/wait.h"
 
 static int	ft_execute(char *path, char **str_arr, t_input *input);
 static int	ft_executable(char **str_arr, t_input *input);

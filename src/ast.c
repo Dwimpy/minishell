@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/15 00:21:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 17:14:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,8 +219,8 @@ t_arglist	*expand_vars(char	*value)
 		}
 		quote = quote->next;
 	}
-	// printf("THE ARGS: \n");
-	// print_args(arglist);
+	print_quotelist(quotelist);
+	print_args(arglist);
 	free_quotelist(quotelist);
 	return (arglist);
 }

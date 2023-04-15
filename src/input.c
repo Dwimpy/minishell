@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/15 00:42:57 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 16:59:20 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,17 @@ void	parse_all_input(t_input *input)
 		parse_input(&input->root, input->tokens, input);
 }
 
-void	expand_node_cmds(char **arr, t_input *input)
+void	expand_node_cmds(t_ast_node	*root, t_input *input)
 {
-	int	i;
+	int		i;
+	char	**args;
 
-	if (arr && arr[0])
+	i = 0;
+	args = root->data.command.cmd.args;
+	while (args && *args)
 	{
-		arr[0] = expand_env_var(arr[0], input);
-	}
-	i++;
-	while (arr && arr[i])
-	{
-		arr[i] = expand_env_var(arr[i], input);
-		i++;
+		*args = expand_env_var(*args, input);
+		args++;
 	}
 }
 
@@ -71,11 +69,14 @@ char	*expand_env_var(char *value, t_input *input)
 	}
 	else
 		return (ft_strdup(""));
-	if (!arg)
+	if (list->arg_count == 0)
 	{
-		free_args(list);
-		return (NULL);
+		printf("EMPTY\n");
+		// free_args(list);
+		return (value);
 	}
+	// print_args(list);
+	// printf("%s\n", value);
 	arg = list->first;
 	while (arg)
 	{
@@ -91,8 +92,10 @@ char	*expand_env_var(char *value, t_input *input)
 	if (!new_value)
 		return (NULL);
 	arg = list->first;
+	// printf("WTF: %s\n", value);
 	if (arg && arg->start_pos != 0)
-		ft_strlcat(new_value, &value[0], arg->start_pos + 1);
+		ft_strncat(new_value, &value[0], arg->start_pos + 1);
+	// print_args(list);
 	while (arg)
 	{
 		prev_index = arg->start_pos + arg->len;
@@ -105,10 +108,9 @@ char	*expand_env_var(char *value, t_input *input)
 		if (arg)
 			ft_strncat(new_value, &value[prev_index], arg->start_pos - prev_index);
 	}
-	if (prev_index < ft_strlen(value))
-		ft_strncat(new_value, &value[prev_index], ft_strlen(value) - prev_index);
+	if (ft_strlen(&value[prev_index]) != 0)
+		ft_strncat(new_value, &value[prev_index], ft_strlen(&value[prev_index]));
 	free_args(list);
-
 	return (new_value);
 }
 

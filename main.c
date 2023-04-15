@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/15 00:59:42 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 16:47:58 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@
 #include "get_next_line.h"
 #include <curses.h>
 #include <term.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+
 int		ft_execute(t_input *input, t_ast_node *root, int *fd);
 int		ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell);
 
@@ -68,32 +71,42 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	int			status;
 
 
+	// if (root->type == COMMAND) // only one thing to execute
+	// {
 
-	if (root->type == COMMAND) // only one thing to execute
-	{
 		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
-		// expand_node_cmds(root->data.command.cmd.args, input);
-		if (root->is_subshell != 1)
-		{
-			exit_code = ft_command(root->data.command.cmd.args, input, root);
-		}
-		else
-		{
-			// exit_code = ft_subshell();
-			return (exit_code);
-		}
-		return (exit_code);
-	}
-	while (root->left != NULL)
-		root = root->left;
-	exit_code = ft_execute_tree(input, root, fd, 0);
+		expand_node_cmds(root, input);
+		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
+		printf("%s\n", root->data.command.cmd.args[0]);
+		// printf("%s\n", root->data.command.cmd.args[1]);
+		// root->data.command.cmd.args[1] = wtf;
+		// root->data.command.cmd.name_path = expand_env_var(root->data.command.cmd.name_path, input);
+		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
+		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
+		// root->data.command.cmd.args[2] = expand_env_var(root->data.command.cmd.args[2], input);
+		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
+		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
 
-	pid = 1;
-	while (pid != -1)
-		pid = waitpid(-1, &status, 0);
-	while (*fd > 2)
-		close((*fd)--);
-	return (exit_code);
+		// if (root->is_subshell != 1)
+		// {
+		// 	exit_code = ft_command(root->data.command.cmd.args, input, root);
+		// }
+		// else
+		// {
+		// 	// exit_code = ft_subshell();
+		// 	return (exit_code);
+		// }
+		// return (exit_code);
+	// while (root->left != NULL)
+	// 	root = root->left;
+	// exit_code = ft_execute_tree(input, root, fd, 0);
+	// printf("WTF");
+	// pid = 1;
+	// while (pid != -1)
+	// 	pid = waitpid(-1, &status, 0);
+	// while (*fd > 2)
+	// 	close((*fd)--);
+	// return (exit_code);
 }
 
 // int	ft_subshell(t_input *input, t_ast_node *root, int *fd, int *pid)
