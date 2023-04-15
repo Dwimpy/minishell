@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/15 16:39:41 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 18:08:00 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,5 @@ int		ft_exit(char **str_arr, t_input *input);
 int		ft_env(char **str_arr, t_input *input);
 int		ft_export(char **str_arr, t_input *input);
 int		ft_unset(char **str_arr, t_input *input);
-void	expand_node_cmds(t_ast_node	*root, t_input *input);
+t_arglist	*expand_vars(char	*value);
 #endif

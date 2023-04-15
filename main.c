@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/15 16:47:58 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/15 18:08:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,9 +75,9 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	// {
 
 		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
-		expand_node_cmds(root, input);
+		expand_vars(root->data.command.cmd.args[0]);
 		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
-		printf("%s\n", root->data.command.cmd.args[0]);
+		// printf("%s\n", root->data.command.cmd.args[0]);
 		// printf("%s\n", root->data.command.cmd.args[1]);
 		// root->data.command.cmd.args[1] = wtf;
 		// root->data.command.cmd.name_path = expand_env_var(root->data.command.cmd.name_path, input);
@@ -106,7 +106,7 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	// 	pid = waitpid(-1, &status, 0);
 	// while (*fd > 2)
 	// 	close((*fd)--);
-	// return (exit_code);
+	return (exit_code);
 }
 
 // int	ft_subshell(t_input *input, t_ast_node *root, int *fd, int *pid)
