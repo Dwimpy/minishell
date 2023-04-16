@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/15 18:08:33 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 15:27:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,37 +75,26 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	// {
 
 		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
-		expand_vars(root->data.command.cmd.args[0]);
-		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
-		// printf("%s\n", root->data.command.cmd.args[0]);
-		// printf("%s\n", root->data.command.cmd.args[1]);
-		// root->data.command.cmd.args[1] = wtf;
-		// root->data.command.cmd.name_path = expand_env_var(root->data.command.cmd.name_path, input);
-		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
-		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
-		// root->data.command.cmd.args[2] = expand_env_var(root->data.command.cmd.args[2], input);
-		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
-		// root->data.command.cmd.args[1] = expand_env_var(root->data.command.cmd.args[1], input);
+		// expand_vars(root->data.command.cmd.args[0]);
 
-		// if (root->is_subshell != 1)
-		// {
-		// 	exit_code = ft_command(root->data.command.cmd.args, input, root);
-		// }
-		// else
-		// {
-		// 	// exit_code = ft_subshell();
-		// 	return (exit_code);
-		// }
-		// return (exit_code);
-	// while (root->left != NULL)
-	// 	root = root->left;
-	// exit_code = ft_execute_tree(input, root, fd, 0);
-	// printf("WTF");
-	// pid = 1;
-	// while (pid != -1)
-	// 	pid = waitpid(-1, &status, 0);
-	// while (*fd > 2)
-	// 	close((*fd)--);
+		if (root->is_subshell != 1)
+		{
+			exit_code = ft_command(root->data.command.cmd.args, input, root);
+		}
+		else
+		{
+			// exit_code = ft_subshell();
+			return (exit_code);
+		}
+		return (exit_code);
+	while (root->left != NULL)
+		root = root->left;
+	exit_code = ft_execute_tree(input, root, fd, 0);
+	pid = 1;
+	while (pid != -1)
+		pid = waitpid(-1, &status, 0);
+	while (*fd > 2)
+		close((*fd)--);
 	return (exit_code);
 }
 

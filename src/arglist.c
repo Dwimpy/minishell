@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/15 18:21:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 15:13:21 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void	print_args(t_arglist *arglist)
 	printf("Args: \n");
 	while (arg)
 	{
+		// if (arg->type == EXPAND)
 		printf("%s |", arg->value);
 		arg = arg->next;
 	}

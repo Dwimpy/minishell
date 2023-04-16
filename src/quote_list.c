@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 19:36:15 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:03:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 02:31:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,11 @@ t_quotelist	*create_list(char *value)
 			else if (value[i] == '\"')
 				fsm.input_state = IN_DQUOTE;
 			else
+			{
 				fsm.input_state = REGULAR;
+				if (value[i + 1] == '\0')
+					i--;
+			}
 			start = i;
 		}
 		else if (fsm.input_state == IN_SQUOTE)
