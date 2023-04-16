@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/15 03:27:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 01:10:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	gen_input(t_input *input)
 	input->lexer.input = read_from_stdin();
 	if (!input->lexer.input)
 	{
-		exit(0);
+		exit(ft_atoi((char *)hashmap_get(input->special_sym, "EXITSTATUS")));
 	}
 	input->lexer.input_len = ft_strlen(input->lexer.input);
 	while (input->lexer.input && input->lexer.input[i] == ' ' || \
@@ -53,19 +53,11 @@ int	gen_input(t_input *input)
 	}
 	if (fsm.state == ERROR)
 	{
-		free(input->lexer.input);
-		free_token_list(input->tokens);
-		print_syntax_error(input->unexpected);
-		pid = fork();
-		if (pid == 0)
-			exit(2);
-		else
-		{
-			waitpid(pid, &status, 0);
-			if (WIFEXITED(status))
-				WEXITSTATUS(status);
+			free_token_list(input->tokens);
+			print_syntax_error(input->unexpected);
+			free(input->lexer.input);
+			free(hashmap_put(input->special_sym, "EXITSTATUS", "2"));
 			return (1);
-		}
 	}
 	// if (!ft_strncmp(input->tokens->first->value.word.value, "../", 4) &&
 	// 	ft_strlen(input->tokens->first->value.word.value) == 3)
@@ -466,11 +458,32 @@ void	get_the_input(t_input *input, t_fsm *fsm)
 		else if (fsm->state == INCOMPLETE)
 		{
 			if (fsm->tok_state == TOK_PIPE)
-				do_in_pipe(lexer, fsm);
+			{
+				if (do_in_pipe(lexer, fsm))
+				{
+					fsm->input_state = INPUT_COMPLETE;
+					fsm->state = ERROR;
+					input->unexpected = TOKEN_END_OF_FILE;
+				}
+			}
 			else if (fsm->tok_state == TOK_AND_IF)
-				do_in_cmdand(lexer, fsm);
+			{
+				if (do_in_cmdand(lexer, fsm))
+				{
+					fsm->input_state = INPUT_COMPLETE;
+					fsm->state = ERROR;
+					input->unexpected = TOKEN_END_OF_FILE;
+				}
+			}
 			else if (fsm->tok_state == TOK_OR_IF)
-				do_in_cmdor(lexer, fsm);
+			{
+				if (do_in_cmdor(lexer, fsm))
+				{
+					fsm->input_state = INPUT_COMPLETE;
+					fsm->state = ERROR;
+					input->unexpected = TOKEN_END_OF_FILE;
+				}
+			}
 		}
 	}
 	// printf("State: %d\t", fsm->state);
@@ -560,25 +573,31 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	fsm->input_state = N_INPUT;
 }
 
-void	do_in_pipe(t_lexer *lexer, t_fsm *fsm)
+int	do_in_pipe(t_lexer *lexer, t_fsm *fsm)
 {
-	readline_pipe(lexer, "pipe> ", fsm);
+	if (readline_pipe(lexer, "pipe> ", fsm))
+		return (1);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
+	return (0);
 }
 
-void	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
+int	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
 {
-	readline_pipe(lexer, "cmdand> ", fsm);
+	if (readline_pipe(lexer, "cmdand> ", fsm))
+		return (1);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
+	return (0);
 }
 
-void	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
+int	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
 {
-	readline_pipe(lexer, "cmdor> ", fsm);
+	if (readline_pipe(lexer, "cmdor> ", fsm))
+		return (1);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
+	return (0);
 }
 
 int	is_empty(char *str)
@@ -625,7 +644,15 @@ void	do_subsh(t_input *input, t_fsm *fsm)
 		input->unexpected = TOKEN_RPARENTHESIS;
 	}
 	else if (lexer->ch == '\0')
-		readline_no_new_line(lexer, "subsh> ", fsm);
+	{
+		if (readline_no_new_line(lexer, "subsh> ", fsm))
+		{
+			fsm->input_state = INPUT_COMPLETE;
+			fsm->state = ERROR;
+			input->unexpected = TOKEN_END_OF_FILE;
+			return ;
+		}
+	}
 	else if (lexer->ch == '\'')
 		fsm->input_state = IN_SQUOTE;
 	else if (lexer->ch == '\"')
@@ -668,14 +695,14 @@ void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	lexer->read_position--;
 }
 
-void	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
+int	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
 {
 	char	*append_line;
 	char	*join_line;
 
 	append_line = readline(prompt);
 	if (!append_line)
-		return ;
+		return (1);
 	join_line = (char *)malloc(sizeof(char) * (ft_strlen(lexer->input) + \
 				ft_strlen(append_line) + 2));
 	ft_strcpy(join_line, lexer->input);
@@ -685,19 +712,24 @@ void	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	lexer->input = join_line;
 	lexer->input_len = ft_strlen(lexer->input);
 	lexer->read_position--;
+	return (0);
 }
 
-void	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm)
+int	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm)
 {
 	char	*append_line;
 	char	*join_line;
 
 	append_line = readline(prompt);
-	while (is_empty(append_line))
+	if (!append_line)
+		return 1;
+	while (append_line && is_empty(append_line))
 	{
 		free(append_line);
 		append_line = readline(prompt);
 	}
+	if (!append_line)
+		return (1);
 	join_line = (char *)malloc(sizeof(char) * (ft_strlen(lexer->input) + \
 				ft_strlen(append_line) + 2));
 	ft_strcpy(join_line, lexer->input);
@@ -708,4 +740,5 @@ void	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	lexer->input_len = ft_strlen(lexer->input);
 	lexer->read_position--;
 	lexer->tok_position--;
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/15 03:15:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 22:16:23 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ typedef struct s_input
 	t_token_list	*tokens;
 	t_lexer			lexer;
 	t_hashmap		*hashmap;
+	t_hashmap		*special_sym;
 	t_ast_node		*root;
 	int				unexpected;
 }				t_input;
@@ -90,4 +91,5 @@ int				is_incomplete_input(t_control control, char c);
 void			handle_incomplete_input(t_control *control, char c);
 char			*get_new_input(t_incomplete_type type);
 int				get_new_lexer_input(t_lexer *lexer, t_control *control);
+t_hashmap		*create_special_table(void);
 #endif

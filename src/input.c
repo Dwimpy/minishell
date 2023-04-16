@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/15 18:17:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 22:24:51 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,39 @@ void	parse_all_input(t_input *input)
 		parse_input(&input->root, input->tokens, input);
 }
 
+t_hashmap	*create_special_table(void)
+{
+	int			i;
+	int			count;
+	char		*home;
+	char		*path;
+	t_hashmap	*hashmap;
+
+	hashmap = hashmap_new(100);
+	path = getcwd(NULL, 0);
+	i = 0;
+	count = 0;
+	while (path && path[i])
+	{
+		if (path[i] == '/')
+			count++;
+		if (count == 3)
+			break ;
+		i++;
+	}
+	home = ft_substr(path, 0, &path[i] - path);
+	hashmap_put(hashmap, "TILDE", home);
+	hashmap_put(hashmap, "EXITSTATUS", ft_strdup("0"));
+	free(path);
+	return (hashmap);
+	// path = NULL;
+}
 
 void	init_input(t_input	*input, char **envp)
 {
 	input->tokens = new_token_list();
 	input->hashmap = load_environment(envp);
+	input->special_sym = create_special_table();
 	input->root = NULL;
 	input->lexer.ch = '\0';
 	input->lexer.input = NULL;

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/15 16:41:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 01:20:55 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -230,8 +230,7 @@ void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix)
 
 void	create_and_free(t_token *token, char **filename, int io)
 {
-	int	fd;
-
+	int		fd;
 	if (!*filename)
 		*filename = ft_strdup(get_token_value(token));
 	else
@@ -244,7 +243,11 @@ void	create_and_free(t_token *token, char **filename, int io)
 	else if (io == OUTPUT)
 		fd = open(*filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
-		perror("error");
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(*filename, 2);
+		ft_putendl_fd(": No such file or directory: ", 2);
+	}
 	close(fd);
 }
 

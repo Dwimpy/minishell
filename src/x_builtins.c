@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/15 03:34:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 01:22:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,9 +126,20 @@ int	ft_env(char **str_arr, t_input *input)
 
 	i = 0;
 	arr = hashmap_tochar(input->hashmap);
+	if (!(char *)hashmap_get(input->hashmap, "PATH"))
+	{
+		ft_putstr_fd("minishell: env: no such file or directory\n", 2);
+		return (1);
+	}
+	if (str_arr[1] && !ft_memcmp(str_arr[1], "-i", 3))
+	{
+		if (str_arr[2] && (!ft_memcmp(str_arr[2], "./", 2) || !ft_memcmp(str_arr[2], "../", 3)))
+			return (ft_executable_no_env(&str_arr[2], input));
+		return (1);
+	}
 	while (arr[i] != NULL)
 	{
-		// printf("%s\n", arr[i]);
+		printf("%s\n", arr[i]);
 		free(arr[i]);
 		i++;
 	}
@@ -203,7 +214,7 @@ int	ft_exit(char **str_arr, t_input *input)
 				ft_putstr_fd(trim, 2);
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd("numeric argument required\n", 2);
-				exit(255);
+				exit(c);
 			}	
 		}
 			c = ft_atoi(trim);
@@ -215,6 +226,7 @@ int	ft_exit(char **str_arr, t_input *input)
 	free(input->tokens);
 	ast_del_node(input->root);
 	hashmap_free(&input->hashmap);
+	hashmap_free(&input->special_sym);
 	// system("leaks minishell");
 	exit (c);
 }
@@ -224,6 +236,7 @@ int	ft_cd(char **str_arr, t_input *input)
 	char	**arr;
 	char	*str;
 	char	*path;
+	char	*old;
 
 	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 2)))
 	{
@@ -232,8 +245,10 @@ int	ft_cd(char **str_arr, t_input *input)
 		{
 			str = getcwd(NULL, 0);
 		}
-		free(hashmap_put(input->hashmap, "PWD", ft_strdup(str)));
+		old = hashmap_put(input->hashmap, "PWD", ft_strdup(str));
+		free(hashmap_put(input->hashmap, "OLDPWD", old));
 		if (str)
+		{
 			if (chdir(str) == -1)
 			{
 				ft_putstr_fd("cd: " ,2);
@@ -243,17 +258,28 @@ int	ft_cd(char **str_arr, t_input *input)
 				ft_putstr_fd("\n", 2);
 				return (1);
 			}
+		}
 	}
 	else
 	{
-		if (chdir(str_arr[1]) == -1)
+		if (!ft_strncmp(str_arr[1], "-", 2))
 		{
-			printf("Error\n");
+			if (!(char *)hashmap_get(input->hashmap, "OLDPWD"))
+			{
+				ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
+				return (1);
+			}
+		}
+		else if (chdir(str_arr[1]) == -1)
+		{
+			ft_putstr_fd("minishell: cd: ", 2);
+			ft_putstr_fd(str_arr[1], 2);
+			ft_putendl_fd(" Not a directory", 2);
 			return (1);
 		}
-		
 		path = getcwd(NULL, 0);
-		free(hashmap_put(input->hashmap, "PWD", ft_strdup(path)));
+		old = hashmap_put(input->hashmap, "PWD", ft_strdup(path));
+		free(hashmap_put(input->hashmap, "OLDPWD", old));
 		free(path);
 	}
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/16 18:07:43 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 22:30:13 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "sys/stat.h"
 
 static int	ft_execute(char *path, char **str_arr, t_input *input);
-static int	ft_executable(char **str_arr, t_input *input);
 static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static int	is_directory(const char *path);
@@ -72,7 +71,8 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 		}
 		else if (access(str_arr[0], F_OK) == 0)
 		{
-			status = ft_execute(str_arr[0], str_arr, input);
+			if (access(str_arr[0], X_OK) == 0)
+				status = ft_execute(str_arr[0], str_arr, input);
 		}
 		else
 		{
@@ -97,7 +97,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 			ft_putstr_fd("minishell: command not found: ", 2);
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd("\n", 2);
-			return (-2);
+			return (127);
 		}
 	}
 	ft_redirect_back(root, &stdin_cp, &stdout_cp);
@@ -204,6 +204,33 @@ int	ft_executable(char **str_arr, t_input *input)
 		{
 			hashmap = hashmap_tochar(input->hashmap);
 			if (execve(str_arr[0], str_arr, hashmap))
+				exit(1);
+			exit(0);
+		}
+		waitpid(pid, &status, 0);
+		return (status);
+	}
+	else
+	{
+		printf("no such file or directory: %s\n", str_arr[0]);
+		return (1);
+	}
+}
+
+int	ft_executable_no_env(char **str_arr, t_input *input)
+{
+	int		pid;
+	int		status;
+	char 	**hashmap;
+
+	if (access(str_arr[0], F_OK) == 0)
+	{
+		pid = fork();
+		if (pid == -1)
+			exit(1);
+		if (pid == 0)
+		{
+			if (execve(str_arr[0], str_arr, NULL))
 				exit(1);
 			exit(0);
 		}

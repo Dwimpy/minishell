@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 19:58:27 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 00:25:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,8 @@ typedef enum e_token_type
 	TOKEN_SEMICOLON = 14,
 	TOKEN_UNEXPECTED = 15,
 	TOKEN_NEWLINE = 16,
-	TOKEN_EOF = 17
+	TOKEN_EOF = 17,
+	TOKEN_END_OF_FILE = 18
 }						t_token_type;
 
 typedef struct s_token_word

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 20:20:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 01:08:13 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,9 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm);
 void	do_squote(t_lexer *lexer, t_fsm *fsm);
 void	do_dquote(t_lexer *lexer, t_fsm *fsm);
 void	do_subsh(t_input *input, t_fsm *fsm);
-void	do_in_pipe(t_lexer *lexer, t_fsm *fsm);
-void	do_in_cmdand(t_lexer *lexer, t_fsm *fsm);
-void	do_in_cmdor(t_lexer *lexer, t_fsm *fsm);
+int		do_in_pipe(t_lexer *lexer, t_fsm *fsm);
+int		do_in_cmdand(t_lexer *lexer, t_fsm *fsm);
+int		do_in_cmdor(t_lexer *lexer, t_fsm *fsm);
 int		is_valid_beginning(t_token *token);
 int		is_prefix(t_token *token);
 int		is_cmd_suffix(t_token *token);
@@ -37,8 +37,8 @@ int		is_token_word_literal(t_token *token);
 int		is_token_logical_op(t_token *token);
 int		is_tok_state_pipe_lop(t_fsm *fsm);
 void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
-void	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
-void	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm);
+int		readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
+int		readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm);
 char	*get_prompt_dir(void);
 char	*read_from_stdin(void);
 void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm);

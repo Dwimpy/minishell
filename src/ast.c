@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 18:08:59 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 01:08:42 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ void	free_cmd_args(char **args)
 	i = 0;
 	while (args[i])
 	{
+		// printf("%s\n", args[i]);
 		free(args[i]);
 		i++;
 	}
@@ -215,7 +216,7 @@ t_arglist	*expand_vars(char	*value)
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
 					fsm.expand_var = NOT_IN_EXPAND_VAR;
-					start = i + 1;
+					start = i;
 					i--;
 				}
 				else if (fsm.input_state == REGULAR && quote->value[i] == '\'')
@@ -224,7 +225,7 @@ t_arglist	*expand_vars(char	*value)
 					fsm.input_state = IN_SQUOTE;
 					start = i + 1;
 				}
-				else if (!ft_isalnum(quote->value[i]))
+				else if (!ft_isalnum(quote->value[i]) && quote->value[i] != '?')
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
 					fsm.expand_var = NOT_IN_EXPAND_VAR;
@@ -253,7 +254,7 @@ t_arglist	*expand_vars(char	*value)
 					if (start < i)
 						new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
 					fsm.expand_var = IN_EXPAND_VAR;
-					start = i + 1;
+					start = i;
 				}
 				else if (quote->value[i] == '\"')
 				{
@@ -274,7 +275,7 @@ t_arglist	*expand_vars(char	*value)
 					if (start < i)
 						new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
 					fsm.expand_var = IN_EXPAND_VAR;
-					start = i + 1;
+					start = i;
 				}
 				else if (quote->value[i] == '\'')
 					fsm.input_state = IN_SQUOTE;
@@ -367,27 +368,32 @@ void	print_node(t_ast_node *node)
 
 void	print_syntax_error(int unexpected)
 {
-	ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	if (unexpected == TOKEN_EOF)
-		ft_putstr_fd("newline'\n", 2);
-	else if (unexpected == TOKEN_PIPE)
-		ft_putstr_fd("|'\n", 2);
-	else if (unexpected == TOKEN_LESS)
-		ft_putstr_fd("<'\n", 2);
-	else if (unexpected == TOKEN_GREAT)
-		ft_putstr_fd(">'\n", 2);
-	else if (unexpected == TOKEN_DLESS)
-		ft_putstr_fd("<<'\n", 2);
-	else if (unexpected == TOKEN_DGREAT)
-		ft_putstr_fd(">>'\n", 2);
-	else if (unexpected == TOKEN_AND)
-		ft_putstr_fd("&'\n", 2);
-	else if (unexpected == TOKEN_AND_IF)
-		ft_putstr_fd("&&'\n", 2);
-	else if (unexpected == TOKEN_OR_IF)
-		ft_putstr_fd("||'\n", 2);
-	else if (unexpected == TOKEN_RPARENTHESIS)
-		ft_putstr_fd(")'\n", 2);
-	else if (unexpected == TOKEN_LPARENTHESIS)
-		ft_putstr_fd("('\n", 2);
+	if (unexpected != TOKEN_END_OF_FILE)
+	{
+		ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
+		if (unexpected == TOKEN_EOF)
+			ft_putstr_fd("newline'\n", 2);
+		else if (unexpected == TOKEN_PIPE)
+			ft_putstr_fd("|'\n", 2);
+		else if (unexpected == TOKEN_LESS)
+			ft_putstr_fd("<'\n", 2);
+		else if (unexpected == TOKEN_GREAT)
+			ft_putstr_fd(">'\n", 2);
+		else if (unexpected == TOKEN_DLESS)
+			ft_putstr_fd("<<'\n", 2);
+		else if (unexpected == TOKEN_DGREAT)
+			ft_putstr_fd(">>'\n", 2);
+		else if (unexpected == TOKEN_AND)
+			ft_putstr_fd("&'\n", 2);
+		else if (unexpected == TOKEN_AND_IF)
+			ft_putstr_fd("&&'\n", 2);
+		else if (unexpected == TOKEN_OR_IF)
+			ft_putstr_fd("||'\n", 2);
+		else if (unexpected == TOKEN_RPARENTHESIS)
+			ft_putstr_fd(")'\n", 2);
+		else if (unexpected == TOKEN_LPARENTHESIS)
+			ft_putstr_fd("('\n", 2);	
+	}
+	else
+		ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
 }

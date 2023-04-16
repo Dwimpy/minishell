@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 16:51:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 18:08:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 22:51:13 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,16 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 
 	arg = list->first;
 	if (!arg)
+	{
+		free_args(list);
 		return (NULL);
+	}
 	len = 0;
 	while (arg)
 	{
 		if (arg->type == EXPAND)
 		{
-			entry = (char *)hashmap_get(input->hashmap, arg->value);
+			entry = (char *)hashmap_get(input->hashmap, &arg->value[1]);
 			if (entry)
 				len += ft_strlen(entry);
 			else
@@ -47,7 +50,10 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 	{
 		if (arg->type == EXPAND)
 		{
-			entry = (char *)hashmap_get(input->hashmap, arg->value);
+			if (arg->value && !ft_strncmp(arg->value, "$?", 3))
+				entry = (char *)hashmap_get(input->special_sym, "EXITSTATUS");
+			else
+				entry = (char *)hashmap_get(input->hashmap, &arg->value[1]);
 			if (entry)
 				ft_strcat(new, entry);
 			else
@@ -56,19 +62,23 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 		else if (arg->type == NON_EXPAND)
 		{
 		if (arg->value)
+		
 			ft_strcat(new, arg->value);
 		else
 			ft_strcat(new, "");
 		}
+		if (arg->next == NULL && arg->value && !ft_memcmp(arg->value, "$", 2))
+			ft_strcat(new, "$");
 		arg = arg->next;
 	}
+	// print_args(list);
 	free_args(list);
 	return (new);
 }
 
 void	expand_env_vars(char **args, t_input *input)
 {
-	char	*prev;
+	char		*prev;
 
 	prev = NULL;
 	while (args && *args)

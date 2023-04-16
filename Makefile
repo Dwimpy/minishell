@@ -6,7 +6,7 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/04/11 19:59:26 by arobu            ###   ########.fr        #
+#    Updated: 2023/04/17 00:56:30 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,9 @@ MAIN_FILE		:= main.c
 NORM_INCLUDE	= ./include
 LIBFT_FOLDER	:= ./libft-printf
 GNL				:= ./get_next_line
-
 # Compiler
 CC			= cc
-LDLFLAGS	= -lreadline -lft -L./libft-printf
+LDLFLAGS	= -lft -L./libft-printf -lreadline
 CFLAGS		= -g3 #-Wall -Werror -Wextra -g3 -pthread 
 
 ASAN		= #-fsanitize=address
