@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/16 15:27:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 17:48:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,12 +71,10 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 	int			status;
 
 
-	// if (root->type == COMMAND) // only one thing to execute
-	// {
+	if (root->type == COMMAND) // only one thing to execute
+	{
 
 		// root->data.command.cmd.args[0] = expand_env_var(root->data.command.cmd.args[0], input);
-		// expand_vars(root->data.command.cmd.args[0]);
-
 		if (root->is_subshell != 1)
 		{
 			exit_code = ft_command(root->data.command.cmd.args, input, root);
@@ -87,6 +85,7 @@ int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 			return (exit_code);
 		}
 		return (exit_code);
+	}
 	while (root->left != NULL)
 		root = root->left;
 	exit_code = ft_execute_tree(input, root, fd, 0);

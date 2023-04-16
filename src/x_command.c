@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/16 15:27:18 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 18:07:43 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,13 @@
 #include "x_execution.h"
 #include "sys/types.h"
 #include "sys/wait.h"
+#include "sys/stat.h"
 
 static int	ft_execute(char *path, char **str_arr, t_input *input);
 static int	ft_executable(char **str_arr, t_input *input);
 static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp);
+static int	is_directory(const char *path);
 
 int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 {
@@ -28,6 +30,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	char	**paths;
 	size_t	i;
 	int		status;
+	char	*prev;
 
 	int		stdin_cp;
 	int		stdout_cp;
@@ -36,6 +39,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 		return (1);
 	stdin_cp = -1;
 	stdout_cp = -1;
+	expand_env_vars(root->data.command.cmd.args, input);
 	if (ft_redirect(root, &stdin_cp, &stdout_cp))
 		return (1);
 	if (!(ft_memcmp("cd", str_arr[0], 3)))
@@ -58,7 +62,15 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	{
 		status = -1;
 		i = 0;
-		if (access(str_arr[0], F_OK) == 0)
+		if (is_directory(str_arr[0]))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(str_arr[0], 2);
+			ft_putstr_fd(": is a directory", 2);
+			ft_putstr_fd("\n", 2);
+			return (-2);
+		}
+		else if (access(str_arr[0], F_OK) == 0)
 		{
 			status = ft_execute(str_arr[0], str_arr, input);
 		}
@@ -90,6 +102,14 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	}
 	ft_redirect_back(root, &stdin_cp, &stdout_cp);
 	return (status);
+}
+
+static int	is_directory(const char *path)
+{
+	struct stat	statbuffer;
+	if (stat(path, &statbuffer) != 0)
+		return (0);
+	return S_ISDIR(statbuffer.st_mode);
 }
 
 int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)

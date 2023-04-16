@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 15:04:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/16 18:08:59 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ t_arglist	*expand_vars(char	*value)
 		{
 			if (quote->value[i] == '\0')
 			{
-				if (start < i && quote->value[i - 1] != '\"')
+				if (start < i && quote->value[i - 1] != '\"' && quote->value[i - 1] != '$')
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, NON_EXPAND));
 				fsm.input_state = INPUT_COMPLETE;
 			}
@@ -211,7 +211,6 @@ t_arglist	*expand_vars(char	*value)
 			}
 			if (fsm.expand_var == IN_EXPAND_VAR)
 			{
-
 				if (quote->value[i] == '$')
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
@@ -219,10 +218,10 @@ t_arglist	*expand_vars(char	*value)
 					start = i + 1;
 					i--;
 				}
-				else if (fsm.state == REGULAR && quote->value[i] == '\'')
+				else if (fsm.input_state == REGULAR && quote->value[i] == '\'')
 				{
 					fsm.expand_var = NOT_IN_EXPAND_VAR;
-					fsm.state = IN_SQUOTE;
+					fsm.input_state = IN_SQUOTE;
 					start = i + 1;
 				}
 				else if (!ft_isalnum(quote->value[i]))
@@ -278,7 +277,7 @@ t_arglist	*expand_vars(char	*value)
 					start = i + 1;
 				}
 				else if (quote->value[i] == '\'')
-					fsm.input_state == IN_SQUOTE;
+					fsm.input_state = IN_SQUOTE;
 				else if (quote->value[i] == '\"')
 					fsm.input_state = IN_DQUOTE;
 				else if (!ft_isalnum(quote->value[i]))
@@ -296,8 +295,8 @@ t_arglist	*expand_vars(char	*value)
 		}
 		quote = quote->next;
 	}
-	print_quotelist(quotelist);
-	print_args(arglist);
+	// print_quotelist(quotelist);
+	// print_args(arglist);
 	free_quotelist(quotelist);
 	return (arglist);
 }
