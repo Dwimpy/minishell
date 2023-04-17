@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 01:10:06 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 02:42:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -344,7 +344,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				else if (token->type == TOKEN_OR_IF)
 					fsm->tok_state = TOK_OR_IF;
 			}
-			else if (fsm->tok_state == TOK_RPARENTHESIS)
+			else if (is_token_rparen(token))
 			{
 				add_token(tokens, token);
 				continue ;
