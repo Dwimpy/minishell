@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 05:30:16 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 05:42:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,13 +62,6 @@ int	ft_unset(char **str_arr, t_input *input)
 		j = 0;
 		while (str_arr[i][j] != '\0' && (ft_isalnum(str_arr[i][j]) || str_arr[i][j] == '_'))
 			j++;
-		if (str_arr[i][j] != '\0')
-		{
-			ft_putstr_fd("unset: ", 2);
-			ft_putstr_fd(str_arr[i], 2);
-			ft_putstr_fd(" invalid parameter name", 2);
-			return (1);
-		}
 		hashmap_remove(input->hashmap, str_arr[i++]);
 	}
 	return (0);
