@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 02:04:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 15:57:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,6 +215,10 @@ t_arglist	*expand_vars(char	*value)
 				if (quote->value[i] == '$')
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
+					if (fsm.input_state == REGULAR)
+						arglist->last->expand_type = 0;
+					else if (fsm.input_state == IN_DQUOTE)
+						arglist->last->expand_type = 1;
 					fsm.expand_var = NOT_IN_EXPAND_VAR;
 					start = i;
 					i--;
@@ -228,12 +232,20 @@ t_arglist	*expand_vars(char	*value)
 				else if (!ft_isalnum(quote->value[i]) && quote->value[i] != '?' && quote->value[i] != '_')
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
+					if (fsm.input_state == REGULAR)
+						arglist->last->expand_type = 0;
+					else if (fsm.input_state == IN_DQUOTE)
+						arglist->last->expand_type = 1;
 					fsm.expand_var = NOT_IN_EXPAND_VAR;
 					start = i;
 				}
 				else if (quote->value[i + 1] == '\0')
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, EXPAND));
+					if (fsm.input_state == REGULAR)
+						arglist->last->expand_type = 0;
+					else if (fsm.input_state == IN_DQUOTE)
+						arglist->last->expand_type = 1;
 					fsm.expand_var = NOT_IN_EXPAND_VAR;
 					start = i + 1;
 				}

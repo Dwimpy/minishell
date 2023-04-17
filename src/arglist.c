@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 15:13:21 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 15:13:58 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,4 +126,46 @@ void	free_args(t_arglist *arglist)
 		arg = arglist->first;
 	}
 	free(arglist);
+}
+
+void	remove_node(t_arglist *arglist, t_arg *remove)
+{
+	t_arg	*arg;
+	t_arg	*prev;
+
+	arg = arglist->first;
+	if (remove == arglist->first)
+	{
+		arglist ->first = arglist->first->next;
+		if (remove->value)
+			free(remove->value);
+		free(remove);
+		remove = NULL;
+		return ;
+	}
+	else if (remove == arglist->last)
+	{
+		while (arg->next == NULL)
+			arg = arg->next;
+		if (remove->value)
+			free(remove->value);
+		free(remove);
+		remove = NULL;
+		arg->next = NULL;
+		arglist->last = arg;
+		return ;
+	}
+	else
+	{
+		while (arg != remove)
+		{
+			prev = arg;
+			arg = arg->next;
+		}
+	prev = arg->next;
+		if (arg->value)
+			free(arg->value);
+		free(arg);
+		return ;	
+	}
 }

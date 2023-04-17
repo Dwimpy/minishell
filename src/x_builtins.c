@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 05:42:31 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 14:42:27 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int	ft_env(char **str_arr, t_input *input)
 	arr = hashmap_tochar(input->hashmap);
 	if (!(char *)hashmap_get(input->hashmap, "PATH"))
 	{
-		ft_putstr_fd("minishell: env: no such file or directory\n", 2);
+		ft_putstr_fd("minishell: env: No such file or directory\n", 2);
 		return (1);
 	}
 	if (str_arr[1] && !ft_memcmp(str_arr[1], "-i", 3))
@@ -277,8 +277,10 @@ int	ft_cd(char **str_arr, t_input *input)
 				ft_putstr_fd("minishell: cd: ", 2);
 				ft_putstr_fd(str_arr[1], 2);
 				ft_putendl_fd(" Not a directory", 2);
-				return (1);
 			}
+			ft_putstr_fd((char *)hashmap_get(input->hashmap, "OLDPWD"), 1);
+			ft_putstr_fd("\n", 1);
+			return (1);
 		}
 		else if (chdir(str_arr[1]) == -1)
 		{
@@ -300,7 +302,7 @@ int	ft_pwd(char **str_arr)
 	char	*path;
 
 	path = getcwd(NULL, 0);
-	printf("%s\n", path);
+	ft_putendl_fd(path, 1);
 	free(path);
 	return (0);
 }

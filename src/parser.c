@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 01:20:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 13:30:25 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -246,7 +246,7 @@ void	create_and_free(t_token *token, char **filename, int io)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(*filename, 2);
-		ft_putendl_fd(": No such file or directory: ", 2);
+		ft_putendl_fd(": No such file or directory", 2);
 	}
 	close(fd);
 }
