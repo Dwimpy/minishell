@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 14:42:27 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 18:50:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,6 +240,7 @@ int	ft_cd(char **str_arr, t_input *input)
 	char	*str;
 	char	*path;
 	char	*old;
+	char	*curr_pwd;
 
 	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 2)))
 	{
@@ -272,15 +273,26 @@ int	ft_cd(char **str_arr, t_input *input)
 				ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
 				return (1);
 			}
-			else if (chdir((char *)hashmap_get(input->hashmap, "OLDPWD")) == -1)
+			else if ((char *)hashmap_get(input->hashmap, "OLDPWD"))
 			{
-				ft_putstr_fd("minishell: cd: ", 2);
-				ft_putstr_fd(str_arr[1], 2);
-				ft_putendl_fd(" Not a directory", 2);
+				if (chdir((char *)hashmap_get(input->hashmap, "OLDPWD")) == -1)
+				{
+					ft_putstr_fd("minishell: cd: ", 2);
+					ft_putstr_fd(str_arr[1], 2);
+					ft_putendl_fd(" Not a directory", 2);
+				}
+				else
+				{
+					path = getcwd(NULL, 0);
+					old = hashmap_put(input->hashmap, "PWD", ft_strdup(path));
+					ft_putstr_fd((char *)hashmap_get(input->hashmap, "OLDPWD"), 1);
+					free(hashmap_put(input->hashmap, "OLDPWD", old));
+					ft_putstr_fd("\n", 1);
+					free(path);
+					return (0);
+				}
+				return (1);
 			}
-			ft_putstr_fd((char *)hashmap_get(input->hashmap, "OLDPWD"), 1);
-			ft_putstr_fd("\n", 1);
-			return (1);
 		}
 		else if (chdir(str_arr[1]) == -1)
 		{

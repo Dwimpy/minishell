@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 16:51:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 16:02:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 16:21:36 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 		if (arg->type == EXPAND)
 		{
 			// printf("%d\t", arg->expand_type);
-			printf("%s\n", arg->value);
+			// printf("%s\n", arg->value);
 			if (arg->value && !ft_strncmp(arg->value, "$?", 3))
 				entry = (char *)hashmap_get(input->special_sym, "EXITSTATUS");
 			else

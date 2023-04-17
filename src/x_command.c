@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/16 22:30:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 22:51:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,9 @@ int	ft_executable(char **str_arr, t_input *input)
 	}
 	else
 	{
-		printf("no such file or directory: %s\n", str_arr[0]);
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(str_arr[0], 2);
+		ft_putendl_fd(": No such file or directory", 2);
 		return (1);
 	}
 }
