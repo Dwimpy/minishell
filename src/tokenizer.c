@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 02:42:48 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 02:55:37 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -569,7 +569,7 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	free(append_line);
 	lexer->input = join_line;
 	lexer->input_len = ft_strlen(lexer->input);
-	lexer->read_position--;
+	lexer->read_position -= 2;
 	fsm->input_state = N_INPUT;
 }
 
