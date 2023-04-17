@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 01:58:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 05:30:16 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,6 @@ int	ft_unset(char **str_arr, t_input *input)
 	size_t	j;
 	void	*str;
 
-	if (str_arr[1] == NULL)
-	{
-		write(2, "unset: not enough arguments\n", 29);
-		return (1);
-	}
 	i = 1;
 	while (str_arr[i] != NULL)
 	{
@@ -84,9 +79,11 @@ int	ft_export(char **str_arr, t_input *input)
 	size_t	i;
 	size_t	j;
 	char	*str;
-	
+	int		status;
+
 	str = NULL;
 	i = 1;
+	status = 0;
 	if (str_arr[1] == NULL)
 		return (ft_env(str_arr, input));
 	else
@@ -94,6 +91,18 @@ int	ft_export(char **str_arr, t_input *input)
 		while (str_arr[i] != NULL)
 		{
 			j = 0;
+			if (str_arr[i] && str_arr[i][0] == '=' || str_arr[i][0] == '@' || str_arr[i][0] == '%'  || str_arr[i][0] == '^' || \
+				!ft_strncmp(str_arr[i], "=", 2) || !ft_strncmp(str_arr[i], "-", 2) || !ft_strncmp(str_arr[i], "!", 2) ||\
+				!ft_strncmp(str_arr[i], "@", 2) || !ft_strncmp(str_arr[i], "$", 2) || !ft_strncmp(str_arr[i], "^", 2))
+			{
+				ft_putstr_fd("minishell: export: `", 2);
+				ft_putstr_fd(str_arr[i], 2);
+				ft_putendl_fd("': not a valid identifier", 2);
+				i++;
+				free(hashmap_put(input->hashmap, "EXITSTATUS", ft_strdup("1")));
+				status = 1;
+				continue ;
+			}
 			while (str_arr[i][j] != '\0' && (ft_isalnum(str_arr[i][j]) || str_arr[i][j] == '_'))
 				j++;
 			if (str_arr[i][j] == '=')
@@ -105,9 +114,10 @@ int	ft_export(char **str_arr, t_input *input)
 				str = &(str_arr[i][j]);
 			if (str_arr[i][j] != '\0')
 			{
-				ft_putstr_fd("export: not valid in this context: ", 2);
+				ft_putstr_fd("minishell: export: `", 2);
 				ft_putstr_fd(str_arr[i], 2);
-				return (1);
+				ft_putendl_fd("': not a valid identifier", 2);
+				status = 1;
 			}
 			else
 			{
@@ -115,7 +125,7 @@ int	ft_export(char **str_arr, t_input *input)
 			}
 			i++;
 		}
-		return (0);
+		return (status);
 	}
 }
 
@@ -214,7 +224,7 @@ int	ft_exit(char **str_arr, t_input *input)
 				ft_putstr_fd(trim, 2);
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd("numeric argument required\n", 2);
-				exit(c);
+				exit(2);
 			}	
 		}
 			c = ft_atoi(trim);
@@ -296,16 +306,8 @@ int	ft_pwd(char **str_arr)
 {
 	char	*path;
 
-	if (str_arr[1] == NULL)
-	{
-		path = getcwd(NULL, 0);
-		printf("%s\n", path);
-		free(path);
-	}
-	else
-	{
-		write(2, "pwd: too many arguments\n", 25);
-		return (1);
-	}
+	path = getcwd(NULL, 0);
+	printf("%s\n", path);
+	free(path);
 	return (0);
 }

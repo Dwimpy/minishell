@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 02:55:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 04:44:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ int	gen_input(t_input *input)
 	}
 	if (fsm.state == ERROR)
 	{
-			free_token_list(input->tokens);
 			print_syntax_error(input->unexpected);
 			free(input->lexer.input);
-			free(hashmap_put(input->special_sym, "EXITSTATUS", "2"));
+			free_token_list(input->tokens);
+			free(hashmap_put(input->special_sym, "EXITSTATUS", ft_strdup("2")));
 			return (1);
 	}
 	// if (!ft_strncmp(input->tokens->first->value.word.value, "../", 4) &&
