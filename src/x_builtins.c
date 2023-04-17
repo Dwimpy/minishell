@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 01:22:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/17 01:58:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,13 @@ int	ft_cd(char **str_arr, t_input *input)
 			if (!(char *)hashmap_get(input->hashmap, "OLDPWD"))
 			{
 				ft_putstr_fd("minishell: cd: OLDPWD not set\n", 2);
+				return (1);
+			}
+			else if (chdir((char *)hashmap_get(input->hashmap, "OLDPWD")) == -1)
+			{
+				ft_putstr_fd("minishell: cd: ", 2);
+				ft_putstr_fd(str_arr[1], 2);
+				ft_putendl_fd(" Not a directory", 2);
 				return (1);
 			}
 		}
