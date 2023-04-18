@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 22:24:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 18:38:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,21 @@
 
 static int	is_valid_string(t_input *input);
 
-void	parse_all_input(t_input *input)
+int		parse_all_input(t_input *input)
 {
-	char	*prev;
-	char	*exx;
+	if (input->tokens->first->type == TOKEN_QUOTE && \
+	input->tokens->num_tokens == 2 && \
+		!ft_strncmp(input->tokens->first->value.quote.value, "\"\"", 3))
+	{
+		ft_putstr_fd("minishell: : command not found\n", 2);
+		free(input->lexer.input);
+		free_token_list(input->tokens);
+		free(hashmap_put(input->special_sym, "EXITSTATUS", ft_itoa(127)));
+		return (1);
+	}
 	while (input->tokens->first->type != TOKEN_EOF)
 		parse_input(&input->root, input->tokens, input);
+	return (0);
 }
 
 t_hashmap	*create_special_table(void)

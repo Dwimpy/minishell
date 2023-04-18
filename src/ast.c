@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 15:57:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 20:34:54 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -284,8 +284,7 @@ t_arglist	*expand_vars(char	*value)
 			{
 				if (quote->value[i] == '$')
 				{
-					if (start < i)
-						new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
 					fsm.expand_var = IN_EXPAND_VAR;
 					start = i;
 				}

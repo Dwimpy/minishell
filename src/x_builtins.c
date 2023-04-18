@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 18:50:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 18:41:47 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,8 @@ int	ft_export(char **str_arr, t_input *input)
 			j = 0;
 			if (str_arr[i] && str_arr[i][0] == '=' || str_arr[i][0] == '@' || str_arr[i][0] == '%'  || str_arr[i][0] == '^' || \
 				!ft_strncmp(str_arr[i], "=", 2) || !ft_strncmp(str_arr[i], "-", 2) || !ft_strncmp(str_arr[i], "!", 2) ||\
-				!ft_strncmp(str_arr[i], "@", 2) || !ft_strncmp(str_arr[i], "$", 2) || !ft_strncmp(str_arr[i], "^", 2))
+				!ft_strncmp(str_arr[i], "@", 2) || !ft_strncmp(str_arr[i], "$", 2) || !ft_strncmp(str_arr[i], "^", 2) || \
+				ft_isdigit(str_arr[i][0]))
 			{
 				ft_putstr_fd("minishell: export: `", 2);
 				ft_putstr_fd(str_arr[i], 2);
@@ -201,13 +202,19 @@ int	ft_exit(char **str_arr, t_input *input)
 			trim = ft_strtrim(str_arr[1], "'");
 		else
 			trim = ft_strdup(str_arr[1]);
-		if (str_arr[2] != NULL)
-		{
-			ft_putstr_fd("minishell: exit: too many arguments\n" ,2);
-			return (1);
-		}
 		if (trim[0] == '-' || trim[0] == '+')
 			i++;
+		if (trim[0] == '\0')
+		{
+			if (!(ft_isdigit(trim[i++])))
+			{
+				ft_putstr_fd("minishell: exit: ", 2);
+				ft_putstr_fd(trim, 2);
+				ft_putstr_fd(": ", 2);
+				ft_putstr_fd("numeric argument required\n", 2);
+				exit((unsigned char) 255);
+			}
+		}
 		while (trim[i] != '\0')
 		{
 
@@ -217,11 +224,16 @@ int	ft_exit(char **str_arr, t_input *input)
 				ft_putstr_fd(trim, 2);
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd("numeric argument required\n", 2);
-				exit(2);
-			}	
+				exit((unsigned char) 255);
+			}
 		}
-			c = ft_atoi(trim);
-			free(trim);
+		if (str_arr[2] != NULL)
+		{
+			ft_putstr_fd("minishell: exit: too many arguments\n" ,2);
+			return (1);
+		}
+		c = ft_atoi(trim);
+		free(trim);
 	}
 	free (input->lexer.input);
 	clear_history();

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/17 22:51:06 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 20:22:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	size_t	i;
 	int		status;
 	char	*prev;
-
+	char	*new;
 	int		stdin_cp;
 	int		stdout_cp;
 
@@ -39,6 +39,22 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	stdin_cp = -1;
 	stdout_cp = -1;
 	expand_env_vars(root->data.command.cmd.args, input);
+	if (str_arr[0][0] == '~')
+	{
+		new = ft_calloc(ft_strlen((char *)hashmap_get(input->special_sym, "TILDE")) + ft_strlen(str_arr[0]), sizeof(char));
+		new = ft_strcpy(new, (char *)hashmap_get(input->special_sym, "TILDE"));
+		new = ft_strcat(new, &root->data.command.cmd.args[0][1]);
+		free(root->data.command.cmd.args[0]);
+		str_arr[0] = new;
+		if (is_directory(str_arr[0]))
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(str_arr[0], 2);
+			ft_putstr_fd(": is a directory", 2);
+			ft_putstr_fd("\n", 2);
+			return (126);
+		}
+	}
 	if (ft_redirect(root, &stdin_cp, &stdout_cp))
 		return (1);
 	if (!(ft_memcmp("cd", str_arr[0], 3)))
@@ -67,7 +83,32 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd(": is a directory", 2);
 			ft_putstr_fd("\n", 2);
-			return (-2);
+			if (str_arr[0][0] == '.')
+			{
+				if (str_arr[0][1] == '.')
+					status = 127;
+				else if (str_arr[0][1] == '/')
+					status = 126;
+				else if (str_arr[0][1] == '\0')
+				{
+					ft_putstr_fd("minishell: .: filename argument required\n", 2);
+					ft_putendl_fd(".: usage: . filename [arguments]", 2);
+					status = 127;
+				}
+				else
+					status = 127;
+				return (status);
+			}
+			else if (str_arr[0][0] == '/')
+				return (126);
+		}
+		else if (str_arr[0][0] == '/' && access(str_arr[0], F_OK) != 0)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(str_arr[0], 2);
+			ft_putstr_fd(": No such file or directory", 2);
+			ft_putstr_fd("\n", 2);
+			return (127);
 		}
 		else if (access(str_arr[0], F_OK) == 0)
 		{
@@ -195,7 +236,15 @@ int	ft_executable(char **str_arr, t_input *input)
 	int		status;
 	char 	**hashmap;
 
-	if (access(str_arr[0], F_OK) == 0)
+	if (is_directory(str_arr[0]))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(str_arr[0], 2);
+		ft_putstr_fd(": is a directory", 2);
+		ft_putstr_fd("\n", 2);
+		status = 126;
+	}
+	else if (access(str_arr[0], F_OK) == 0 && access(str_arr[0], X_OK) == 0)
 	{
 		pid = fork();
 		if (pid == -1)
@@ -210,13 +259,21 @@ int	ft_executable(char **str_arr, t_input *input)
 		waitpid(pid, &status, 0);
 		return (status);
 	}
-	else
+	else if (access(str_arr[0], F_OK) != 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(str_arr[0], 2);
 		ft_putendl_fd(": No such file or directory", 2);
-		return (1);
+		status = 127;
 	}
+	else if (access(str_arr[0], X_OK) != 0)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(str_arr[0], 2);
+		ft_putendl_fd(": Permission denied", 2);
+		status = 126;
+	}
+	return (status);
 }
 
 int	ft_executable_no_env(char **str_arr, t_input *input)

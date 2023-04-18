@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 17:20:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 18:29:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int				is_logical_op(t_token *token);
 int				is_prev_subshell(t_token *token);
 void			init_input(t_input	*input, char **envp);
 int				generate_input(t_input *input);
-void			parse_all_input(t_input *input);
+int				parse_all_input(t_input *input);
 void			convert_info_to_cmd(t_command_info info, t_data *data, \
 					t_input *input);
 t_io_redirect	get_input_file(t_command_info info);

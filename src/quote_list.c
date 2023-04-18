@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 19:36:15 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/16 02:31:02 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 19:54:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ t_quotelist	*create_list(char *value)
 			else
 			{
 				fsm.input_state = REGULAR;
-				if (value[i + 1] == '\0')
-					i--;
 			}
 			start = i;
+			if (value[i + 1] == '\0')
+				i -= 1;
 		}
 		else if (fsm.input_state == IN_SQUOTE)
 		{
@@ -103,7 +103,9 @@ t_quotelist	*create_list(char *value)
 				start = i;
 			}
 			else if (value[i + 1] == '\0')
+			{
 				add_quote_element(list, new_quote_elem(ft_substr(value, start, i - start + 1), QUOTE_REGULAR));
+			}
 		}
 		i++;
 	}

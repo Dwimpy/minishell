@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 13:30:25 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 16:45:38 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,9 +341,9 @@ void	get_cmd_args(t_command_info info, t_data *data)
 		{
 			arg = info.arglist->first;
 			size += info.arglist->arg_count;
-			if (info.suffix.arglist)
-				size += info.suffix.arglist->arg_count;
 		}
+		if (info.suffix.arglist)
+			size += info.suffix.arglist->arg_count;
 		data->command.cmd.args = (char **)ft_calloc(size + 1, sizeof(char *));
 		data->command.cmd.args[i] = ft_strdup(data->command.cmd.name_path);
 		i++;

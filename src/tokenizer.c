@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 04:44:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 18:32:32 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,7 @@ int	gen_input(t_input *input)
 	i = 0;
 	input->lexer.input = read_from_stdin();
 	if (!input->lexer.input)
-	{
 		exit(ft_atoi((char *)hashmap_get(input->special_sym, "EXITSTATUS")));
-	}
 	input->lexer.input_len = ft_strlen(input->lexer.input);
 	while (input->lexer.input && input->lexer.input[i] == ' ' || \
 		input->lexer.input[i] == '\t')

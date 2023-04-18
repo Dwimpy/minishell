@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 16:51:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 16:21:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 20:53:52 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,22 +59,22 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 				entry = (char *)hashmap_get(input->hashmap, &arg->value[1]);
 			if (entry)
 				ft_strcat(new, entry);
+			else if (arg->next == NULL && arg->value && \
+				arg->expand_type == 0 && !ft_memcmp(arg->value, "$", 2))
+				ft_strcat(new, "$");
 			else if (arg->expand_type == 0)
 				ft_strcat(new, "");
-			else if (arg->expand_type == 1)
+			else if (arg->expand_type == 1 && !ft_memcmp(arg->value, "$", 2))
 				ft_strcat(new, arg->value);
 		}
 		else if (arg->type == NON_EXPAND)
 		{
 		if (arg->value)
-		
 			ft_strcat(new, arg->value);
 		else
 			ft_strcat(new, "");
 		}
-		if (arg->next == NULL && arg->value && \
-			arg->expand_type == 0 && !ft_memcmp(arg->value, "$", 2))
-			ft_strcat(new, "$");
+
 		// else if (arg->next != NULL && arg->value[0] == '\0')
 		// 	ft_strcat(new, "$");
 		arg = arg->next;
@@ -89,6 +89,12 @@ void	expand_env_vars(char **args, t_input *input)
 	char		*prev;
 
 	prev = NULL;
+	if (args && *args && !ft_strncmp(*args, "~", 2))
+	{
+		prev = *args;
+		*args = ft_strdup((char *)hashmap_get(input->special_sym, "TILDE"));
+		free(prev);
+	}
 	while (args && *args)
 	{
 		prev = *args;
