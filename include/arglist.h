@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:15:28 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 15:51:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/18 22:10:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef enum e_arg_type
 	NORMAL,
 	QUOTED_ARG,
 	EXPAND,
+	ESCAPED,
 	NON_EXPAND
 }				t_arg_type;
 

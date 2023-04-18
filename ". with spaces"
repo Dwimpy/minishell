@@ -1,0 +1,10 @@
+". with spaces"
+Makefile
+include
+input
+libft-printf
+main.c
+minishell
+obj
+src
+test

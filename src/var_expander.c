@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 16:51:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/18 20:53:52 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 01:00:51 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,15 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 			else
 				len += 0;
 		}
-		if (arg->value)
-			len += ft_strlen(arg->value);
+		else if (arg->type == ESCAPED)
+			len += 1;
 		else
-			len += 0;
+		{
+			if (arg->value)
+				len += ft_strlen(arg->value);
+			else
+				len += 0;
+		}
 		arg = arg->next;
 	}
 	new = (char *)ft_calloc(len + 1, sizeof(char));
@@ -49,22 +54,19 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 	arg = list->first;
 	while (arg)
 	{
-		if (arg->type == EXPAND)
+		if (arg->type == ESCAPED)
+			ft_strcat(new, arg->value);
+		else if (arg->type == EXPAND)
 		{
-			// printf("%d\t", arg->expand_type);
-			// printf("%s\n", arg->value);
 			if (arg->value && !ft_strncmp(arg->value, "$?", 3))
 				entry = (char *)hashmap_get(input->special_sym, "EXITSTATUS");
 			else
 				entry = (char *)hashmap_get(input->hashmap, &arg->value[1]);
 			if (entry)
 				ft_strcat(new, entry);
-			else if (arg->next == NULL && arg->value && \
-				arg->expand_type == 0 && !ft_memcmp(arg->value, "$", 2))
-				ft_strcat(new, "$");
 			else if (arg->expand_type == 0)
 				ft_strcat(new, "");
-			else if (arg->expand_type == 1 && !ft_memcmp(arg->value, "$", 2))
+			else if (arg->expand_type == 1)
 				ft_strcat(new, arg->value);
 		}
 		else if (arg->type == NON_EXPAND)
@@ -74,7 +76,9 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 		else
 			ft_strcat(new, "");
 		}
-
+		if (arg->next == NULL && arg->value && \
+			arg->expand_type == 0 && arg->type == EXPAND && !ft_memcmp(arg->value, "$", 2))
+			ft_strcat(new, "$");
 		// else if (arg->next != NULL && arg->value[0] == '\0')
 		// 	ft_strcat(new, "$");
 		arg = arg->next;

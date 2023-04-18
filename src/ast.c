@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/18 20:34:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 01:44:53 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,15 @@ t_arglist	*expand_vars(char	*value)
 				}
 
 			}
-			if (fsm.expand_var == IN_EXPAND_VAR)
+			if (quote->value[i] == '\\' && fsm.input_state != IN_SQUOTE && fsm.input_state != IN_DQUOTE)
+			{
+				if (start < i)
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
+				new_argument(arglist, create_expand_arg(&quote->value[i + 1], 0, 1, ESCAPED));
+				i += 1;
+				start = i + 1;
+			}
+			else if (fsm.expand_var == IN_EXPAND_VAR)
 			{
 				if (quote->value[i] == '$')
 				{
@@ -284,7 +292,8 @@ t_arglist	*expand_vars(char	*value)
 			{
 				if (quote->value[i] == '$')
 				{
-					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
+					if (start < i)
+						new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
 					fsm.expand_var = IN_EXPAND_VAR;
 					start = i;
 				}

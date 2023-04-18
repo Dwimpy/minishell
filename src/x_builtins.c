@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/18 18:41:47 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 01:49:05 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string.h>
 #include <errno.h>
 
+static int	check_valid_env_ident(char *str_arr, t_input *input, int *status);
 
 static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 {
@@ -83,44 +84,74 @@ int	ft_export(char **str_arr, t_input *input)
 	{
 		while (str_arr[i] != NULL)
 		{
-			j = 0;
-			if (str_arr[i] && str_arr[i][0] == '=' || str_arr[i][0] == '@' || str_arr[i][0] == '%'  || str_arr[i][0] == '^' || \
-				!ft_strncmp(str_arr[i], "=", 2) || !ft_strncmp(str_arr[i], "-", 2) || !ft_strncmp(str_arr[i], "!", 2) ||\
-				!ft_strncmp(str_arr[i], "@", 2) || !ft_strncmp(str_arr[i], "$", 2) || !ft_strncmp(str_arr[i], "^", 2) || \
-				ft_isdigit(str_arr[i][0]))
+			if (check_valid_env_ident(str_arr[i], input, &status))
 			{
-				ft_putstr_fd("minishell: export: `", 2);
-				ft_putstr_fd(str_arr[i], 2);
-				ft_putendl_fd("': not a valid identifier", 2);
 				i++;
-				free(hashmap_put(input->hashmap, "EXITSTATUS", ft_strdup("1")));
-				status = 1;
 				continue ;
 			}
-			while (str_arr[i][j] != '\0' && (ft_isalnum(str_arr[i][j]) || str_arr[i][j] == '_'))
-				j++;
-			if (str_arr[i][j] == '=')
+			if (ft_isalpha(str_arr[i][0]) && ft_strchr(str_arr[i], '+') && (ft_strchr(str_arr[i], '+') + 1)[0] == '=')
 			{
-				str_arr[i][j] = '\0';
-				str = &(str_arr[i][j + 1]);
+				str = ft_strchr(str_arr[i], '=') + 1;
+				ft_strchr(str_arr[i], '+')[0] = '\0';
+				free(hashmap_put_new(input->hashmap, str_arr[i], str));
 			}
-			else
-				str = &(str_arr[i][j]);
-			if (str_arr[i][j] != '\0')
+			else if (ft_strchr(str_arr[i], '=') && ft_isalpha(str_arr[i][0]))
 			{
-				ft_putstr_fd("minishell: export: `", 2);
-				ft_putstr_fd(str_arr[i], 2);
-				ft_putendl_fd("': not a valid identifier", 2);
-				status = 1;
-			}
-			else
-			{
+				str = ft_strchr(str_arr[i], '=') + 1;
+				ft_strchr(str_arr[i], '=')[0] = '\0';
 				free(hashmap_put_new(input->hashmap, str_arr[i], str));
 			}
 			i++;
 		}
 		return (status);
 	}
+}
+
+int	check_valid_env_ident(char *str_arr, t_input *input, int *status)
+{
+	int		j;
+	char	*copy;
+
+	copy = strdup(str_arr);
+	if (!ft_isalpha(copy[0]) && copy[0] != '_')
+	{
+		ft_putstr_fd("minishell: export: `", 2);
+		ft_putstr_fd(copy, 2);
+		ft_putendl_fd("': not a valid identifier", 2);
+		free(hashmap_put(input->hashmap, "EXITSTATUS", ft_itoa(*status)));
+		if (copy[0] == '-')
+			*status = 2;
+		else
+			*status = 1;
+		free(copy);
+		return (*status);
+	}
+	if (ft_strchr(copy, '='))
+		ft_strchr(copy, '=')[1] = '\0';
+	j = 0;
+	while (copy[j])
+	{
+		if (ft_strchr("@%^-!&~.{}+", copy[j]))
+		{
+			if (copy[j] == '+' && copy[j + 1] == '=')
+			{
+				j++;
+				continue ;
+			}
+			ft_putstr_fd("minishell: export: `", 2);
+			ft_putstr_fd(copy, 2);
+			ft_putendl_fd("': not a valid identifier", 2);
+			if (copy[0] == '-')
+				*status = 2;
+			else
+				*status = 1;
+			free(hashmap_put(input->hashmap, "EXITSTATUS", ft_itoa(*status)));
+			free(copy);
+			return (*status);
+		}
+		j++;
+	}
+	return (0);
 }
 
 int	ft_env(char **str_arr, t_input *input)
