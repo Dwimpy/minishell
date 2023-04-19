@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 02:25:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:43:19 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "quote_list.h"
 #include "fsm.h"
 
-t_ast_node	*new_node(t_data data, t_node_type type)
+t_ast_node	*new_node(t_data data, t_node_type type, size_t count)
 {
 	t_ast_node	*new_node;
 

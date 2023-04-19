@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:23:07 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:44:51 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ typedef struct s_ast_node
 	t_ast_node		*right;
 }				t_ast_node;
 
-t_ast_node	*new_node(t_data data, t_node_type type);
+t_ast_node	*new_node(t_data data, t_node_type type, size_t sub_count);
 void		ast_add_parent(t_ast_node **current, t_ast_node *new_parent);
 void		ast_add_left(t_ast_node *root, t_ast_node *left_child);
 void		ast_add_right(t_ast_node *root, t_ast_node *right_child);

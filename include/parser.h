@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/18 18:29:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:47:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,12 @@
 int				accept(t_token *token, t_token_type type);
 int				expect(t_token *token, t_token_type type);
 int				accept_redirection(t_token *token);
-t_ast_node		*parse_command(t_token_list *tokens, t_input *input);
-t_ast_node		*parse_pipeline(t_token_list *tokens);
-t_ast_node		*parse_and_if(t_token_list *tokens);
-t_ast_node		*parse_or_if(t_token_list *tokens);
-t_ast_node		*parse_subshell(t_token_list *tokens, t_input *input);
-void			parse_input(t_ast_node **root, t_token_list *tokens, \
-					t_input *input);
+t_ast_node		*parse_command(t_token_list *tokens, t_input *input, size_t sub_count);
+t_ast_node		*parse_pipeline(t_token_list *tokens, size_t sub_count);
+t_ast_node		*parse_and_if(t_token_list *tokens, size_t sub_count);
+t_ast_node		*parse_or_if(t_token_list *tokens, size_t sub_count);
+t_ast_node		*parse_subshell(t_token_list *tokens, t_input *input, size_t *sub_count);
+void			parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t	*sub_count);
 void			parse_redirection_prefix(t_token_list *tokens, \
 					t_cmd_prefix *prefix);
 void			parse_redirection_suffix(t_token_list *tokens, \

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/19 02:22:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:34:09 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "sys/wait.h"
 #include "sys/stat.h"
 
-static int	ft_execute(char *path, char **str_arr, t_input *input);
 static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static int	is_directory(const char *path);
@@ -255,7 +254,6 @@ int	ft_executable(char **str_arr, t_input *input)
 			hashmap = hashmap_tochar(input->hashmap);
 			if (execve(str_arr[0], str_arr, hashmap))
 				exit(1);
-			exit(0);
 		}
 		waitpid(pid, &status, 0);
 		return (status);
@@ -292,7 +290,6 @@ int	ft_executable_no_env(char **str_arr, t_input *input)
 		{
 			if (execve(str_arr[0], str_arr, NULL))
 				exit(1);
-			exit(0);
 		}
 		waitpid(pid, &status, 0);
 		return (status);

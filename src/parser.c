@@ -6,20 +6,20 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 02:51:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:53:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include "parser.h"
 
-t_ast_node	*parse_command(t_token_list *tokens, t_input *input)
+t_ast_node	*parse_command(t_token_list *tokens, t_input *input, size_t sub_count)
 {
 	t_command_info	cmd;
 	t_data			data;
 
-	if (is_prev_subshell(tokens->first))
-		return (NULL);
+	// if (is_prev_subshell(tokens->first))
+	// 	return (NULL);
 	data.command.cmd.args = NULL;
 	data.command.cmd.assignments = NULL;
 	data.command.cmd.name_path = NULL;
@@ -35,7 +35,7 @@ t_ast_node	*parse_command(t_token_list *tokens, t_input *input)
 	// print_args(cmd.suffix.arglist);
 	convert_info_to_cmd(cmd, &data, input);
 	free_cmd_info(cmd);
-	return (new_node(data, COMMAND));
+	return (new_node(data, COMMAND, sub_count));
 }
 
 int	is_prev_subshell(t_token *token)
@@ -44,7 +44,7 @@ int	is_prev_subshell(t_token *token)
 		token->type == TOKEN_OR_IF || token->type == TOKEN_LPARENTHESIS);
 }
 
-t_ast_node	*parse_pipeline(t_token_list *tokens)
+t_ast_node	*parse_pipeline(t_token_list *tokens, size_t sub_count)
 {
 	t_data		data;
 
@@ -52,12 +52,12 @@ t_ast_node	*parse_pipeline(t_token_list *tokens)
 	if (tokens->first->type == TOKEN_PIPE)
 	{
 		consume_token(tokens);
-		return (new_node(data, PIPELINE));
+		return (new_node(data, PIPELINE, sub_count));
 	}
 	return (NULL);
 }
 
-t_ast_node	*parse_and_if(t_token_list *tokens)
+t_ast_node	*parse_and_if(t_token_list *tokens, size_t sub_count)
 {
 	t_data		data;
 
@@ -66,12 +66,12 @@ t_ast_node	*parse_and_if(t_token_list *tokens)
 	{
 		data.and_if.symbol = ft_strdup("&&");
 		consume_token(tokens);
-		return (new_node(data, AND_IF));
+		return (new_node(data, AND_IF, sub_count));
 	}
 	return (NULL);
 }
 
-t_ast_node	*parse_or_if(t_token_list *tokens)
+t_ast_node	*parse_or_if(t_token_list *tokens, size_t sub_count)
 {
 	t_data		data;
 
@@ -80,34 +80,68 @@ t_ast_node	*parse_or_if(t_token_list *tokens)
 	{
 		data.and_if.symbol = ft_strdup("||");
 		consume_token(tokens);
-		return (new_node(data, OR_IF));
+		return (new_node(data, OR_IF, sub_count));
 	}
 	return (NULL);
 }
 
-t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input)
+t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input, size_t *sub_count)
 {
-	t_ast_node	*root;
-
-	root = NULL;
-	if (accept(tokens->first, TOKEN_LPARENTHESIS))
+	while (accept(tokens->first, TOKEN_LPARENTHESIS) || accept(tokens->first, TOKEN_RPARENTHESIS))
 	{
+		if (accept(tokens->first, TOKEN_LPARENTHESIS))
+			(*sub_count)++;
+		else if (accept(tokens->first, TOKEN_RPARENTHESIS))
+			(*sub_count)--;
 		consume_token(tokens);
-		while (!accept(tokens->first, TOKEN_RPARENTHESIS))
-		{
-			ast_add(&root, parse_command(tokens, input));
-			ast_add(&root, parse_pipeline(tokens));
-			ast_add(&root, parse_and_if(tokens));
-			ast_add(&root, parse_or_if(tokens));
-			ast_add(&root, parse_subshell(tokens, input));
-		}
-		if (root)
-			root->is_subshell = 1;
-		consume_token(tokens);
-		return (root);
 	}
-	return (root);
+	return (NULL);
 }
+
+void	parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t	*sub_count)
+{
+	parse_subshell(tokens, input, sub_count);
+	ast_add(root, parse_command(tokens, input, *sub_count));
+	parse_subshell(tokens, input, sub_count);
+	ast_add(root, parse_pipeline(tokens, *sub_count));
+	parse_subshell(tokens, input, sub_count);
+	ast_add(root, parse_and_if(tokens, *sub_count));
+	parse_subshell(tokens, input, sub_count);
+	ast_add(root, parse_or_if(tokens, *sub_count));
+	parse_subshell(tokens, input, sub_count);
+	ast_add(root, parse_subshell(tokens, input, sub_count));
+}
+
+// t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input, int sub_count)
+// {
+// 	t_ast_node	*root;
+
+// 	root = NULL;
+// 	if (accept(tokens->first, TOKEN_LPARENTHESIS))
+// 	{
+// 		sub_count++;
+// 		consume_token(tokens);
+// 		while (!accept(tokens->first, TOKEN_RPARENTHESIS))
+// 		{
+// 			if (!accept(tokens->first, TOKEN_LPARENTHESIS))
+// 				printf("parentehese\n");
+// 			if (!accept(tokens->first, TOKEN_RPARENTHESIS))
+// 				printf("parentethese closed\n");
+// 			ast_add(&root, parse_command(tokens, input));
+// 			ast_add(&root, parse_pipeline(tokens));
+// 			ast_add(&root, parse_and_if(tokens));
+// 			ast_add(&root, parse_or_if(tokens));
+// 			ast_add(&root, parse_subshell(tokens, input, sub_count));
+// 			if (root)
+// 				root->is_subshell = sub_count;
+// 		}
+// 		// if (root)
+// 		// 	root->is_subshell = sub_count;
+// 		consume_token(tokens);
+// 		return (root);
+// 	}
+// 	return (root);
+// }
 
 void	parse_cmd_word(t_token_list	**tokens, t_command_info *data)
 {
@@ -272,15 +306,6 @@ void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
 			create_arg((tokens)->first, NORMAL));
 		consume_token(tokens);
 	}
-}
-
-void	parse_input(t_ast_node **root, t_token_list *tokens, t_input *input)
-{
-	ast_add(root, parse_command(tokens, input));
-	ast_add(root, parse_pipeline(tokens));
-	ast_add(root, parse_and_if(tokens));
-	ast_add(root, parse_or_if(tokens));
-	ast_add(root, parse_subshell(tokens, input));
 }
 
 void	convert_info_to_cmd(t_command_info info, t_data *data, t_input *input)

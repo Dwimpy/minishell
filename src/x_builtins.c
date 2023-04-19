@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/19 02:02:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:35:13 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -221,9 +221,9 @@ int	ft_exit(char **str_arr, t_input *input)
 	unsigned char	c;
 	size_t			i;
 	char			*trim;
+
 	i = 0;
 	c = 0;
-
 	trim = NULL;
 	if (str_arr[1] != NULL)
 	{
@@ -243,19 +243,18 @@ int	ft_exit(char **str_arr, t_input *input)
 				ft_putstr_fd(trim, 2);
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd("numeric argument required\n", 2);
-				exit((unsigned char) 255);
+				exit(255);
 			}
 		}
 		while (trim[i] != '\0')
 		{
-
 			if (!(ft_isdigit(trim[i++])))
 			{
 				ft_putstr_fd("minishell: exit: ", 2);
 				ft_putstr_fd(trim, 2);
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd("numeric argument required\n", 2);
-				exit((unsigned char) 255);
+				exit(255);
 			}
 		}
 		if (str_arr[2] != NULL)

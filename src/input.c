@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/18 18:38:33 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 22:41:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ static int	is_valid_string(t_input *input);
 
 int		parse_all_input(t_input *input)
 {
+	char	*prev;
+	char	*exx;
+	size_t	sub_count;
+
+	sub_count = 0;
 	if (input->tokens->first->type == TOKEN_QUOTE && \
 	input->tokens->num_tokens == 2 && \
 		!ft_strncmp(input->tokens->first->value.quote.value, "\"\"", 3))
@@ -29,7 +34,7 @@ int		parse_all_input(t_input *input)
 		return (1);
 	}
 	while (input->tokens->first->type != TOKEN_EOF)
-		parse_input(&input->root, input->tokens, input);
+		parse_input(&input->root, input->tokens, input, &sub_count);
 	return (0);
 }
 
