@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/19 01:26:05 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 02:22:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	{
 		status = -1;
 		i = 0;
+		if (!(char *)hashmap_get(input->hashmap, "PATH") || ((char *)hashmap_get(input->hashmap, "PATH"))[0] == '\0')
+			return (ft_executable(str_arr, input));
 		if (is_directory(str_arr[0]))
 		{
 			ft_putstr_fd("minishell: ", 2);
@@ -134,7 +136,6 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 		}
 		if (status == -1)
 		{
-
 			ft_putstr_fd("minishell: command not found: ", 2);
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd("\n", 2);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/19 01:49:05 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 02:02:34 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ int	check_valid_env_ident(char *str_arr, t_input *input, int *status)
 	j = 0;
 	while (copy[j])
 	{
-		if (ft_strchr("@%^-!&~.{}+", copy[j]))
+		if (ft_strchr("@%^*#-!&~.{}+", copy[j]))
 		{
 			if (copy[j] == '+' && copy[j + 1] == '=')
 			{

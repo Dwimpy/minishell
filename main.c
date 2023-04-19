@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/18 18:32:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 02:45:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	main(int argc, char **argv, char **envp)
 		if (parse_all_input(&input))
 			continue;
 
-		// // my part
+		// // // my part
 		fd = 0;
 		exit_code = ft_execute(&input, input.root, &fd);
 		if (exit_code >= 256)

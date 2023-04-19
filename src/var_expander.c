@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 16:51:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 01:00:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/19 02:31:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,10 +64,12 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 				entry = (char *)hashmap_get(input->hashmap, &arg->value[1]);
 			if (entry)
 				ft_strcat(new, entry);
-			else if (arg->expand_type == 0)
+			else if (arg->expand_type == 0 && !ft_strncmp(arg->value, "$", 2))
 				ft_strcat(new, "");
-			else if (arg->expand_type == 1)
+			else if (arg->expand_type == 1 && !ft_strncmp(arg->value, "$", 2))
 				ft_strcat(new, arg->value);
+			else
+				ft_strcat(new, "");
 		}
 		else if (arg->type == NON_EXPAND)
 		{
