@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 02:16:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 21:31:08 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "quote_list.h"
 #include "fsm.h"
 
-t_ast_node	*new_node(t_data data, t_node_type type, size_t count)
+t_ast_node	*new_node(t_data data, t_node_type type, size_t sub_count)
 {
 	t_ast_node	*new_node;
 
@@ -26,6 +26,7 @@ t_ast_node	*new_node(t_data data, t_node_type type, size_t count)
 	new_node->parent = NULL;
 	new_node->right = NULL;
 	new_node->left = NULL;
+	new_node->is_subshell = sub_count;
 	new_node->data = data;
 	return (new_node);
 }

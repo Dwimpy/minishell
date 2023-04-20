@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 16:25:44 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 21:37:22 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ int	ft_execute(char *path, char **str_arr, t_input *input)
 		}
 		else
 			waitpid(pid, &status, 0);
-		return (status);
+		return (WEXITSTATUS(status));
 	}
 	else
 		return(-1);
@@ -255,7 +255,7 @@ int	ft_executable(char **str_arr, t_input *input)
 				exit(1);
 		}
 		waitpid(pid, &status, 0);
-		return (status);
+		return (WEXITSTATUS(status));
 	}
 	else if (access(str_arr[0], F_OK) != 0)
 	{
@@ -299,7 +299,7 @@ int	ft_executable_no_env(char **str_arr, t_input *input)
 				exit(1);
 		}
 		waitpid(pid, &status, 0);
-		return (status);
+		return (WEXITSTATUS(status));
 	}
 	else if (access(str_arr[0], F_OK) != 0)
 	{

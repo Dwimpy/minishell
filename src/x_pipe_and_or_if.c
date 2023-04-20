@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:15:58 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 02:21:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 21:36:08 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	ft_pipe(t_input *input, t_ast_node *root, int *fd)
 		*fd = new_fd[0];
 		if (!root->parent || (root->parent && (root->parent->type != PIPELINE)))
 			waitpid(pid, &status, 0);
-		return (status);
+		return (WEXITSTATUS(status));
 	}
 }
 

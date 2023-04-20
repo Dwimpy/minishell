@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:11:41 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 02:21:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 21:29:39 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 			if (root->parent == NULL && root->left == NULL)
 			{
 				if (root->is_subshell == 0)
-					return (ft_command(root->data.command.cmd.args, input, root, 0));
+					return (ft_command(root->data.command.cmd.args, input, root, 1));
 				else
 					return (ft_subshell_no_tree(input, root));
 			}
@@ -88,6 +88,7 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 				if (root->is_subshell == subshell && root->left == NULL)
 				{
 				//	printf("%d\n", subshell);
+					// printf("%d\n", subshell);
 					if (root->parent->type == PIPELINE)
 						exit_code = ft_pipe(input, root, fd);
 					else
@@ -95,6 +96,8 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 				}
 				else if (root->is_subshell == subshell)
 				{
+					// printf("%d\n", subshell);
+					// printf("lol\n");
 					if (root->left->type == PIPELINE)
 						exit_code = ft_pipe(input, root, fd);
 					else if (root->left->type == AND_IF && exit_code == 0)
@@ -116,7 +119,7 @@ int	ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell)
 				exit(exit_code);
 			if (root->right->is_subshell != subshell)
 			{
-				if ((exit_code == 0 && root->type == AND_IF) || (exit_code != 0 && root->type == OR_IF))
+				if ((exit_code == 0 && root->type == AND_IF) || (exit_code != 0 && root->type == OR_IF) || root->type == PIPELINE)
 					exit_code = ft_add_subshell(input, root->right, fd, subshell + 1);
 				while (root->parent && root->parent->is_subshell > subshell)
 					root = root->parent;
@@ -168,13 +171,13 @@ int	ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell)
 	ptr = root;
 	while (ptr && ptr->is_subshell >= subshell)
 		ptr = ptr->parent;
-	if (root->is_subshell > subshell)
-	{
-		if (ptr->is_subshell <= subshell - 2)
-		{
-			return (1);
-		}
-	}
+	// if (root->is_subshell > subshell)
+	// {
+	// 	if (ptr->is_subshell <= subshell - 2)
+	// 	{
+	// 		return (1);
+	// 	}
+	// }
 
 	if (pipe(new_fd) == -1)
 		return (-1);
@@ -188,7 +191,11 @@ int	ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell)
 		
 		
 		if (ptr && ptr->type == PIPELINE)
+		{
+			// printf("pipe\n");
 			dup2(new_fd[1], STDOUT_FILENO);
+			// printf("pipe\n");
+		}
 		status = ft_execute_tree(input, root, fd, subshell);
 		close(new_fd[1]);
 		close(*fd);
@@ -200,6 +207,7 @@ int	ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell)
 		*fd = new_fd[0];
 		if (ptr == NULL || !(ptr->type == PIPELINE))
 			waitpid(pid, &status, 0);
+		//printf("status: %d\n", WEXITSTATUS(status));
 		return (WEXITSTATUS(status));
 	}
 }
