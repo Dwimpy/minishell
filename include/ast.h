@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 22:44:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 02:56:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,13 @@ typedef enum e_node_type
 
 typedef struct s_io_redirect
 {
+	int			fd_redir_out;
 	char		*filename;
 }				t_io_redirect;
 
 typedef struct s_cmd_prefix
 {
+	int					fd_redir_out;
 	t_io_redirect		input;
 	t_io_redirect		output;
 	t_arglist			*assignments;
@@ -47,6 +49,7 @@ typedef struct s_cmd_prefix
 
 typedef struct s_cmd_suffix
 {
+	int				fd_redir_out;
 	t_io_redirect	input;
 	t_io_redirect	output;
 	t_arglist		*arglist;

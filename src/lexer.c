@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/14 14:25:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 03:32:57 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,9 @@ t_token	*create_next_token(t_lexer *lexer)
 	
 	while (match_whitespace(get_next_char_tok(lexer)))
 		;
+	if ((lexer->tok_ch == '1' || lexer->tok_ch == '2' || lexer->tok_ch == '0') && \
+		look_ahead_tok(lexer) == '>')
+		get_next_char_tok(lexer);
 	// if (lexer->tok_ch == '\0')
 	// 	return (new_token(TOKEN_EOF, NULL));
 	if (match_word(lexer->tok_ch))

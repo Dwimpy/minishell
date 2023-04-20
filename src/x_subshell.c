@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:20:28 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/19 21:46:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 02:22:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int ft_subshell_no_tree(t_input *input, t_ast_node *root)
 	{
 		if (root->is_subshell > 1)
 			exit(1);
-		status = ft_command(root->data.command.cmd.args, input, root);
+		status = ft_command(root->data.command.cmd.args, input, root, 0);
 		exit(status);
 	}
 	else

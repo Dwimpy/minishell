@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/19 22:34:00 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 01:59:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,8 @@ int	main(int argc, char **argv, char **envp)
 
 	//ft_signals(&sa);
 	//input.root->is_subshell_start = 0;
-	// printf("%s\n", getlogin());
-	// stat(getcwd(path, sizeof(path)), &statbuf);
-	// pwd = getpwuid(statbuf.st_uid);
-	// printf("%s\n", pwd->pw_name);
 
 	init_input(&input, envp);
-	// printf("%s\n", hashmap_get(input.special_sym, "TILDE"));
 	while (1)
 	{
 		if (gen_input(&input))
@@ -49,7 +44,7 @@ int	main(int argc, char **argv, char **envp)
 		if (parse_all_input(&input))
 			continue;
 
-		// // // my part
+		// // my part
 		fd = 0;
 		exit_code = ft_execution(&input, input.root, &fd);
 		if (exit_code >= 256)

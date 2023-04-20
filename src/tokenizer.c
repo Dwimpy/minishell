@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/18 18:32:32 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 01:36:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	gen_input(t_input *input)
 	// 	return (1);
 	// }
 	if (fsm.state == COMPLETE)
-		add_token(input->tokens, new_token(TOKEN_EOF, NULL));
+		add_token(input->tokens, new_token(TOKEN_EOF, NULL, EMPTY));
 	// print_tokens(input->tokens);
 	return (0);
 }

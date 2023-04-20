@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 00:25:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 03:31:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,14 @@ typedef enum e_token_type
 	TOKEN_EOF = 17,
 	TOKEN_END_OF_FILE = 18
 }						t_token_type;
+
+typedef enum e_redir_type
+{
+	STD_IN,
+	STD_OUT,
+	STD_ERR,
+	EMPTY
+}				t_redir_type;
 
 typedef struct s_token_word
 {
@@ -85,7 +93,8 @@ typedef struct s_token_less
 
 typedef struct s_token_great
 {
-	char			c;
+	char			*symbol;
+	t_redir_type	from;
 }				t_token_great;
 
 typedef struct s_token_dless
@@ -96,6 +105,7 @@ typedef struct s_token_dless
 typedef struct s_token_dgreat
 {
 	char			*value;
+	t_redir_type	from;
 }				t_token_dgreat;
 
 typedef struct s_token_lbrace
@@ -155,7 +165,7 @@ typedef struct s_token
 	t_token				*next;
 }						t_token;
 
-t_token		*new_token(t_token_type type, char *value);
+t_token		*new_token(t_token_type type, char *value, t_redir_type redir_type);
 int			is_token_lparen(t_token *token);
 int			is_token_rparen(t_token *token);
 int			is_token_pipe(t_token *token);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 22:53:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 03:39:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,6 +178,7 @@ t_cmd_prefix	parse_prefix(t_token_list **tokens)
 	prefix.input.filename = NULL;
 	prefix.output.filename = NULL;
 	prefix.assignments = NULL;
+	prefix.fd_redir_out = 3;
 	while (is_prefix((*tokens)->first))
 	{
 		parse_redirection_prefix(*tokens, &prefix);
@@ -193,6 +194,7 @@ t_cmd_suffix	parse_suffix(t_token_list **tokens)
 	suffix.input.filename = NULL;
 	suffix.output.filename = NULL;
 	suffix.arglist = NULL;
+	suffix.fd_redir_out = 3;
 	while (is_cmd_suffix((*tokens)->first))
 	{
 		parse_redirection_suffix(*tokens, &suffix);
@@ -236,6 +238,18 @@ void	parse_redirection_prefix(t_token_list *tokens, \
 		}
 		else if (is_output_redir((tokens)->first))
 		{
+			if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_IN)
+				prefix->fd_redir_out = 0;
+			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_IN)
+				prefix->fd_redir_out = 0;
+			else if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_OUT)
+				prefix->fd_redir_out = 1;
+			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_OUT)
+				prefix->fd_redir_out = 1;
+			else if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_ERR)
+				prefix->fd_redir_out = 2;
+			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_ERR)
+				prefix->fd_redir_out = 2;
 			consume_token(tokens);
 			create_and_free((tokens)->first, &prefix->output.filename, OUTPUT);
 			consume_token(tokens);
@@ -255,6 +269,18 @@ void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix)
 		}
 		else if (is_output_redir((tokens)->first))
 		{
+			if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_IN)
+				suffix->fd_redir_out = 0;
+			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_IN)
+				suffix->fd_redir_out = 0;
+			else if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_OUT)
+				suffix->fd_redir_out = 1;
+			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_OUT)
+				suffix->fd_redir_out = 1;
+			else if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_ERR)
+				suffix->fd_redir_out = 2;
+			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_ERR)
+				suffix->fd_redir_out = 2;
 			consume_token(tokens);
 			create_and_free((tokens)->first, &suffix->output.filename, OUTPUT);
 			consume_token(tokens);
@@ -322,6 +348,8 @@ t_io_redirect	get_input_file(t_command_info info)
 {
 	t_io_redirect	input;
 	char			*trim;
+
+	input.fd_redir_out = 0;
 	if (info.suffix.input.filename)
 		input.filename = ft_strdup(info.suffix.input.filename);
 	else if (info.prefix.input.filename)
@@ -336,11 +364,19 @@ t_io_redirect	get_output_file(t_command_info info)
 	t_io_redirect	output;
 
 	if (info.suffix.output.filename)
+	{
 		output.filename = ft_strdup(info.suffix.output.filename);
+		output.fd_redir_out = info.suffix.fd_redir_out;
+	}
 	else if (info.prefix.output.filename)
+	{
 		output.filename = ft_strdup(info.prefix.output.filename);
+		output.fd_redir_out = info.prefix.fd_redir_out;
+	}
 	else
+	{
 		output.filename = NULL;
+	}
 	return (output);
 }
 

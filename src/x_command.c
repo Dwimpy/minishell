@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/19 22:34:09 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 03:41:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 static int	is_directory(const char *path);
 
-int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
+int	ft_command(char **str_arr, t_input *input, t_ast_node *root, pid_t pid)
 {
 	
 	char	*ptr;
@@ -61,7 +61,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	else if (!(ft_memcmp("pwd", str_arr[0], 4)))
 		status = ft_pwd(str_arr);
 	else if (!(ft_memcmp("exit", str_arr[0], 5)))
-		status = ft_exit(str_arr, input);
+		status = ft_exit(str_arr, input, pid);
 	else if (!(ft_memcmp("env", str_arr[0], 4)))
 		status = ft_env(str_arr, input);
 	else if (!(ft_memcmp("echo", str_arr[0], 5)))
@@ -77,8 +77,8 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 		status = -1;
 		i = 0;
 		if (!(char *)hashmap_get(input->hashmap, "PATH") || ((char *)hashmap_get(input->hashmap, "PATH"))[0] == '\0')
-			return (ft_executable(str_arr, input));
-		if (is_directory(str_arr[0]))
+			status = ft_executable(str_arr, input);
+		else if (is_directory(str_arr[0]))
 		{
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(str_arr[0], 2);
@@ -101,7 +101,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 				return (status);
 			}
 			else if (str_arr[0][0] == '/')
-				return (126);
+				status = 126;
 		}
 		else if (str_arr[0][0] == '/' && access(str_arr[0], F_OK) != 0)
 		{
@@ -109,7 +109,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd(": No such file or directory", 2);
 			ft_putstr_fd("\n", 2);
-			return (127);
+			status = 127;
 		}
 		else if (access(str_arr[0], F_OK) == 0)
 		{
@@ -138,7 +138,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 			ft_putstr_fd("minishell: command not found: ", 2);
 			ft_putstr_fd(str_arr[0], 2);
 			ft_putstr_fd("\n", 2);
-			return (127);
+			status = 127;
 		}
 	}
 	ft_redirect_back(root, &stdin_cp, &stdout_cp);
@@ -220,7 +220,6 @@ int	ft_execute(char *path, char **str_arr, t_input *input)
 			hashmap = hashmap_tochar(input->hashmap);
 			if (execve(path, str_arr, hashmap))
 				exit(1);
-			exit(0);
 		}
 		else
 			waitpid(pid, &status, 0);
@@ -281,7 +280,15 @@ int	ft_executable_no_env(char **str_arr, t_input *input)
 	int		status;
 	char 	**hashmap;
 
-	if (access(str_arr[0], F_OK) == 0)
+	if (is_directory(str_arr[0]))
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(str_arr[0], 2);
+		ft_putstr_fd(": is a directory", 2);
+		ft_putstr_fd("\n", 2);
+		status = 126;
+	}
+	else if (access(str_arr[0], F_OK) == 0 && access(str_arr[0], X_OK) == 0)
 	{
 		pid = fork();
 		if (pid == -1)
@@ -294,10 +301,19 @@ int	ft_executable_no_env(char **str_arr, t_input *input)
 		waitpid(pid, &status, 0);
 		return (status);
 	}
-	else
+	else if (access(str_arr[0], F_OK) != 0)
 	{
-		printf("no such file or directory: %s\n", str_arr[0]);
-		return (1);
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(str_arr[0], 2);
+		ft_putendl_fd(": No such file or directory", 2);
+		status = 127;
 	}
+	else if (access(str_arr[0], X_OK) != 0)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(str_arr[0], 2);
+		ft_putendl_fd(": Permission denied", 2);
+		status = 126;
+	}
+	return (status);
 }
-

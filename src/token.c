@@ -6,15 +6,15 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 21:58:46 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 03:32:24 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token.h"
 
-t_token_value	get_value(t_token_type type, char *value);
+t_token_value	get_value(t_token_type type, char *value, t_redir_type redir_type);
 
-t_token	*new_token(t_token_type type, char *value)
+t_token	*new_token(t_token_type type, char *value, t_redir_type redir_type)
 {
 	t_token			*token;
 
@@ -22,12 +22,12 @@ t_token	*new_token(t_token_type type, char *value)
 	if (!token)
 		return (NULL);
 	token->type = type;
-	token->value = get_value(type, value);
+	token->value = get_value(type, value, redir_type);
 	token->next = NULL;
 	return (token);
 }
 
-t_token_value	get_value(t_token_type type, char *value)
+t_token_value	get_value(t_token_type type, char *value, t_redir_type redir_type)
 {
 	if (type == TOKEN_WORD)
 		return ((t_token_value){.word.value = ft_strdup(value)});
@@ -46,11 +46,29 @@ t_token_value	get_value(t_token_type type, char *value)
 	if (type == TOKEN_LESS)
 		return ((t_token_value){.less.c = '<'});
 	if (type == TOKEN_GREAT)
-		return ((t_token_value){.great.c = '>'});
+	{
+		if (redir_type == EMPTY)
+			return ((t_token_value){.great.symbol = ft_strdup(">"), .great.from = redir_type});
+		else if (redir_type == STD_IN)
+			return ((t_token_value){.great.symbol = ft_strdup("0>"), .great.from = redir_type});
+		else if (redir_type == STD_OUT)
+			return ((t_token_value){.great.symbol = ft_strdup("1>"), .great.from = redir_type});
+		else if (redir_type == STD_ERR)
+			return ((t_token_value){.great.symbol = ft_strdup("2>"), .great.from = redir_type});
+	}
 	if (type == TOKEN_DLESS)
 		return ((t_token_value){.dless.value = ft_strdup("<<")});
 	if (type == TOKEN_DGREAT)
-		return ((t_token_value){.dgreat.value = ft_strdup(">>")});
+	{
+		if (redir_type == EMPTY)
+			return ((t_token_value){.dgreat.value = ft_strdup(">>"), .dgreat.from = redir_type});
+		if (redir_type == STD_IN)
+			return ((t_token_value){.dgreat.value = ft_strdup("0>>"), .dgreat.from = redir_type});
+		else if (redir_type == STD_OUT)
+			return ((t_token_value){.dgreat.value = ft_strdup("1>>"), .dgreat.from = redir_type});
+		else if (redir_type == STD_ERR)
+			return ((t_token_value){.dgreat.value = ft_strdup("2>>"), .dgreat.from = redir_type});
+	}
 	if (type == TOKEN_LPARENTHESIS)
 		return ((t_token_value){.lparanthesis.c = '('});
 	if (type == TOKEN_RPARENTHESIS)
@@ -81,7 +99,7 @@ void	print_token_value(t_token *token)
 	if (token->type == TOKEN_LESS)
 		printf("\t[ %c ] (LESS)\n", token->value.less.c);
 	if (token->type == TOKEN_GREAT)
-		printf("\t[ %c ] (GREAT)\n", token->value.great.c);
+		printf("\t[ %s ] (GREAT)\n", token->value.great.symbol);
 	if (token->type == TOKEN_DLESS)
 		printf("\t[ %s ] (DLESS)\n", token->value.dless.value);
 	if (token->type == TOKEN_DGREAT)
@@ -117,6 +135,8 @@ void	free_token(t_token *token)
 		free(token->value.dless.value);
 	if (token->type == TOKEN_DGREAT)
 		free(token->value.dgreat.value);
+	if (token->type == TOKEN_GREAT)
+		free(token->value.great.symbol);
 	if (token->type == TOKEN_EOF)
 		free(token->value.dgreat.value);
 	free(token);
