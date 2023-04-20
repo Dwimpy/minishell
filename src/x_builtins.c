@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 03:17:20 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/20 20:49:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,16 +56,36 @@ int	ft_unset(char **str_arr, t_input *input)
 	size_t	i;
 	size_t	j;
 	void	*str;
+	int		status;
 
 	i = 1;
+	status = 0;
 	while (str_arr[i] != NULL)
 	{
-		j = 0;
-		while (str_arr[i][j] != '\0' && (ft_isalnum(str_arr[i][j]) || str_arr[i][j] == '_'))
-			j++;
+		if (ft_strchr(str_arr[i], '='))
+		{
+			ft_putstr_fd("minishell: export: `", 2);
+			ft_putstr_fd(str_arr[i], 2);
+			ft_putendl_fd("': not a valid identifier", 2);
+			i++;
+			status = 1;
+			continue ;
+		}
+		else if (str_arr[i][0] =='\0' || ft_strchr(str_arr[i], '?') || ft_strchr(str_arr[i], '$') || \
+		ft_strchr(str_arr[i], '.') || ft_strchr(str_arr[i], '{') || ft_strchr(str_arr[i], '}') || \
+		ft_strchr(str_arr[i], '^') || ft_strchr(str_arr[i], '!') || ft_strchr(str_arr[i], '~') || \
+		ft_strchr(str_arr[i], ';') || ft_strchr(str_arr[i], '-') || ft_strchr(str_arr[i], '+'))
+		{
+			ft_putstr_fd("minishell: export: `", 2);
+			ft_putstr_fd(str_arr[i], 2);
+			ft_putendl_fd("': not a valid identifier", 2);
+			i++;
+			status = 1;
+			continue ;
+		}
 		hashmap_remove(input->hashmap, str_arr[i++]);
 	}
-	return (0);
+	return (status);
 }
 
 int	ft_export(char **str_arr, t_input *input)
