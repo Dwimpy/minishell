@@ -6,16 +6,17 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 14:47:09 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 15:04:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include <sys/wait.h>
-#define CTEAL "\033[0;96m"
-#define CTEALBOLD "\033[0;96;1m"
-#define RESET   "\033\e[0;39;m"
+#define CTEAL "\033[0;93m"
+#define CTEALBOLD "\033[1;91m"
+#define RESET   "\033\e[0m"
 #define PROMPT "\033[0;91;1m > "
+
 int	gen_input(t_input *input)
 {
 	t_fsm	fsm;
@@ -540,9 +541,11 @@ char	*read_from_stdin(t_input *input)
 	}
 	else
 	{
-		new = ft_calloc(ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 25, sizeof(char));
+		new = ft_calloc(ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + ft_strlen(&prompt[1]) + 2, sizeof(char));
+		ft_strcat(new, CTEAL);
+		ft_strcat(new, "/");
 		ft_strcat(new, CTEALBOLD);
-		ft_strcat(new, prompt);
+		ft_strcat(new, &prompt[1]);
 		ft_strcat(new, PROMPT);
 		ft_strcat(new, RESET);
 		line = readline(new);
