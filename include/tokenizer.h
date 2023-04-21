@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 01:08:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 13:17:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
 int		readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
 int		readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm);
 char	*get_prompt_dir(void);
-char	*read_from_stdin(void);
+char	*read_from_stdin(t_input *input);
 void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm);
 void	print_syntax_error(int unexpected);
 #endif

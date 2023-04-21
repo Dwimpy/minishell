@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 21:37:22 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 13:05:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,10 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root, pid_t pid)
 		new = ft_strcat(new, &root->data.command.cmd.args[0][1]);
 		free(root->data.command.cmd.args[0]);
 		str_arr[0] = new;
-		if (is_directory(str_arr[0]))
+		if (is_directory(new))
 		{
 			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(str_arr[0], 2);
+			ft_putstr_fd(new, 2);
 			ft_putstr_fd(": is a directory", 2);
 			ft_putstr_fd("\n", 2);
 			return (126);

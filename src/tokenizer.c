@@ -6,14 +6,16 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 01:36:45 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 14:47:09 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include <sys/wait.h>
-
-
+#define CTEAL "\033[0;96m"
+#define CTEALBOLD "\033[0;96;1m"
+#define RESET   "\033\e[0;39;m"
+#define PROMPT "\033[0;91;1m > "
 int	gen_input(t_input *input)
 {
 	t_fsm	fsm;
@@ -29,7 +31,7 @@ int	gen_input(t_input *input)
 	fsm.in_subshell = 0;
 	fsm.paren = 0;
 	i = 0;
-	input->lexer.input = read_from_stdin();
+	input->lexer.input = read_from_stdin(input);
 	if (!input->lexer.input)
 		exit(ft_atoi((char *)hashmap_get(input->special_sym, "EXITSTATUS")));
 	input->lexer.input_len = ft_strlen(input->lexer.input);
@@ -495,20 +497,57 @@ char	*get_prompt_dir(void)
 
 	if (getcwd(path, sizeof(path)))
 	{
-		ft_strcat(path, ">$ ");
 		return (ft_strdup(path));
 	}
 	else
-		return (ft_strdup(">$ "));
+		return (ft_strdup(""));
 }
 
-char	*read_from_stdin(void)
+char	*read_from_stdin(t_input *input)
 {
 	char	*prompt;
 	char	*line;
+	char	*user;
+	char	*new;
+	size_t	len_user;
 
 	prompt = get_prompt_dir();
-	line = readline(prompt);
+	user =	(char *)hashmap_get(input->special_sym, "TILDE");
+	if (user && !ft_strncmp(prompt, user, ft_strlen(user)))
+	{
+		len_user = ft_strlen(user);
+		if (len_user == ft_strlen(prompt))
+		{
+			new = ft_calloc(ft_strlen(CTEALBOLD) + ft_strlen(RESET) + ft_strlen(PROMPT) + 4, sizeof(char));
+			ft_strcat(new, CTEALBOLD);
+			ft_strcat(new, "~ ");
+			ft_strcat(new, PROMPT);
+			ft_strcat(new, RESET);
+		}
+		else
+		{
+			new = ft_calloc(len_user + ft_strlen(&prompt[len_user]) + ft_strlen(CTEALBOLD) + ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 1, sizeof(char));
+			ft_strcat(new, CTEAL);
+			ft_strcat(new, "~");
+			ft_strncat(new, &prompt[len_user], ft_strrchr(prompt, '/') - &prompt[len_user] + 1);
+			ft_strcat(new, CTEALBOLD);
+			ft_strcat(new, ft_strrchr(prompt, '/') + 1);
+			ft_strcat(new, PROMPT);
+			ft_strcat(new, RESET);
+		}
+		line = readline(new);
+		free(new);
+	}
+	else
+	{
+		new = ft_calloc(ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 25, sizeof(char));
+		ft_strcat(new, CTEALBOLD);
+		ft_strcat(new, prompt);
+		ft_strcat(new, PROMPT);
+		ft_strcat(new, RESET);
+		line = readline(new);
+		free(new);
+	}
 	free(prompt);
 	return (line);
 }

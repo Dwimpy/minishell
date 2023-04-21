@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 22:24:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 14:54:30 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,7 +343,7 @@ int	ft_cd(char **str_arr, t_input *input)
 		{
 			if (chdir(str) == -1)
 			{
-				ft_putstr_fd("cd: " ,2);
+				ft_putstr_fd("cd: ", 2);
 				ft_putstr_fd(strerror(errno), 2);
 				ft_putstr_fd(": ", 2);
 				ft_putstr_fd(str, 2);
@@ -386,6 +386,7 @@ int	ft_cd(char **str_arr, t_input *input)
 		{
 			ft_putstr_fd("minishell: cd: ", 2);
 			ft_putstr_fd(str_arr[1], 2);
+
 			ft_putendl_fd(" Not a directory", 2);
 			return (1);
 		}
