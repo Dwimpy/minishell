@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 03:11:11 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 18:12:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 
 # define INPUT 0
 # define OUTPUT 1
+# define HERE_DOC 2
 
 
 int				accept(t_token *token, t_token_type type);
@@ -31,19 +32,19 @@ t_ast_node		*parse_or_if(t_token_list *tokens, size_t sub_count);
 t_ast_node		*parse_subshell(t_token_list *tokens, t_input *input, size_t *sub_count);
 void			parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t	*sub_count);
 void			parse_redirection_prefix(t_token_list *tokens, \
-					t_cmd_prefix *prefix);
+					t_cmd_prefix *prefix, t_input *input);
 void			parse_redirection_suffix(t_token_list *tokens, \
-					t_cmd_suffix *suffix);
+					t_cmd_suffix *suffix, t_input *input);
 void			parse_suffix_words(t_token_list *tokens, t_cmd_suffix *suffix);
 void			parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix);
 void			parse_cmd_word(t_token_list	**tokens, t_command_info *data);
-t_cmd_prefix	parse_prefix(t_token_list **tokens);
-t_cmd_suffix	parse_suffix(t_token_list **tokens);
+t_cmd_prefix	parse_prefix(t_token_list **tokens, t_input *input);
+t_cmd_suffix	parse_suffix(t_token_list **tokens, t_input *input);
 int				is_input_redir(t_token *token);
 int				is_output_redir(t_token *token);
 int				is_assign_word(t_token *token);
 int				is_cmd_word(t_token *token);
-void			create_and_free(t_token *token, char **filename, int io);
+void			create_and_free(t_token *token, char **filename, int io, t_input *input);
 int				is_pipe(t_token *token);
 int				is_logical_op(t_token *token);
 int				is_prev_subshell(t_token *token);

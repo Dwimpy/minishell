@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/21 00:40:59 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 19:53:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int				ft_executable(char **str_arr, t_input *input);
 int				ft_executable_no_env(char **str_arr, t_input *input);
 char			*get_env_vars(t_arglist *list, t_input *input);
 t_arglist		*expand_vars(char	*value);
+t_arglist		*expand_vars_heredoc(char	*value);
 void			expand_env_vars(char **args, t_input *input);
 int				ft_execute(char *path, char **str_arr, t_input *input);
 int				ft_execution(t_input *input, t_ast_node *root, int *fd);

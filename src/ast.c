@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 21:31:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 20:00:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,6 +280,165 @@ t_arglist	*expand_vars(char	*value)
 				else if (quote->value[i] == '\"')
 				{
 					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
+					fsm.input_state = REGULAR;
+					start = i + 1;
+				}
+				else if (!ft_isalnum(quote->value[i]))
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, NON_EXPAND));
+					start = i + 1;
+				}
+			}
+			else if (fsm.input_state == REGULAR)
+			{
+				if (quote->value[i] == '$')
+				{
+					if (start < i)
+						new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
+					fsm.expand_var = IN_EXPAND_VAR;
+					start = i;
+				}
+				else if (quote->value[i] == '\'')
+					fsm.input_state = IN_SQUOTE;
+				else if (quote->value[i] == '\"')
+					fsm.input_state = IN_DQUOTE;
+				else if (!ft_isalnum(quote->value[i]))
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, NON_EXPAND));
+					start = i + 1;
+				}
+				else if (quote->value[i + 1] == '\0')
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, NON_EXPAND));
+					start = i + 1;
+				}
+			}		
+			i++;
+		}
+		quote = quote->next;
+	}
+	// print_quotelist(quotelist);
+	// print_args(arglist);
+	free_quotelist(quotelist);
+	return (arglist);
+}
+
+t_arglist	*expand_vars_heredoc(char *value)
+{
+	t_quotelist	*quotelist;
+	t_quote		*quote;
+	t_arglist	*arglist;
+	t_fsm		fsm;
+	int			i;
+	int			start;
+
+	if (!value)
+		return (NULL);
+	quotelist = create_list(value);
+	arglist = new_arglist();
+	quote = quotelist->first;
+	fsm.input_state = N_INPUT;
+	fsm.expand_var = NOT_IN_EXPAND_VAR;
+	while (quote)
+	{
+		fsm.input_state = N_INPUT;
+		i = 0;
+		start = 0;
+		while (fsm.input_state != INPUT_COMPLETE)
+		{
+			if (quote->value[i] == '\0')
+			{
+				if (start < i)
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, NON_EXPAND));
+				fsm.input_state = INPUT_COMPLETE;
+			}
+			if (fsm.input_state == N_INPUT)
+			{
+				if (quote->value[i] == '\'')
+				{
+					fsm.input_state = IN_SQUOTE;
+					i++;
+				}
+				else if (quote->value[i] == '"')
+				{
+					fsm.input_state = IN_DQUOTE;
+					i++;
+				}
+				else
+				{
+					fsm.input_state = REGULAR;
+				}
+				start = i;
+			}
+			if (quote->value[i] == '\\' && fsm.input_state != IN_SQUOTE && fsm.input_state != IN_DQUOTE)
+			{
+				if (start < i)
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, NON_EXPAND));
+				new_argument(arglist, create_expand_arg(&quote->value[i + 1], 0, 1, ESCAPED));
+				i += 1;
+				start = i + 1;
+			}
+			else if (fsm.expand_var == IN_EXPAND_VAR)
+			{
+				if (quote->value[i] == '$')
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
+					if (fsm.input_state == REGULAR)
+						arglist->last->expand_type = 0;
+					else if (fsm.input_state == IN_DQUOTE)
+						arglist->last->expand_type = 1;
+					fsm.expand_var = NOT_IN_EXPAND_VAR;
+					start = i;
+					i--;
+				}
+				else if (fsm.input_state == REGULAR && quote->value[i] == '\'')
+				{
+					fsm.expand_var = NOT_IN_EXPAND_VAR;
+					fsm.input_state = IN_SQUOTE;
+					start = i + 1;
+				}
+				else if (!ft_isalnum(quote->value[i]) && quote->value[i] != '?' && quote->value[i] != '_')
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, EXPAND));
+					if (fsm.input_state == REGULAR)
+						arglist->last->expand_type = 0;
+					else if (fsm.input_state == IN_DQUOTE)
+						arglist->last->expand_type = 1;
+					fsm.expand_var = NOT_IN_EXPAND_VAR;
+					start = i;
+				}
+				else if (quote->value[i + 1] == '\0')
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start + 1, EXPAND));
+					if (fsm.input_state == REGULAR)
+						arglist->last->expand_type = 0;
+					else if (fsm.input_state == IN_DQUOTE)
+						arglist->last->expand_type = 1;
+					fsm.expand_var = NOT_IN_EXPAND_VAR;
+					start = i + 1;
+				}
+			}
+			else if (fsm.input_state == IN_SQUOTE)
+			{
+				if (quote->value[i] == '\'')
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start - 1], 0, i - start + 1, NON_EXPAND));
+					fsm.input_state = REGULAR;
+					start = i + 1;
+				}
+			}
+			else if (fsm.input_state == IN_DQUOTE)
+			{
+				if (quote->value[i] == '$')
+				{
+					if (start < i)
+						new_argument(arglist, create_expand_arg(&quote->value[start], 0, i - start, NON_EXPAND));
+					fsm.expand_var = IN_EXPAND_VAR;
+					start = i;
+				}
+				else if (quote->value[i] == '\"')
+				{
+					new_argument(arglist, create_expand_arg(&quote->value[start - 1], 0, i - start + 1, NON_EXPAND));
 					fsm.input_state = REGULAR;
 					start = i + 1;
 				}

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/21 14:54:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 20:08:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,6 +251,7 @@ int	ft_echo(char **str_arr, int fd)
 	}
 	if (!n_flag)
 		write(fd, "\n", 1);
+	rl_on_new_line();
 	return (0);
 }
 
@@ -330,10 +331,11 @@ int	ft_cd(char **str_arr, t_input *input)
 	char	*old;
 	char	*curr_pwd;
 
+	str = NULL;
 	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 2)))
 	{
 		str = (char *)hashmap_get(input->hashmap, "HOME");
-		if (!str)
+		if (!str || str[0] == '\0')
 		{
 			str = getcwd(NULL, 0);
 		}

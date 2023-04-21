@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 13:17:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 17:09:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "lexer.h"
 # include "fsm.h"
+# include "x_execution.h"
 
 int		gen_input(t_input *input);
 void	tokenize(t_input *input, t_fsm *fsm);

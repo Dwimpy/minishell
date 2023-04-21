@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 15:50:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 16:14:07 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,12 @@ typedef enum e_cmd_p_substates
 	TOK_CMD_SUFFIX_REDIR
 }				t_cmd_p_substates;
 
+typedef enum e_redir_states
+{
+	HEREDOC,
+	OTHER,
+}				t_redir_states;
+
 typedef enum e_expand_state
 {
 	NOT_IN_EXPAND_VAR,
@@ -77,6 +83,7 @@ typedef struct s_fsm
 	t_cmd_substate			cmd_state;
 	t_cmd_p_substates		cmd_p_substate;
 	t_expand_state			expand_var;
+	t_redir_states			redir_state;
 }					t_fsm;
 
 #endif

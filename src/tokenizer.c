@@ -6,12 +6,13 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 15:04:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 22:35:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include <sys/wait.h>
+
 #define CTEAL "\033[0;93m"
 #define CTEALBOLD "\033[1;91m"
 #define RESET   "\033\e[0m"
@@ -34,7 +35,10 @@ int	gen_input(t_input *input)
 	i = 0;
 	input->lexer.input = read_from_stdin(input);
 	if (!input->lexer.input)
+	{
+		rl_on_new_line();
 		exit(ft_atoi((char *)hashmap_get(input->special_sym, "EXITSTATUS")));
+	}
 	input->lexer.input_len = ft_strlen(input->lexer.input);
 	while (input->lexer.input && input->lexer.input[i] == ' ' || \
 		input->lexer.input[i] == '\t')
@@ -58,6 +62,7 @@ int	gen_input(t_input *input)
 			free(input->lexer.input);
 			free_token_list(input->tokens);
 			free(hashmap_put(input->special_sym, "EXITSTATUS", ft_strdup("2")));
+			free_heredoc_list(input->heredoc_files);
 			return (1);
 	}
 	// if (!ft_strncmp(input->tokens->first->value.word.value, "../", 4) &&
@@ -81,6 +86,7 @@ int	gen_input(t_input *input)
 	if (fsm.state == COMPLETE)
 		add_token(input->tokens, new_token(TOKEN_EOF, NULL, EMPTY));
 	// print_tokens(input->tokens);
+	add_history(input->lexer.input);
 	return (0);
 }
 
@@ -150,6 +156,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->tok_state = TOK_CMD;
 					fsm->cmd_state = TOK_CMD_PREFIX;
 					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
+					fsm->redir_state = OTHER;
 				}
 				else if (is_token_lparen(token))
 					fsm->tok_state = TOK_LPARENTHESIS;
@@ -169,17 +176,88 @@ void	tokenize(t_input *input, t_fsm *fsm)
 			{
 				if (is_token_redir(token) && \
 					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
+				{
 					fsm->cmd_p_substate = TOK_CMD_PREFIX_REDIR;
+					if (token->type == TOKEN_DLESS)
+					{
+						fsm->redir_state = HEREDOC;
+					}
+					else
+						fsm->redir_state = OTHER;
+				}
 				else if (fsm->cmd_p_substate == TOK_CMD_PREFIX_REDIR)
 				{
-					if (!is_token_word_literal(token))
+					if (fsm->redir_state == OTHER)
 					{
-					// printf("ERROR IN STATE %d\n", fsm->tok_state);
-					// printf("ERROR IN P_STATE %d\n", fsm->cmd_p_substate);
-						fsm->state = ERROR;
-						input->unexpected = token->type;
+						if (!is_token_word_literal(token))
+						{
+							fsm->state = ERROR;
+							input->unexpected = token->type;
+						}
+					}
+					else if (fsm->redir_state == HEREDOC)
+					{
+						char	*line;
+						char	*filename;
+						int		fd;
+						char	*expanded;
+
+						line = NULL;
+						if (!is_token_word_literal(token))
+						{
+							fsm->state = ERROR;
+							input->unexpected = token->type;
+						}
+						if (token->type == TOKEN_WORD)
+							filename = get_env_vars(expand_vars(token->value.word.value), input);
+						else if (token->type == TOKEN_QUOTE)
+							filename = get_env_vars(expand_vars(token->value.quote.value), input);
+						fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+						if (fd > 0)
+						{
+							new_argument(input->heredoc_files, create_heredoc_file(filename));
+							while(1)
+							{
+								char	*str;
+
+								line = readline("heredoc> ");
+								if (!line)
+									break ;
+								if (token->type == TOKEN_WORD)
+								{
+									// printf("%s\n", str);
+									if (!ft_strncmp(line, token->value.word.value, ft_strlen(token->value.word.value)))
+									{
+										free(line);
+										break ;
+									}
+									expanded = get_env_vars(expand_vars(line), input);
+									ft_putstr_fd(expanded, fd);
+									ft_putstr_fd("\n", fd);
+									free(line);
+									free(expanded);
+								}
+								else if (token->type == TOKEN_QUOTE)
+								{
+									str = get_env_vars(expand_vars(token->value.quote.value), input);
+									if (!ft_strncmp(line, str, ft_strlen(str)))
+									{
+										free(str);
+										free(line);
+										break ;
+									}
+									expanded = get_env_vars(expand_vars(line), input);
+									ft_putstr_fd(expanded, fd);
+									ft_putstr_fd("\n", fd);
+									free(line);
+									free(expanded);
+									free(str);
+								}
+							}
+						}
 					}
 					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
+					fsm->redir_state = OTHER;
 				}
 				else if (is_token_assignment(token) && \
 					fsm->cmd_p_substate == TOK_CMD_PREFIX_NONE)
@@ -220,6 +298,12 @@ void	tokenize(t_input *input, t_fsm *fsm)
 				{
 					fsm->cmd_state = TOK_CMD_SUFFIX;
 					fsm->cmd_p_substate = TOK_CMD_SUFFIX_REDIR;
+					if (token->type == TOKEN_DLESS)
+					{
+						fsm->redir_state = HEREDOC;
+					}
+					else
+						fsm->redir_state = OTHER;
 				}
 				else if (is_token_logical_op(token))
 				{
@@ -249,15 +333,86 @@ void	tokenize(t_input *input, t_fsm *fsm)
 					fsm->cmd_p_substate == TOK_CMD_SUFFIX_NONE)
 				{
 					fsm->cmd_p_substate = TOK_CMD_SUFFIX_REDIR;
+					if (token->type == TOKEN_DLESS)
+					{
+						fsm->redir_state = HEREDOC;
+					}
+					else
+						fsm->redir_state = OTHER;
 				}
 				else if (fsm->cmd_p_substate == TOK_CMD_SUFFIX_REDIR)
 				{
-					if (!is_token_word_literal(token))
+					if (fsm->redir_state == OTHER)
 					{
-						fsm->state = ERROR;
-						input->unexpected = token->type;
+						if (!is_token_word_literal(token))
+						{
+							fsm->state = ERROR;
+							input->unexpected = token->type;
+						}
+					}
+					else if (fsm->redir_state == HEREDOC)
+					{
+						char	*line;
+						char	*filename;
+						int		fd;
+						char	*expanded;
+
+						line = NULL;
+						if (!is_token_word_literal(token))
+						{
+							fsm->state = ERROR;
+							input->unexpected = token->type;
+						}
+						if (token->type == TOKEN_WORD)
+							filename = get_env_vars(expand_vars(token->value.word.value), input);
+						else if (token->type == TOKEN_QUOTE)
+							filename = get_env_vars(expand_vars(token->value.quote.value), input);
+						fd = open(filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+						if (fd > 0)
+						{
+							new_argument(input->heredoc_files, create_heredoc_file(filename));
+							while(1)
+							{
+								char	*str;
+
+								line = readline("heredoc> ");
+								if (!line)
+									break ;
+								if (token->type == TOKEN_WORD)
+								{
+									// printf("%s\n", str);
+									if (!ft_strncmp(line, token->value.word.value, ft_strlen(token->value.word.value)))
+									{
+										free(line);
+										break ;
+									}
+									expanded = get_env_vars(expand_vars(line), input);
+									ft_putstr_fd(expanded, fd);
+									ft_putstr_fd("\n", fd);
+									free(line);
+									free(expanded);
+								}
+								else if (token->type == TOKEN_QUOTE)
+								{
+									str = get_env_vars(expand_vars(token->value.quote.value), input);
+									if (!ft_strncmp(line, str, ft_strlen(str)))
+									{
+										free(str);
+										free(line);
+										break ;
+									}
+									expanded = get_env_vars(expand_vars(line), input);
+									ft_putstr_fd(expanded, fd);
+									ft_putstr_fd("\n", fd);
+									free(line);
+									free(str);
+									free(expanded);
+								}
+							}
+						}
 					}
 					fsm->cmd_p_substate = TOK_CMD_SUFFIX_NONE;
+					fsm->redir_state = OTHER;
 				}
 				else if (is_token_word_literal(token) || is_token_assignment(token))
 					;
@@ -489,7 +644,6 @@ void	get_the_input(t_input *input, t_fsm *fsm)
 	}
 	// printf("State: %d\t", fsm->state);
 	// printf("State: %d\n", fsm->input_state);
-	add_history(lexer->input);
 }
 
 char	*get_prompt_dir(void)
@@ -541,11 +695,12 @@ char	*read_from_stdin(t_input *input)
 	}
 	else
 	{
-		new = ft_calloc(ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + ft_strlen(&prompt[1]) + 2, sizeof(char));
+		new = ft_calloc(ft_strlen(CTEAL) +ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + ft_strlen(prompt) + 2, sizeof(char));
 		ft_strcat(new, CTEAL);
 		ft_strcat(new, "/");
 		ft_strcat(new, CTEALBOLD);
-		ft_strcat(new, &prompt[1]);
+		if (prompt && &prompt[1])
+			ft_strcat(new, &prompt[1]);
 		ft_strcat(new, PROMPT);
 		ft_strcat(new, RESET);
 		line = readline(new);

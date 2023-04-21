@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 22:41:35 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 19:31:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int		parse_all_input(t_input *input)
 		ft_putstr_fd("minishell: : command not found\n", 2);
 		free(input->lexer.input);
 		free_token_list(input->tokens);
+		free_heredoc_list(input->heredoc_files);
 		free(hashmap_put(input->special_sym, "EXITSTATUS", ft_itoa(127)));
 		return (1);
 	}
@@ -69,6 +70,7 @@ t_hashmap	*create_special_table(void)
 void	init_input(t_input	*input, char **envp)
 {
 	input->tokens = new_token_list();
+	input->heredoc_files = new_arglist();
 	input->hashmap = load_environment(envp);
 	input->special_sym = create_special_table();
 	input->root = NULL;

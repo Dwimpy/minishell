@@ -6,12 +6,13 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/20 01:59:41 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 23:04:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <readline/history.h>
-#include <readline/readline.h>
+#include "/Users/arobu/.brew/Cellar/readline/8.2.1/include/readline/readline.h"
+#include "/Users/arobu/.brew/Cellar/readline/8.2.1/include/readline/history.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
@@ -25,25 +26,27 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <signal.h>
 #include <pwd.h>
+
+void sigint_handler(int sig);
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_input				input;
 	int					fd;
 	int					exit_code;
-
 	//ft_signals(&sa);
 	//input.root->is_subshell_start = 0;
-
 	init_input(&input, envp);
+	// rl_initialize();
+ 	// signal(SIGINT, sigint_handler);
 	while (1)
 	{
 		if (gen_input(&input))
 			continue ;
 		if (parse_all_input(&input))
 			continue;
-
 		// // my part
 		fd = 0;
 		exit_code = ft_execution(&input, input.root, &fd);
@@ -54,11 +57,20 @@ int	main(int argc, char **argv, char **envp)
 		input.root = NULL;
 		free(input.lexer.input);
 		free_token_list(input.tokens);
+		free_heredoc_list(input.heredoc_files);
 		// system("leaks minishell");
 		// exit(0);
 	}
 	return (ft_atoi(hashmap_get(input.special_sym, "EXITSTATUS")));
 }
+
+// void	sigint_handler(int sig)
+// {
+// 	ft_putstr_fd("\n", 1);
+// 	rl_replace_line("", 0);
+// 	rl_on_new_line();
+// 	rl_redisplay();
+// }
 
 // int	ft_execute(t_input *input, t_ast_node *root, int *fd)
 // {

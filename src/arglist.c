@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 14:17:44 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/17 15:13:58 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 19:31:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,36 @@ void	free_args(t_arglist *arglist)
 		arg = arglist->first;
 	}
 	free(arglist);
+}
+
+t_arg		*create_heredoc_file(char *value)
+{
+	t_arg	*arg;
+
+	arg = (t_arg *)malloc(sizeof(t_arg));
+	if (!arg)
+		return (NULL);
+	arg->value = ft_strdup(value);
+	// printf("IN FUNC: %s\n", arg->value);
+	arg->next = NULL;
+	return (arg);
+}
+
+void	free_heredoc_list(t_arglist *arglist)
+{
+	t_arg	*arg;
+
+	if (!arglist)
+		return ;
+	arg = arglist->first;
+	while (arg)
+	{
+		arglist->first = arglist->first->next;
+		unlink(arg->value);
+		free(arg->value);
+		free(arg);
+		arg = arglist->first;
+	}
 }
 
 void	remove_node(t_arglist *arglist, t_arg *remove)

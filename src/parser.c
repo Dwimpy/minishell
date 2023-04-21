@@ -6,12 +6,13 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 03:39:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/21 18:51:24 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include "parser.h"
+#include "x_execution.h"
 
 t_ast_node	*parse_command(t_token_list *tokens, t_input *input, size_t sub_count)
 {
@@ -27,10 +28,10 @@ t_ast_node	*parse_command(t_token_list *tokens, t_input *input, size_t sub_count
 	data.command.output.filename = NULL;
 	cmd.name = NULL;
 	cmd.arglist = NULL;
-	cmd.prefix = parse_prefix(&tokens);
+	cmd.prefix = parse_prefix(&tokens, input);
 	cmd.type = COMMAND;
 	parse_cmd_word(&tokens, &cmd);
-	cmd.suffix = parse_suffix(&tokens);
+	cmd.suffix = parse_suffix(&tokens, input);
 	// print_args(cmd.arglist);
 	// print_args(cmd.suffix.arglist);
 	convert_info_to_cmd(cmd, &data, input);
@@ -171,7 +172,7 @@ void	parse_cmd_word(t_token_list	**tokens, t_command_info *data)
 	}
 }
 
-t_cmd_prefix	parse_prefix(t_token_list **tokens)
+t_cmd_prefix	parse_prefix(t_token_list **tokens, t_input *input)
 {
 	t_cmd_prefix	prefix;
 
@@ -181,13 +182,13 @@ t_cmd_prefix	parse_prefix(t_token_list **tokens)
 	prefix.fd_redir_out = 3;
 	while (is_prefix((*tokens)->first))
 	{
-		parse_redirection_prefix(*tokens, &prefix);
+		parse_redirection_prefix(*tokens, &prefix, input);
 		parse_assignment(*tokens, &prefix);
 	}
 	return (prefix);
 }
 
-t_cmd_suffix	parse_suffix(t_token_list **tokens)
+t_cmd_suffix	parse_suffix(t_token_list **tokens, t_input *input)
 {
 	t_cmd_suffix	suffix;
 
@@ -197,7 +198,7 @@ t_cmd_suffix	parse_suffix(t_token_list **tokens)
 	suffix.fd_redir_out = 3;
 	while (is_cmd_suffix((*tokens)->first))
 	{
-		parse_redirection_suffix(*tokens, &suffix);
+		parse_redirection_suffix(*tokens, &suffix, input);
 		parse_suffix_words(*tokens, &suffix);
 	}
 	return (suffix);
@@ -226,14 +227,23 @@ void	parse_suffix_words(t_token_list *tokens, t_cmd_suffix *suffix)
 }
 
 void	parse_redirection_prefix(t_token_list *tokens, \
-			t_cmd_prefix *prefix)
+			t_cmd_prefix *prefix, t_input *input)
 {
 	if (accept_redirection((tokens)->first))
 	{
 		if (is_input_redir((tokens)->first))
 		{
-			consume_token(tokens);
-			create_and_free((tokens)->first, &prefix->input.filename, INPUT);
+			if ((tokens)->first->type == TOKEN_DLESS)
+			{
+				consume_token(tokens);
+				create_and_free((tokens)->first, &prefix->input.filename, HERE_DOC, input);
+			}
+			else
+			{
+				consume_token(tokens);
+				create_and_free((tokens)->first, &prefix->input.filename, INPUT, input);
+				
+			}
 			consume_token(tokens);
 		}
 		else if (is_output_redir((tokens)->first))
@@ -251,20 +261,29 @@ void	parse_redirection_prefix(t_token_list *tokens, \
 			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_ERR)
 				prefix->fd_redir_out = 2;
 			consume_token(tokens);
-			create_and_free((tokens)->first, &prefix->output.filename, OUTPUT);
+			create_and_free((tokens)->first, &prefix->output.filename, OUTPUT, input);
 			consume_token(tokens);
 		}
 	}
 }
 
-void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix)
+void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix, t_input *input)
 {
 	if (accept_redirection((tokens)->first))
 	{
 		if (is_input_redir((tokens)->first))
 		{
-			consume_token(tokens);
-			create_and_free((tokens)->first, &suffix->input.filename, INPUT);
+			if ((tokens)->first->type == TOKEN_DLESS)
+			{
+				consume_token(tokens);
+				create_and_free((tokens)->first, &suffix->input.filename, HERE_DOC, input);
+			}
+			else
+			{
+				consume_token(tokens);
+				create_and_free((tokens)->first, &suffix->input.filename, INPUT, input);
+				
+			}
 			consume_token(tokens);
 		}
 		else if (is_output_redir((tokens)->first))
@@ -282,22 +301,30 @@ void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix)
 			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_ERR)
 				suffix->fd_redir_out = 2;
 			consume_token(tokens);
-			create_and_free((tokens)->first, &suffix->output.filename, OUTPUT);
+			create_and_free((tokens)->first, &suffix->output.filename, OUTPUT, input);
 			consume_token(tokens);
 		}
 	}
 }
 
-void	create_and_free(t_token *token, char **filename, int io)
+void	create_and_free(t_token *token, char **filename, int io, t_input *input)
 {
 	int		fd;
 
 	if (!*filename)
-		*filename = ft_strtrim(get_token_value(token), "\"'");
+	{
+		if (token->type == TOKEN_QUOTE)
+			*filename = get_env_vars(expand_vars(token->value.quote.value), input);
+		else if (token->type == TOKEN_WORD)
+			*filename = get_env_vars(expand_vars(token->value.word.value), input);
+	}
 	else
 	{
 		free(*filename);
-		*filename = ft_strdup(get_token_value(token));
+		if (token->type == TOKEN_QUOTE)
+			*filename = get_env_vars(expand_vars(token->value.quote.value), input);
+		else if (token->type == TOKEN_WORD)
+			*filename = get_env_vars(expand_vars(token->value.word.value), input);
 	}
 	if (io == INPUT)
 	{
@@ -313,6 +340,12 @@ void	create_and_free(t_token *token, char **filename, int io)
 		else
 			fd = open(*filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	}
+	// else if (io == HERE_DOC)
+	// {
+	// 	fd = open(*filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	// 	if (fd > 0)
+	// 		new_argument(input->heredoc_files, create_heredoc_file(*filename));
+	// }
 	if (fd < 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
