@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:15:58 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/20 21:36:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:11:24 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_pipe(t_input *input, t_ast_node *root, int *fd)
 		if (root->parent && root->parent->type == PIPELINE && !(root->is_subshell > root->parent->is_subshell))
 			dup2(new_fd[1], STDOUT_FILENO);
 		dup2(*fd, STDIN_FILENO);
-		status = ft_command(root->data.command.cmd.args, input, root, pid);
+		status = ft_command(root->data.command.cmd.args, input, root);
 		close(new_fd[1]);
 		close(*fd);
 		exit(status);
@@ -54,15 +54,15 @@ int	ft_and_if(t_input *input, t_ast_node *root, int *fd)
 	int				status;
 
 	st = 0;
+	pid = 0;
 	while (pid != -1)
 		pid = waitpid(-1, &st, 0);
 	while (*fd > 2)
 		close((*fd)--);
-
 	if (root->parent && root->parent->type == PIPELINE)
 		status = ft_pipe(input, root, fd);
 	else
-		status = ft_command(root->data.command.cmd.args, input, root, pid);
+		status = ft_command(root->data.command.cmd.args, input, root);
 	return (status);
 }
 
@@ -73,14 +73,15 @@ int	ft_or_if(t_input *input, t_ast_node *root, int *fd)
 	int				status;
 
 	st = 0;
+	pid = 0;
+	status = 0;
 	while (pid != -1)
 		pid = waitpid(-1, &st, 0);
 	while (*fd > 2)
 		close((*fd)--);
-
 	if (root->parent && root->parent->type == PIPELINE)
 		status = ft_pipe(input, root, fd);
 	else
-		status = ft_command(root->data.command.cmd.args, input, root, pid);
+		status = ft_command(root->data.command.cmd.args, input, root);
 	return (status);
 }

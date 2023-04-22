@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 03:32:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 16:57:38 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_token_value	get_value(t_token_type type, char *value, t_redir_type redir_type)
 		return ((t_token_value){.semicolon.c = ';'});
 	if (type == TOKEN_NEWLINE)
 		return ((t_token_value){.new_line.c = '\n'});
-	return ((t_token_value){.eof = '\0'});
+	return ((t_token_value){.eof = {'\0'}});
 }
 
 void	print_token_value(t_token *token)

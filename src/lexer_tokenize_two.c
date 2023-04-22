@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 18:58:12 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 23:51:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 16:56:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,12 @@ t_token	*tokenize_braces(t_lexer *lexer)
 
 t_token	*tokenize_newline(t_lexer *lexer)
 {
+	(void)lexer;
 	return (new_token(TOKEN_NEWLINE, NULL, EMPTY));
 }
 
 t_token	*tokenize_semicolon(t_lexer *lexer)
 {
+	(void)lexer;
 	return (new_token(TOKEN_SEMICOLON, NULL, EMPTY));
 }

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/20 16:29:08 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 16:57:16 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@
 #include "lexer.h"
 #include "fsm.h"
 
-static char	*return_prompt_type(t_incomplete_type type);
-static char	*get_new_input_tok_type(t_token_type type);
 
 char	get_next_char(t_lexer *lexer)
 {

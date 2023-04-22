@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 22:35:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:12:51 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,17 @@ int	gen_input(t_input *input)
 	fsm.in_subshell = 0;
 	fsm.paren = 0;
 	i = 0;
+	status = 0;
+	pid = 0;
+	prompt = NULL;
 	input->lexer.input = read_from_stdin(input);
 	if (!input->lexer.input)
 	{
-		rl_on_new_line();
 		exit(ft_atoi((char *)hashmap_get(input->special_sym, "EXITSTATUS")));
 	}
 	input->lexer.input_len = ft_strlen(input->lexer.input);
-	while (input->lexer.input && input->lexer.input[i] == ' ' || \
-		input->lexer.input[i] == '\t')
+	while (input->lexer.input && (input->lexer.input[i] == ' ' || \
+		input->lexer.input[i] == '\t'))
 		i++;
 	if (i == input->lexer.input_len)
 	{
@@ -690,7 +692,6 @@ char	*read_from_stdin(t_input *input)
 			ft_strcat(new, PROMPT);
 			ft_strcat(new, RESET);
 		}
-		line = readline(new);
 		free(new);
 	}
 	else
@@ -703,9 +704,9 @@ char	*read_from_stdin(t_input *input)
 			ft_strcat(new, &prompt[1]);
 		ft_strcat(new, PROMPT);
 		ft_strcat(new, RESET);
-		line = readline(new);
 		free(new);
 	}
+	line = readline(new);
 	free(prompt);
 	return (line);
 }
@@ -770,7 +771,7 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
 
 int	do_in_pipe(t_lexer *lexer, t_fsm *fsm)
 {
-	if (readline_pipe(lexer, "pipe> ", fsm))
+	if (readline_pipe(lexer, "pipe> "))
 		return (1);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
@@ -779,7 +780,7 @@ int	do_in_pipe(t_lexer *lexer, t_fsm *fsm)
 
 int	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
 {
-	if (readline_pipe(lexer, "cmdand> ", fsm))
+	if (readline_pipe(lexer, "cmdand> "))
 		return (1);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
@@ -788,7 +789,7 @@ int	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
 
 int	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
 {
-	if (readline_pipe(lexer, "cmdor> ", fsm))
+	if (readline_pipe(lexer, "cmdor> "))
 		return (1);
 	fsm->state = GET_INPUT;
 	fsm->input_state = N_INPUT;
@@ -810,7 +811,7 @@ int	is_empty(char *str)
 void	do_squote(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
-		readline_new_line(lexer, "squote> ", fsm);
+		readline_new_line(lexer, "squote> ");
 	else if (lexer->ch == '\'' && fsm->in_subshell)
 		fsm->input_state = IN_SUBSH;
 	else if (lexer->ch == '\'')
@@ -820,7 +821,7 @@ void	do_squote(t_lexer *lexer, t_fsm *fsm)
 void	do_dquote(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
-		readline_new_line(lexer, "dquote> ", fsm);
+		readline_new_line(lexer, "dquote> ");
 	else if (lexer->ch == '\"' && fsm->in_subshell)
 		fsm->input_state = IN_SUBSH;
 	else if (lexer->ch == '\"')
@@ -840,7 +841,7 @@ void	do_subsh(t_input *input, t_fsm *fsm)
 	}
 	else if (lexer->ch == '\0')
 	{
-		if (readline_no_new_line(lexer, "subsh> ", fsm))
+		if (readline_no_new_line(lexer, "subsh> "))
 		{
 			fsm->input_state = INPUT_COMPLETE;
 			fsm->state = ERROR;
@@ -870,7 +871,7 @@ void	do_subsh(t_input *input, t_fsm *fsm)
 	}
 }
 
-void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
+void	readline_new_line(t_lexer *lexer, char *prompt)
 {
 	char	*append_line;
 	char	*join_line;
@@ -890,7 +891,7 @@ void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	lexer->read_position--;
 }
 
-int	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
+int	readline_no_new_line(t_lexer *lexer, char *prompt)
 {
 	char	*append_line;
 	char	*join_line;
@@ -910,7 +911,7 @@ int	readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	return (0);
 }
 
-int	readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm)
+int	readline_pipe(t_lexer *lexer, char *prompt)
 {
 	char	*append_line;
 	char	*join_line;

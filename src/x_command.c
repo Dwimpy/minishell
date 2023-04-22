@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/21 13:05:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:11:07 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,11 @@
 #include "sys/stat.h"
 
 static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
-static void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp);
+static void	ft_redirect_back(int *stdin_cp, int *stdout_cp);
+
 static int	is_directory(const char *path);
 
-int	ft_command(char **str_arr, t_input *input, t_ast_node *root, pid_t pid)
+int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 {
 	
 	char	*ptr;
@@ -28,7 +29,6 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root, pid_t pid)
 	char	**paths;
 	size_t	i;
 	int		status;
-	char	*prev;
 	char	*new;
 	int		stdin_cp;
 	int		stdout_cp;
@@ -59,9 +59,9 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root, pid_t pid)
 	if (!(ft_memcmp("cd", str_arr[0], 3)))
 		status = ft_cd(str_arr, input);
 	else if (!(ft_memcmp("pwd", str_arr[0], 4)))
-		status = ft_pwd(str_arr);
+		status = ft_pwd();
 	else if (!(ft_memcmp("exit", str_arr[0], 5)))
-		status = ft_exit(str_arr, input, pid);
+		status = ft_exit(str_arr, input);
 	else if (!(ft_memcmp("env", str_arr[0], 4)))
 		status = ft_env(str_arr, input);
 	else if (!(ft_memcmp("echo", str_arr[0], 5)))
@@ -141,7 +141,7 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root, pid_t pid)
 			status = 127;
 		}
 	}
-	ft_redirect_back(root, &stdin_cp, &stdout_cp);
+	ft_redirect_back(&stdin_cp, &stdout_cp);
 	return (status);
 }
 
@@ -186,7 +186,7 @@ int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 	return (0);
 }
 
-void	ft_redirect_back(t_ast_node *root, int *stdin_cp, int *stdout_cp)
+void	ft_redirect_back(int *stdin_cp, int *stdout_cp)
 {	
 	// printf("input :%s\n", root->data.command.input.filename);
 	// printf("output :%s\n", root->data.command.output.filename);
@@ -235,6 +235,7 @@ int	ft_executable(char **str_arr, t_input *input)
 	int		status;
 	char 	**hashmap;
 
+	status = 0;
 	if (is_directory(str_arr[0]))
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -274,12 +275,12 @@ int	ft_executable(char **str_arr, t_input *input)
 	return (status);
 }
 
-int	ft_executable_no_env(char **str_arr, t_input *input)
+int	ft_executable_no_env(char **str_arr)
 {
 	int		pid;
 	int		status;
-	char 	**hashmap;
 
+	status = 0;
 	if (is_directory(str_arr[0]))
 	{
 		ft_putstr_fd("minishell: ", 2);

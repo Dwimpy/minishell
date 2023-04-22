@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/16 16:51:47 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/19 02:31:06 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 16:56:43 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ char	*get_env_vars(t_arglist *list, t_input *input)
 	char	*entry;
 	char	*new;
 	size_t	len;
-	t_arg	*empty;
 
 	arg = list->first;
 	if (!arg)

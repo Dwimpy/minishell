@@ -6,15 +6,15 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/21 23:04:56 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 16:54:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "/Users/arobu/.brew/Cellar/readline/8.2.1/include/readline/readline.h"
-#include "/Users/arobu/.brew/Cellar/readline/8.2.1/include/readline/history.h"
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "readline/readline.h"
+#include "readline/history.h"
 #include "parser.h"
 #include "tokenizer.h"
 #include "environment_handler.h"

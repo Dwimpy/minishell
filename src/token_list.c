@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:28:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/06 13:54:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:00:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ t_token	*peek_token(t_token_list *tokens, int look_ahead_times)
 	int		i;
 
 	i = 0;
+	token = tokens->first;
 	while (token && i < look_ahead_times)
 	{
 		token = token->next;

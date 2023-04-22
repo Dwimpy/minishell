@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 18:12:06 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:08:10 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_ast_node		*parse_command(t_token_list *tokens, t_input *input, size_t sub_coun
 t_ast_node		*parse_pipeline(t_token_list *tokens, size_t sub_count);
 t_ast_node		*parse_and_if(t_token_list *tokens, size_t sub_count);
 t_ast_node		*parse_or_if(t_token_list *tokens, size_t sub_count);
-t_ast_node		*parse_subshell(t_token_list *tokens, t_input *input, size_t *sub_count);
+t_ast_node		*parse_subshell(t_token_list *tokens, size_t *sub_count);
 void			parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t	*sub_count);
 void			parse_redirection_prefix(t_token_list *tokens, \
 					t_cmd_prefix *prefix, t_input *input);
@@ -51,8 +51,7 @@ int				is_prev_subshell(t_token *token);
 void			init_input(t_input	*input, char **envp);
 int				generate_input(t_input *input);
 int				parse_all_input(t_input *input);
-void			convert_info_to_cmd(t_command_info info, t_data *data, \
-					t_input *input);
+void			convert_info_to_cmd(t_command_info info, t_data *data);
 t_io_redirect	get_input_file(t_command_info info);
 t_io_redirect	get_output_file(t_command_info info);
 void			get_assignments(t_command_info info, t_data *data);

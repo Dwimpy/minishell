@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 18:51:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:09:55 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_ast_node	*parse_command(t_token_list *tokens, t_input *input, size_t sub_count
 	cmd.suffix = parse_suffix(&tokens, input);
 	// print_args(cmd.arglist);
 	// print_args(cmd.suffix.arglist);
-	convert_info_to_cmd(cmd, &data, input);
+	convert_info_to_cmd(cmd, &data);
 	free_cmd_info(cmd);
 	return (new_node(data, COMMAND, sub_count));
 }
@@ -86,7 +86,7 @@ t_ast_node	*parse_or_if(t_token_list *tokens, size_t sub_count)
 	return (NULL);
 }
 
-t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input, size_t *sub_count)
+t_ast_node	*parse_subshell(t_token_list *tokens, size_t *sub_count)
 {
 	while (accept(tokens->first, TOKEN_LPARENTHESIS) || accept(tokens->first, TOKEN_RPARENTHESIS))
 	{
@@ -101,16 +101,16 @@ t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input, size_t *sub_cou
 
 void	parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t	*sub_count)
 {
-	parse_subshell(tokens, input, sub_count);
+	parse_subshell(tokens, sub_count);
 	ast_add(root, parse_command(tokens, input, *sub_count));
-	parse_subshell(tokens, input, sub_count);
+	parse_subshell(tokens, sub_count);
 	ast_add(root, parse_pipeline(tokens, *sub_count));
-	parse_subshell(tokens, input, sub_count);
+	parse_subshell(tokens, sub_count);
 	ast_add(root, parse_and_if(tokens, *sub_count));
-	parse_subshell(tokens, input, sub_count);
+	parse_subshell(tokens, sub_count);
 	ast_add(root, parse_or_if(tokens, *sub_count));
-	parse_subshell(tokens, input, sub_count);
-	ast_add(root, parse_subshell(tokens, input, sub_count));
+	parse_subshell(tokens, sub_count);
+	ast_add(root, parse_subshell(tokens, sub_count));
 }
 
 // t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input, int sub_count)
@@ -311,6 +311,7 @@ void	create_and_free(t_token *token, char **filename, int io, t_input *input)
 {
 	int		fd;
 
+	fd = 0;
 	if (!*filename)
 	{
 		if (token->type == TOKEN_QUOTE)
@@ -367,7 +368,7 @@ void	parse_assignment(t_token_list *tokens, t_cmd_prefix *prefix)
 	}
 }
 
-void	convert_info_to_cmd(t_command_info info, t_data *data, t_input *input)
+void	convert_info_to_cmd(t_command_info info, t_data *data)
 {
 	if (info.name)
 		data->command.cmd.name_path = ft_strdup(info.name);
@@ -380,7 +381,6 @@ void	convert_info_to_cmd(t_command_info info, t_data *data, t_input *input)
 t_io_redirect	get_input_file(t_command_info info)
 {
 	t_io_redirect	input;
-	char			*trim;
 
 	input.fd_redir_out = 0;
 	if (info.suffix.input.filename)

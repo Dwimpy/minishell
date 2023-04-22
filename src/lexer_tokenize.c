@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 14:14:00 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 03:36:23 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:00:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,9 @@ t_token	*tokenize_redir_input(t_lexer *lexer)
 {
 	t_redir_type	redir_type;
 
+	redir_type = EMPTY;
 	if (look_ahead_tok(lexer) == '<')
 	{
-
 		get_next_char_tok(lexer);
 		return (new_token(TOKEN_DLESS, NULL, redir_type));
 	}

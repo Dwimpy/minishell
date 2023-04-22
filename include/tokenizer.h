@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 17:09:41 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:12:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,9 +37,9 @@ int		is_token_assignment(t_token *token);
 int		is_token_word_literal(t_token *token);
 int		is_token_logical_op(t_token *token);
 int		is_tok_state_pipe_lop(t_fsm *fsm);
-void	readline_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
-int		readline_no_new_line(t_lexer *lexer, char *prompt, t_fsm *fsm);
-int		readline_pipe(t_lexer *lexer, char *prompt, t_fsm *fsm);
+void	readline_new_line(t_lexer *lexer, char *prompt);
+int		readline_no_new_line(t_lexer *lexer, char *prompt);
+int		readline_pipe(t_lexer *lexer, char *prompt);
 char	*get_prompt_dir(void);
 char	*read_from_stdin(t_input *input);
 void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm);

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/21 20:08:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:11:46 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 int	ft_unset(char **str_arr, t_input *input)
 {
 	size_t	i;
-	size_t	j;
-	void	*str;
 	int		status;
 
 	i = 1;
@@ -76,7 +74,6 @@ int	ft_unset(char **str_arr, t_input *input)
 int	ft_export(char **str_arr, t_input *input)
 {
 	size_t	i;
-	size_t	j;
 	char	*str;
 	int		status;
 
@@ -207,7 +204,7 @@ int	ft_env(char **str_arr, t_input *input)
 	if (str_arr[1] && !ft_memcmp(str_arr[1], "-i", 3))
 	{
 		if (str_arr[2] && (!ft_memcmp(str_arr[2], "./", 2) || !ft_memcmp(str_arr[2], "../", 3)))
-			return (ft_executable_no_env(&str_arr[2], input));
+			return (ft_executable_no_env(&str_arr[2]));
 		return (1);
 	}
 	while (arr[i] != NULL)
@@ -255,7 +252,7 @@ int	ft_echo(char **str_arr, int fd)
 	return (0);
 }
 
-int	ft_exit(char **str_arr, t_input *input, pid_t pid)
+int	ft_exit(char **str_arr, t_input *input)
 {
 	unsigned char	c;
 	size_t			i;
@@ -325,11 +322,9 @@ int	ft_exit(char **str_arr, t_input *input, pid_t pid)
 
 int	ft_cd(char **str_arr, t_input *input)
 {
-	char	**arr;
 	char	*str;
 	char	*path;
 	char	*old;
-	char	*curr_pwd;
 
 	str = NULL;
 	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 2)))
@@ -400,7 +395,7 @@ int	ft_cd(char **str_arr, t_input *input)
 	return (0);
 }
 
-int	ft_pwd(char **str_arr)
+int	ft_pwd(void)
 {
 	char	*path;
 

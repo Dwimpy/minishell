@@ -6,13 +6,13 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/04/21 22:48:46 by arobu            ###   ########.fr        #
+#    Updated: 2023/04/22 16:55:10 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Variables
 NAME			= minishell
-INCLUDE			= -I include/ -I libft-printf/include/ -I get_next_line/gnl/include -I /Users/arobu/.brew/Cellar/readline/8.2.1/include/readline
+INCLUDE			= -I include/ -I libft-printf/include/ -I get_next_line/gnl/include -I ./readline
 DSYM			= ./minishell.dSYM
 SRC_DIR			= ./src
 OBJ_DIR			= ./obj
@@ -23,8 +23,8 @@ GNL_FOLDER		:= ./get_next_line
 
 # Compiler
 CC			= cc
-LDLFLAGS	= -lft -L./libft-printf -L ./get_next_line/ -lgnl -L /Users/arobu/.brew/Cellar/readline/8.2.1/lib -lreadline 
-CFLAGS		= -g3 #-Wall -Werror -Wextra -g3 -pthread 
+LDLFLAGS	= -lft -L./libft-printf -L ./get_next_line/ -lgnl -L ./readline -lreadline -lhistory -ltermcap
+CFLAGS		= -g3 -Wall -Werror -Wextra 
 
 ASAN		= #-fsanitize=address
 
