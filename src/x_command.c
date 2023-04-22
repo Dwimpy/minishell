@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 17:11:07 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 21:31:34 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,9 +157,22 @@ int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 {
 	int		fd;
 
-	if (root->data.command.output.filename)
+	if (root->data.command.output.filename && !root->data.command.output.is_appended)
 	{
-		fd = open(root->data.command.output.filename, O_TRUNC | O_WRONLY, 0644);
+		fd = open(root->data.command.output.filename, O_WRONLY | O_TRUNC, 0644);
+		if (fd < 0)
+			return (1);
+		else
+		{
+			*stdout_cp = dup(STDOUT_FILENO);
+			close(STDOUT_FILENO);
+			dup2(fd, STDOUT_FILENO);
+			close(fd);
+		}
+	}
+	else if (root->data.command.output.filename && root->data.command.output.is_appended)
+	{
+		fd = open(root->data.command.output.filename, O_WRONLY | O_APPEND, 0644);
 		if (fd < 0)
 			return (1);
 		else
@@ -217,6 +230,7 @@ int	ft_execute(char *path, char **str_arr, t_input *input)
 			exit(1);
 		if (pid == 0)
 		{
+			ft_signals_child(&(input->sa));
 			hashmap = hashmap_tochar(input->hashmap);
 			if (execve(path, str_arr, hashmap))
 				exit(1);
@@ -251,6 +265,7 @@ int	ft_executable(char **str_arr, t_input *input)
 			exit(1);
 		if (pid == 0)
 		{
+			ft_signals_child(&(input->sa));
 			hashmap = hashmap_tochar(input->hashmap);
 			if (execve(str_arr[0], str_arr, hashmap))
 				exit(1);
@@ -275,7 +290,7 @@ int	ft_executable(char **str_arr, t_input *input)
 	return (status);
 }
 
-int	ft_executable_no_env(char **str_arr)
+int	ft_executable_no_env(char **str_arr, t_input *input)
 {
 	int		pid;
 	int		status;
@@ -296,6 +311,7 @@ int	ft_executable_no_env(char **str_arr)
 			exit(1);
 		if (pid == 0)
 		{
+			ft_signals_child(&(input->sa));
 			if (execve(str_arr[0], str_arr, NULL))
 				exit(1);
 		}

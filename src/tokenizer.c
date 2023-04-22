@@ -6,12 +6,13 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 17:17:25 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 21:24:55 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tokenizer.h"
 #include <sys/wait.h>
+#include "signals.h"
 
 #define CTEAL "\033[0;93m"
 #define CTEALBOLD "\033[1;91m"
@@ -660,56 +661,57 @@ char	*get_prompt_dir(void)
 		return (ft_strdup(""));
 }
 
-char	*read_from_stdin(t_input *input)
+char    *read_from_stdin(t_input *input)
 {
-	char	*prompt;
-	char	*line;
-	char	*user;
-	char	*new;
-	size_t	len_user;
-
-	prompt = get_prompt_dir();
-	user =	(char *)hashmap_get(input->special_sym, "TILDE");
-	if (user && !ft_strncmp(prompt, user, ft_strlen(user)))
-	{
-		len_user = ft_strlen(user);
-		if (len_user == ft_strlen(prompt))
-		{
-			new = ft_calloc(ft_strlen(CTEALBOLD) + ft_strlen(RESET) + ft_strlen(PROMPT) + 4, sizeof(char));
-			ft_strcat(new, CTEALBOLD);
-			ft_strcat(new, "~ ");
-			ft_strcat(new, PROMPT);
-			ft_strcat(new, RESET);
-		}
-		else
-		{
-			new = ft_calloc(len_user + ft_strlen(&prompt[len_user]) + ft_strlen(CTEALBOLD) + ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 1, sizeof(char));
-			ft_strcat(new, CTEAL);
-			ft_strcat(new, "~");
-			ft_strncat(new, &prompt[len_user], ft_strrchr(prompt, '/') - &prompt[len_user] + 1);
-			ft_strcat(new, CTEALBOLD);
-			ft_strcat(new, ft_strrchr(prompt, '/') + 1);
-			ft_strcat(new, PROMPT);
-			ft_strcat(new, RESET);
-		}
-		line = readline(new);
-		free(new);
-	}
-	else
-	{
-		new = ft_calloc(ft_strlen(CTEAL) +ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + ft_strlen(prompt) + 2, sizeof(char));
-		ft_strcat(new, CTEAL);
-		ft_strcat(new, "/");
-		ft_strcat(new, CTEALBOLD);
-		if (prompt && &prompt[1])
-			ft_strcat(new, &prompt[1]);
-		ft_strcat(new, PROMPT);
-		ft_strcat(new, RESET);
-		line = readline(new);
-		free(new);
-	}
-	free(prompt);
-	return (line);
+    char    *prompt;
+    char    *line;
+    char    *user;
+    char    *new;
+    size_t  len_user;
+    ft_signals(&(input->sa), 1);
+    prompt = get_prompt_dir();
+    user =  (char *)hashmap_get(input->special_sym, "TILDE");
+    if (user && !ft_strncmp(prompt, user, ft_strlen(user)))
+    {
+        len_user = ft_strlen(user);
+        if (len_user == ft_strlen(prompt))
+        {
+            new = ft_calloc(ft_strlen(CTEALBOLD) + ft_strlen(RESET) + ft_strlen(PROMPT) + 4, sizeof(char));
+            ft_strcat(new, CTEALBOLD);
+            ft_strcat(new, "~ ");
+            ft_strcat(new, PROMPT);
+            ft_strcat(new, RESET);
+        }
+        else
+        {
+            new = ft_calloc(len_user + ft_strlen(&prompt[len_user]) + ft_strlen(CTEALBOLD) + ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 1, sizeof(char));
+            ft_strcat(new, CTEAL);
+            ft_strcat(new, "~");
+            ft_strncat(new, &prompt[len_user], ft_strrchr(prompt, '/') - &prompt[len_user] + 1);
+            ft_strcat(new, CTEALBOLD);
+            ft_strcat(new, ft_strrchr(prompt, '/') + 1);
+            ft_strcat(new, PROMPT);
+            ft_strcat(new, RESET);
+        }
+        line = readline(new);
+        free(new);
+    }
+    else
+    {
+        new = ft_calloc(ft_strlen(CTEAL) +ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + ft_strlen(prompt) + 2, sizeof(char));
+        ft_strcat(new, CTEAL);
+        ft_strcat(new, "/");
+        ft_strcat(new, CTEALBOLD);
+        if (prompt && &prompt[1])
+            ft_strcat(new, &prompt[1]);
+        ft_strcat(new, PROMPT);
+        ft_strcat(new, RESET);
+        line = readline(new);
+        free(new);
+    }
+    free(prompt);
+    ft_signals(&(input->sa), 0);
+    return (line);
 }
 
 

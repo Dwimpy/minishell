@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 17:08:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 21:14:07 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@
 
 # define INPUT 0
 # define OUTPUT 1
-# define HERE_DOC 2
+# define OUTPUT_APPEND 2
+# define HERE_DOC 3
 
 
 int				accept(t_token *token, t_token_type type);

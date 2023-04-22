@@ -6,13 +6,15 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/22 17:15:33 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 22:08:36 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include <stdio.h>
 #include <stdlib.h>
+// #include <readline/readline.h>
+// #include <readline/history.h>
 #include "readline/readline.h"
 #include "readline/history.h"
 #include "parser.h"
@@ -40,7 +42,7 @@ int	main(int argc, char **argv, char **envp)
 	//input.root->is_subshell_start = 0;
 	init_input(&input, envp);
 	rl_initialize();
- 	// signal(SIGINT, sigint_handler);
+
 	while (1)
 	{
 		if (gen_input(&input))
@@ -63,6 +65,8 @@ int	main(int argc, char **argv, char **envp)
 	}
 	return (ft_atoi(hashmap_get(input.special_sym, "EXITSTATUS")));
 }
+
+
 
 // void	sigint_handler(int sig)
 // {

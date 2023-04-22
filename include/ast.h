@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 19:52:41 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:22:39 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ typedef enum e_node_type
 typedef struct s_io_redirect
 {
 	int			fd_redir_out;
+	int			is_appended;
 	char		*filename;
 }				t_io_redirect;
 

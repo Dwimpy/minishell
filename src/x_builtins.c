@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 17:11:46 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 21:32:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 
 static int	check_valid_env_ident(char *str_arr, t_input *input, int *status);
 static int	check_valid_unset_ident(char *str, t_input *input, int *status);
+void		handle_whitespaces(char *str);
 
 static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 {
@@ -101,12 +102,40 @@ int	ft_export(char **str_arr, t_input *input)
 			{
 				str = ft_strchr(str_arr[i], '=') + 1;
 				ft_strchr(str_arr[i], '=')[0] = '\0';
+				handle_whitespaces(str);
 				free(hashmap_put_new(input->hashmap, str_arr[i], str));
 			}
 			i++;
 		}
 		return (status);
 	}
+}
+
+void	handle_whitespaces(char *str)
+{
+	int		i;
+	int		j;
+	char	*str_cpy;
+
+	i = 0;
+	j = 0;
+	str_cpy	= ft_strdup(str);
+	while (str[j])
+	{
+		if (ft_isspace3(str_cpy[i]))
+			str[j++] = str_cpy[i++];
+		while (ft_isspace3(str_cpy[i]))
+			i++;
+		if (str_cpy[i] == '\0')
+		{
+			str[j] = '\0';
+			break ;
+		}
+		str[j] = str_cpy[i];
+		i++;
+		j++;
+	}
+	// printf("%s", str);
 }
 
 int	check_valid_unset_ident(char *str, t_input *input, int *status)
@@ -204,7 +233,7 @@ int	ft_env(char **str_arr, t_input *input)
 	if (str_arr[1] && !ft_memcmp(str_arr[1], "-i", 3))
 	{
 		if (str_arr[2] && (!ft_memcmp(str_arr[2], "./", 2) || !ft_memcmp(str_arr[2], "../", 3)))
-			return (ft_executable_no_env(&str_arr[2]));
+			return (ft_executable_no_env(&str_arr[2], input));
 		return (1);
 	}
 	while (arr[i] != NULL)

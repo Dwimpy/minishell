@@ -1,0 +1,10 @@
+[0;93m~/projects/workdir/[1;91mminishell[0;91;1m > [0menv -i ./minishell
+[0;93m~/projects/workdir/[1;91mminishell[0;91;1m > [0mcd /bin/
+[0;93m/[1;91mbin[0;91;1m > [0m<kefile > out >>out1 >out2 | cat << stop > out3 | ls
+[0;93m/[1;91mbin[0;91;1m > [0mtestinator
+[0;93m/[1;91mbin[0;91;1m > [0mstop
+[0;93m/[1;91mbin[0;91;1m > [0m/bin/rm -f out
+[0;93m/[1;91mbin[0;91;1m > [0m/bin/rm -f out1
+[0;93m/[1;91mbin[0;91;1m > [0m/bin/rm -f out2
+[0;93m/[1;91mbin[0;91;1m > [0m/bin/rm -f out3
+[0;93m/[1;91mbin[0;91;1m > [0m[0;93m~/projects/workdir/[1;91mminishell[0;91;1m > [0m

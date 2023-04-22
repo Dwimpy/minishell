@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 17:09:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:40:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,6 +248,10 @@ void	parse_redirection_prefix(t_token_list *tokens, \
 		}
 		else if (is_output_redir((tokens)->first))
 		{
+			if (tokens->first->type == TOKEN_DGREAT)
+				prefix->output.is_appended = 1;
+			else
+				prefix->output.is_appended = 0;
 			if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_IN)
 				prefix->fd_redir_out = 0;
 			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_IN)
@@ -261,7 +265,10 @@ void	parse_redirection_prefix(t_token_list *tokens, \
 			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_ERR)
 				prefix->fd_redir_out = 2;
 			consume_token(tokens);
-			create_and_free((tokens)->first, &prefix->output.filename, OUTPUT, input);
+			if (prefix->output.is_appended)
+				create_and_free((tokens)->first, &prefix->output.filename, OUTPUT_APPEND, input);
+			else
+				create_and_free((tokens)->first, &prefix->output.filename, OUTPUT, input);
 			consume_token(tokens);
 		}
 	}
@@ -282,12 +289,15 @@ void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix, t_inpu
 			{
 				consume_token(tokens);
 				create_and_free((tokens)->first, &suffix->input.filename, INPUT, input);
-				
 			}
 			consume_token(tokens);
 		}
 		else if (is_output_redir((tokens)->first))
 		{
+			if (tokens->first->type == TOKEN_DGREAT)
+				suffix->output.is_appended = 1;
+			else
+				suffix->output.is_appended = 0;
 			if (tokens->first->type == TOKEN_GREAT && tokens->first->value.great.from == STD_IN)
 				suffix->fd_redir_out = 0;
 			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_IN)
@@ -301,7 +311,10 @@ void	parse_redirection_suffix(t_token_list *tokens, t_cmd_suffix *suffix, t_inpu
 			else if (tokens->first->type == TOKEN_DGREAT && tokens->first->value.dgreat.from == STD_ERR)
 				suffix->fd_redir_out = 2;
 			consume_token(tokens);
-			create_and_free((tokens)->first, &suffix->output.filename, OUTPUT, input);
+			if (suffix->output.is_appended)
+				create_and_free((tokens)->first, &suffix->output.filename, OUTPUT_APPEND, input);
+			else
+				create_and_free((tokens)->first, &suffix->output.filename, OUTPUT, input);
 			consume_token(tokens);
 		}
 	}
@@ -334,6 +347,12 @@ void	create_and_free(t_token *token, char **filename, int io, t_input *input)
 		else
 			fd = open((*filename), O_RDONLY);
 	}
+	else if (io == HERE_DOC)
+	{
+		fd = open(*filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		if (fd > 0)
+			new_argument(input->heredoc_files, create_heredoc_file(*filename));
+	}
 	else if (io == OUTPUT)
 	{
 		if (!ft_strncmp(*filename, "./", 2))
@@ -341,12 +360,13 @@ void	create_and_free(t_token *token, char **filename, int io, t_input *input)
 		else
 			fd = open(*filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	}
-	// else if (io == HERE_DOC)
-	// {
-	// 	fd = open(*filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
-	// 	if (fd > 0)
-	// 		new_argument(input->heredoc_files, create_heredoc_file(*filename));
-	// }
+	else if (io == OUTPUT_APPEND)
+	{
+		if (!ft_strncmp(*filename, "./", 2))
+			fd = open(*filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		else
+			fd = open(*filename, O_CREAT | O_WRONLY | O_APPEND, 0644);
+	}
 	if (fd < 0)
 	{
 		ft_putstr_fd("minishell: ", 2);
@@ -400,10 +420,12 @@ t_io_redirect	get_output_file(t_command_info info)
 	{
 		output.filename = ft_strdup(info.suffix.output.filename);
 		output.fd_redir_out = info.suffix.fd_redir_out;
+		output.is_appended = info.suffix.output.is_appended;
 	}
 	else if (info.prefix.output.filename)
 	{
 		output.filename = ft_strdup(info.prefix.output.filename);
+		output.is_appended = info.prefix.output.is_appended;
 		output.fd_redir_out = info.prefix.fd_redir_out;
 	}
 	else

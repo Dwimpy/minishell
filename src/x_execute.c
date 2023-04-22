@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:11:41 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 17:09:47 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 21:29:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,6 +186,7 @@ int	ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell)
 		return (-1);
 	if (pid == 0)
 	{
+		ft_signals_child(&(input->sa));
 		close(new_fd[0]);
 		//if (root->parent && root->parent->type == PIPELINE)
 		

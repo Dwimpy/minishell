@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/21 22:35:06 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 21:22:26 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 # include "token_list.h"
 # include "readline/readline.h"
 # include "readline/history.h"
+// # include <readline/readline.h>
+// # include <readline/history.h>
 # include "hashmap.h"
 # include "ast.h"
 # include "get_next_line.h"
@@ -31,13 +33,14 @@ typedef struct s_lexer
 
 typedef struct s_input
 {
-	t_token_list	*tokens;
-	t_lexer			lexer;
-	t_hashmap		*hashmap;
-	t_hashmap		*special_sym;
-	t_ast_node		*root;
-	t_arglist		*heredoc_files;
-	int				unexpected;
+	t_token_list		*tokens;
+	t_lexer				lexer;
+	t_hashmap			*hashmap;
+	t_hashmap			*special_sym;
+	t_ast_node			*root;
+	t_arglist			*heredoc_files;
+    struct sigaction	sa;
+	int					unexpected;
 }				t_input;
 
 typedef struct s_control
@@ -94,4 +97,5 @@ void			handle_incomplete_input(t_control *control, char c);
 char			*get_new_input(t_incomplete_type type);
 int				get_new_lexer_input(t_lexer *lexer, t_control *control);
 t_hashmap		*create_special_table(void);
+
 #endif
