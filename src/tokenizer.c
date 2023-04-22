@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 17:12:51 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:17:25 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -692,6 +692,7 @@ char	*read_from_stdin(t_input *input)
 			ft_strcat(new, PROMPT);
 			ft_strcat(new, RESET);
 		}
+		line = readline(new);
 		free(new);
 	}
 	else
@@ -704,9 +705,9 @@ char	*read_from_stdin(t_input *input)
 			ft_strcat(new, &prompt[1]);
 		ft_strcat(new, PROMPT);
 		ft_strcat(new, RESET);
+		line = readline(new);
 		free(new);
 	}
-	line = readline(new);
 	free(prompt);
 	return (line);
 }

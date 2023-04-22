@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/22 16:54:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/22 17:15:33 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int	main(int argc, char **argv, char **envp)
 	//ft_signals(&sa);
 	//input.root->is_subshell_start = 0;
 	init_input(&input, envp);
-	// rl_initialize();
+	rl_initialize();
  	// signal(SIGINT, sigint_handler);
 	while (1)
 	{
