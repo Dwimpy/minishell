@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:20:28 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 21:30:30 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 21:30:24 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "x_execution.h"
 #include "signals.h"
 
-int ft_subshell_no_tree(t_input *input, t_ast_node *root)
+int	ft_subshell_no_tree(t_input *input, t_ast_node *root)
 {
 	int	pid;
 	int	status;

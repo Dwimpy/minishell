@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 18:41:32 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 21:28:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,14 @@ void	do_fsm_incomplete_cmd_or(t_lexer *lexer, t_fsm *fsm, t_input *input);
 void	set_fsm_error(t_fsm *fsm, t_input *input);
 void	run_fsm_input_get_input(t_lexer *lexer, t_fsm *fsm, t_input *input);
 void	print_syntax_error(int unexpected);
+void	fsm_init_tokenizer_params(int *index, int *status, \
+		pid_t *pid, char **prompt);
+int		get_tokenizer_input(t_input *input);
+void	free_input_at_exit(t_input *input);
+void	free_input_on_error(t_input *input);
+int		handle_tokenizer_errors(t_input *input, t_fsm *fsm);
+int		is_empty(char *str);
+void		init_state_get_tokens(t_lexer **lexer, t_token_list **tokens, \
+			t_token **token, t_input *input);
+int		init_state_get_tokens_substates(t_fsm *fsm);
 #endif

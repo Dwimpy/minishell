@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tokenizer.c                                        :+:      :+:    :+:   */
+/*   tokenizer_completion.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:17:03 by arobu            ###   ########.fr       */
+/*   Created: 2023/04/23 18:56:36 by arobu             #+#    #+#             */
+/*   Updated: 2023/04/23 18:56:46 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,30 @@
 #include <sys/wait.h>
 #include "signals.h"
 
-int	gen_input(t_input *input)
+int	do_in_pipe(t_lexer *lexer, t_fsm *fsm)
 {
-	t_fsm	fsm;
-	pid_t	pid;
-	char	*prompt;
-	int		i;
-	int		status;
+	if (readline_pipe(lexer, "pipe> "))
+		return (1);
+	fsm->state = GET_INPUT;
+	fsm->input_state = N_INPUT;
+	return (0);
+}
 
-	fsm_init_tokenizer(&fsm);
-	fsm_init_tokenizer_params(&i, &status, &pid, &prompt);
-	if (get_tokenizer_input(input))
+int	do_in_cmdand(t_lexer *lexer, t_fsm *fsm)
+{
+	if (readline_pipe(lexer, "cmdand> "))
 		return (1);
-	while (fsm.state != COMPLETE && fsm.state != ERROR)
-	{
-		get_the_input(input, &fsm);
-		tokenize(input, &fsm);
-	}
-	if (handle_tokenizer_errors(input, &fsm))
+	fsm->state = GET_INPUT;
+	fsm->input_state = N_INPUT;
+	return (0);
+}
+
+int	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
+{
+	if (readline_pipe(lexer, "cmdor> "))
 		return (1);
-	add_history(input->lexer.input);
+	fsm->state = GET_INPUT;
+	fsm->input_state = N_INPUT;
 	return (0);
 }
 
