@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 21:24:43 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 18:41:32 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,11 @@ int		readline_pipe(t_lexer *lexer, char *prompt);
 char	*get_prompt_dir(void);
 char	*read_from_stdin(t_input *input);
 void	fsm_input_state_update(char c, t_lexer *lexer, t_fsm *fsm);
+void	do_fsm_incomplete_state(t_lexer *lexer, t_fsm *fsm, t_input *input);
+void	do_fsm_incomplete_pipe(t_lexer *lexer, t_fsm *fsm, t_input *input);
+void	do_fsm_incomplete_cmd_and(t_lexer *lexer, t_fsm *fsm, t_input *input);
+void	do_fsm_incomplete_cmd_or(t_lexer *lexer, t_fsm *fsm, t_input *input);
+void	set_fsm_error(t_fsm *fsm, t_input *input);
+void	run_fsm_input_get_input(t_lexer *lexer, t_fsm *fsm, t_input *input);
 void	print_syntax_error(int unexpected);
 #endif

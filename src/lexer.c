@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/22 16:57:16 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 18:18:53 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,11 @@ char	get_next_char_tok(t_lexer *lexer)
 
 t_token	*create_next_token(t_lexer *lexer)
 {
-	int		i;
-
-	i = 0;
-	
 	while (match_whitespace(get_next_char_tok(lexer)))
 		;
 	if ((lexer->tok_ch == '1' || lexer->tok_ch == '2' || lexer->tok_ch == '0') && \
 		look_ahead_tok(lexer) == '>')
 		get_next_char_tok(lexer);
-	// if (lexer->tok_ch == '\0')
-	// 	return (new_token(TOKEN_EOF, NULL));
 	if (match_word(lexer->tok_ch))
 		return (tokenize_word(lexer));
 	else if (lexer->tok_ch == '|')
@@ -69,8 +63,8 @@ t_token	*create_next_token(t_lexer *lexer)
 		return (tokenize_redir_output(lexer));
 	else if (lexer->tok_ch == '(' || lexer->tok_ch == ')')
 		return (tokenize_braces(lexer));
-	// else if (lexer->tok_ch == ';')
-	// 	return (tokenize_semicolon(lexer));
+	else if (lexer->tok_ch == ';')
+		return (tokenize_semicolon(lexer));
 	if (lexer->ch == '\n')
 		return (tokenize_newline(lexer));
 	return (NULL);

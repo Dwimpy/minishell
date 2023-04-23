@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 21:24:55 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 18:50:11 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -518,77 +518,6 @@ void	tokenize(t_input *input, t_fsm *fsm)
 	}
 }
 
-inline int	is_token_logical_op(t_token *token)
-{
-	return (token->type == TOKEN_AND_IF || \
-		token->type == TOKEN_OR_IF || \
-		token->type == TOKEN_PIPE);
-}
-
-inline int	is_tok_state_pipe_lop(t_fsm *fsm)
-{
-	return (fsm->tok_state == TOK_PIPE || \
-		fsm->tok_state == TOK_AND_IF || \
-		fsm->tok_state == TOK_OR_IF);
-}
-
-inline int is_token_word(t_token *token)
-{
-	return (token->type == TOKEN_WORD);
-}
-
-inline int	is_token_word_literal(t_token *token)
-{
-	return (token->type == TOKEN_WORD || token->type == TOKEN_QUOTE || \
-		token->type == TOKEN_QUOTE);
-}
-
-inline int	is_token_redir(t_token *token)
-{
-	return (token->type == TOKEN_LESS || token->type == TOKEN_GREAT || \
-		token->type == TOKEN_DLESS || token->type == TOKEN_DGREAT);
-}
-
-inline int	is_token_assignment(t_token *token)
-{
-	return (token->type == TOKEN_ASSIGN_WORD);
-}
-
-inline int	is_token_lparen(t_token *token)
-{
-	return (token->type == TOKEN_LPARENTHESIS);
-}
-
-inline int	is_token_rparen(t_token *token)
-{
-	return (token->type == TOKEN_RPARENTHESIS);
-}
-
-inline int	is_token_pipe(t_token *token)
-{
-	return (token->type == TOKEN_PIPE);
-}
-
-inline int	is_token_cmdand(t_token *token)
-{
-	return (token->type == TOKEN_AND_IF);
-}
-
-inline int	is_token_cmdor(t_token *token)
-{
-	return (token->type == TOKEN_OR_IF);
-}
-
-inline int	is_tokenizer_ending(t_input	*input)
-{
-	return (input->tokens->last->type != TOKEN_WORD && \
-			input->tokens->last->type != TOKEN_SEMICOLON && \
-			input->tokens->last->type != TOKEN_QUOTE && \
-			input->tokens->last->type != TOKEN_QUOTE && \
-			input->tokens->last->type != TOKEN_RPARENTHESIS && \
-			input->tokens->last->type != TOKEN_ASSIGN_WORD);
-}
-
 void	get_the_input(t_input *input, t_fsm *fsm)
 {
 	t_lexer		*lexer;
@@ -598,55 +527,28 @@ void	get_the_input(t_input *input, t_fsm *fsm)
 	fsm->input_state = N_INPUT;
 	while (fsm->input_state != INPUT_COMPLETE)
 	{
-		// printf("%d\t%d\t%d\n", fsm->input_state, fsm->state, fsm->tok_state);
-
 		if (fsm->state == GET_INPUT)
-		{
-			c = get_next_char(lexer);
-			if (fsm->input_state == N_INPUT)
-				fsm_input_state_update(c, lexer, fsm);
-			else if (fsm->input_state == IN_LINEBR)
-				do_linebreak(lexer, "> ", fsm);
-			else if (fsm->input_state == IN_SQUOTE)
-				do_squote(lexer, fsm);
-			else if (fsm->input_state == IN_DQUOTE)
-				do_dquote(lexer, fsm);
-			else if (fsm->input_state == IN_SUBSH)
-				do_subsh(input, fsm);
-		}
+			run_fsm_input_get_input(lexer, fsm, input);
 		else if (fsm->state == INCOMPLETE)
-		{
-			if (fsm->tok_state == TOK_PIPE)
-			{
-				if (do_in_pipe(lexer, fsm))
-				{
-					fsm->input_state = INPUT_COMPLETE;
-					fsm->state = ERROR;
-					input->unexpected = TOKEN_END_OF_FILE;
-				}
-			}
-			else if (fsm->tok_state == TOK_AND_IF)
-			{
-				if (do_in_cmdand(lexer, fsm))
-				{
-					fsm->input_state = INPUT_COMPLETE;
-					fsm->state = ERROR;
-					input->unexpected = TOKEN_END_OF_FILE;
-				}
-			}
-			else if (fsm->tok_state == TOK_OR_IF)
-			{
-				if (do_in_cmdor(lexer, fsm))
-				{
-					fsm->input_state = INPUT_COMPLETE;
-					fsm->state = ERROR;
-					input->unexpected = TOKEN_END_OF_FILE;
-				}
-			}
-		}
+			do_fsm_incomplete_state(lexer, fsm, input);
 	}
-	// printf("State: %d\t", fsm->state);
-	// printf("State: %d\n", fsm->input_state);
+}
+
+void	run_fsm_input_get_input(t_lexer *lexer, t_fsm *fsm, t_input *input)
+{
+	char	c;
+
+	c = get_next_char(lexer);
+	if (fsm->input_state == N_INPUT)
+		fsm_input_state_update(c, lexer, fsm);
+	else if (fsm->input_state == IN_LINEBR)
+		do_linebreak(lexer, "> ", fsm);
+	else if (fsm->input_state == IN_SQUOTE)
+		do_squote(lexer, fsm);
+	else if (fsm->input_state == IN_DQUOTE)
+		do_dquote(lexer, fsm);
+	else if (fsm->input_state == IN_SUBSH)
+		do_subsh(input, fsm);
 }
 
 char	*get_prompt_dir(void)
@@ -663,38 +565,39 @@ char	*get_prompt_dir(void)
 
 char    *read_from_stdin(t_input *input)
 {
-    char    *prompt;
-    char    *line;
-    char    *user;
-    char    *new;
-    size_t  len_user;
-    ft_signals(&(input->sa), 1);
-    prompt = get_prompt_dir();
-    user =  (char *)hashmap_get(input->special_sym, "TILDE");
-    if (user && !ft_strncmp(prompt, user, ft_strlen(user)))
-    {
-        len_user = ft_strlen(user);
-        if (len_user == ft_strlen(prompt))
-        {
-            new = ft_calloc(ft_strlen(CTEALBOLD) + ft_strlen(RESET) + ft_strlen(PROMPT) + 4, sizeof(char));
-            ft_strcat(new, CTEALBOLD);
-            ft_strcat(new, "~ ");
-            ft_strcat(new, PROMPT);
-            ft_strcat(new, RESET);
-        }
-        else
-        {
-            new = ft_calloc(len_user + ft_strlen(&prompt[len_user]) + ft_strlen(CTEALBOLD) + ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 1, sizeof(char));
-            ft_strcat(new, CTEAL);
-            ft_strcat(new, "~");
-            ft_strncat(new, &prompt[len_user], ft_strrchr(prompt, '/') - &prompt[len_user] + 1);
-            ft_strcat(new, CTEALBOLD);
-            ft_strcat(new, ft_strrchr(prompt, '/') + 1);
-            ft_strcat(new, PROMPT);
-            ft_strcat(new, RESET);
-        }
-        line = readline(new);
-        free(new);
+	char	*prompt;
+	char	*line;
+	char	*user;
+	char	*new;
+	size_t	len_user;
+
+	ft_signals(&(input->sa), 1);
+	prompt = get_prompt_dir();
+	user =  (char *)hashmap_get(input->special_sym, "TILDE");
+	if (user && !ft_strncmp(prompt, user, ft_strlen(user)))
+	{
+		len_user = ft_strlen(user);
+		if (len_user == ft_strlen(prompt))
+		{
+			new = ft_calloc(ft_strlen(CTEALBOLD) + ft_strlen(RESET) + ft_strlen(PROMPT) + 4, sizeof(char));
+			ft_strcat(new, CTEALBOLD);
+			ft_strcat(new, "~ ");
+			ft_strcat(new, PROMPT);
+			ft_strcat(new, RESET);
+		}
+		else
+		{
+			new = ft_calloc(len_user + ft_strlen(&prompt[len_user]) + ft_strlen(CTEALBOLD) + ft_strlen(CTEAL) + ft_strlen(RESET) + ft_strlen(PROMPT) + 1, sizeof(char));
+			ft_strcat(new, CTEAL);
+			ft_strcat(new, "~");
+			ft_strncat(new, &prompt[len_user], ft_strrchr(prompt, '/') - &prompt[len_user] + 1);
+			ft_strcat(new, CTEALBOLD);
+			ft_strcat(new, ft_strrchr(prompt, '/') + 1);
+			ft_strcat(new, PROMPT);
+			ft_strcat(new, RESET);
+		}
+		line = readline(new);
+		free(new);
     }
     else
     {
@@ -758,6 +661,12 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	append_line = readline(prompt);
 	if (!append_line)
 		return ;
+	if (append_line[0] == '\0')
+	{
+		fsm->input_state = INPUT_COMPLETE;
+		free(append_line);
+		return ;
+	}
 	trimmed = ft_strtrim(lexer->input, "\\");
 	join_line = (char *)malloc(sizeof(char) * (ft_strlen(lexer->input) + \
 				ft_strlen(append_line) + 1));
