@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 21:32:02 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 22:43:24 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -331,20 +331,20 @@ int	ft_exit(char **str_arr, t_input *input)
 		free(trim);
 	}
 
-		free (input->lexer.input);
-		clear_history();
-		free_token_list(input->tokens);
-		free(input->tokens);
-
-		t_ast_node *root;
-
-		root = input->root;
-		while (root->left != NULL)
-			root = root->left;
-		ft_change_tree_back(root);
-		ast_del_node(input->root);
-		hashmap_free(&input->hashmap);
-		hashmap_free(&input->special_sym);	
+	free (input->lexer.input);
+	clear_history();
+	free_token_list(input->tokens);
+	free(input->tokens);
+	t_ast_node *root;
+	root = input->root;
+	while (root->left != NULL)
+		root = root->left;
+	ft_change_tree_back(root);
+	ast_del_node(input->root);
+	hashmap_free(&input->hashmap);
+	hashmap_free(&input->special_sym);
+	free_heredoc_list(input->heredoc_files);
+	free(input->heredoc_files);
 	// system("leaks minishell");
 	exit (c);
 }

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 21:17:12 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:29:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 22:48:05 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "signals.h"
 
 int	is_running(t_fsm *fsm);
+int	is_beginning(t_token *token, t_fsm *fsm, t_input *input);
 
 void	tokenize(t_input *input, t_fsm *fsm)
 {
@@ -28,67 +29,10 @@ void	tokenize(t_input *input, t_fsm *fsm)
 	while (is_running(fsm))
 	{
 		token = create_next_token(lexer);
-
-		// print_token_value(token);
-		if (!token)
-		{
-			if (!tokens->last)
-				fsm->state = COMPLETE;
-			else if (is_tokenizer_ending(input))
-			{
-				fsm->state = INCOMPLETE;
-				if (tokens->last->type == TOKEN_PIPE)
-					fsm->tok_state = TOK_PIPE;
-				else if (tokens->last->type == TOKEN_AND_IF)
-					fsm->tok_state = TOK_AND_IF;
-				else if (tokens->last->type == TOKEN_OR_IF)
-					fsm->tok_state = TOK_OR_IF;
-				else if (is_token_redir(tokens->last))
-				{
-					fsm->state = ERROR;
-					input->unexpected = TOKEN_EOF;
-				}
-			}
-			else
-			{
-				fsm->tok_state = TOK_COMPLETE;
-				fsm->state = COMPLETE;
-			}
+		if (end_of_tokens(token, tokens, fsm, input))
 			return ;
-		}
 		else
-		{
-			if (input->tokens->num_tokens == 0)
-			{
-				if (!is_valid_beginning(token))
-				{
-					// printf("ERROR IN STATE %d\n", fsm->tok_state);
-					fsm->state = ERROR;
-					input->unexpected = token->type;
-					break ;
-				}
-			}
-			if (fsm->tok_state == N_TOKENIZER)
-			{
-				if (is_prefix(token) || is_cmd_suffix(token))
-				{
-					fsm->tok_state = TOK_CMD;
-					fsm->cmd_state = TOK_CMD_PREFIX;
-					fsm->cmd_p_substate = TOK_CMD_PREFIX_NONE;
-					fsm->redir_state = OTHER;
-				}
-				else if (is_token_lparen(token))
-					fsm->tok_state = TOK_LPARENTHESIS;
-				else if (is_token_rparen(token))
-					fsm->tok_state = TOK_RPARENTHESIS;
-				else if (is_token_pipe(token))
-					fsm->tok_state = TOK_PIPE;
-				else if (is_token_cmdand(token))
-					fsm->tok_state = TOK_AND_IF;
-				else if (is_token_cmdor(token))
-					fsm->tok_state = TOK_OR_IF;
-			}
-		}
+			tokenizer_run_n_tok_state(token, fsm, input);
 		if (fsm->tok_state == TOK_CMD)
 		{
 			if (fsm->cmd_state == TOK_CMD_PREFIX)
@@ -126,6 +70,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 						{
 							fsm->state = ERROR;
 							input->unexpected = token->type;
+							break ;
 						}
 						if (token->type == TOKEN_WORD)
 							filename = get_env_vars(expand_vars(token->value.word.value), input);
@@ -135,6 +80,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 						if (fd > 0)
 						{
 							new_argument(input->heredoc_files, create_heredoc_file(filename));
+							free(filename);
 							while(1)
 							{
 								char	*str;
@@ -277,10 +223,12 @@ void	tokenize(t_input *input, t_fsm *fsm)
 						char	*expanded;
 
 						line = NULL;
+						filename = NULL;
 						if (!is_token_word_literal(token))
 						{
 							fsm->state = ERROR;
 							input->unexpected = token->type;
+							break ;
 						}
 						if (token->type == TOKEN_WORD)
 							filename = get_env_vars(expand_vars(token->value.word.value), input);
@@ -290,6 +238,7 @@ void	tokenize(t_input *input, t_fsm *fsm)
 						if (fd > 0)
 						{
 							new_argument(input->heredoc_files, create_heredoc_file(filename));
+							free(filename);
 							while(1)
 							{
 								char	*str;
@@ -434,28 +383,40 @@ void	tokenize(t_input *input, t_fsm *fsm)
 	}
 }
 
-int	is_running(t_fsm *fsm)
+int	end_of_tokens(t_token *token, t_token_list *tokens, \
+				t_fsm *fsm, t_input *input)
 {
-	return (fsm->tok_state != TOK_COMPLETE && \
-			fsm->state != INCOMPLETE && \
-			fsm->state != COMPLETE && \
-			fsm->state != ERROR);
-}
-
-void	init_state_get_tokens(t_lexer **lexer, t_token_list **tokens, \
-			t_token **token, t_input *input)
-{
-
-	*lexer = &input->lexer;
-	*token = NULL;
-	*tokens = input->tokens;
-}
-
-int	init_state_get_tokens_substates(t_fsm *fsm)
-{
-	if (fsm->state == ERROR)
+	if (!token)
+	{
+		if (!tokens->last)
+			fsm->state = COMPLETE;
+		else if (is_tokenizer_ending(input))
+			do_tokenizer_ending(fsm, tokens, input);
+		else
+			tokenizer_input_complete(fsm);
 		return (1);
-	fsm->state = GET_TOKENS;
-	fsm->tok_state = N_TOKENIZER;
+	}
 	return (0);
+}
+
+void	tokenizer_input_complete(t_fsm *fsm)
+{
+	fsm->tok_state = TOK_COMPLETE;
+	fsm->state = COMPLETE;
+}
+
+void	do_tokenizer_ending(t_fsm *fsm, t_token_list *tokens, t_input *input)
+{
+	fsm->state = INCOMPLETE;
+	if (tokens->last->type == TOKEN_PIPE)
+		fsm->tok_state = TOK_PIPE;
+	else if (tokens->last->type == TOKEN_AND_IF)
+		fsm->tok_state = TOK_AND_IF;
+	else if (tokens->last->type == TOKEN_OR_IF)
+		fsm->tok_state = TOK_OR_IF;
+	else if (is_token_redir(tokens->last))
+	{
+		fsm->state = ERROR;
+		input->unexpected = TOKEN_EOF;
+	}
 }

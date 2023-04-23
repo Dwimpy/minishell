@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:28:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/23 22:06:01 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,8 @@ int		is_empty(char *str);
 void		init_state_get_tokens(t_lexer **lexer, t_token_list **tokens, \
 			t_token **token, t_input *input);
 int		init_state_get_tokens_substates(t_fsm *fsm);
+int		tokenizer_run_n_tok_state(t_token *token, t_fsm *fsm, t_input *input);
+int		end_of_tokens(t_token *token, t_token_list *tokens, t_fsm *fsm, t_input *input);
+void	tokenizer_input_complete(t_fsm *fsm);
+void	do_tokenizer_ending(t_fsm *fsm, t_token_list *tokens, t_input *input);
 #endif
