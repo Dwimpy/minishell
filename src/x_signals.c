@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 20:48:55 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 10:09:34 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 11:06:19 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ void	ft_signal_handler_reading(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (sig == 2)
 	{
+		rl_replace_line("", 0);
 		write(1, "\n", 2);
 		rl_on_new_line();
 		rl_redisplay();
