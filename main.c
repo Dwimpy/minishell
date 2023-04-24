@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/22 22:08:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 18:34:20 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,7 @@ int	main(int argc, char **argv, char **envp)
 	t_input				input;
 	int					fd;
 	int					exit_code;
-	//ft_signals(&sa);
-	//input.root->is_subshell_start = 0;
+
 	init_input(&input, envp);
 	rl_initialize();
 
@@ -48,8 +47,7 @@ int	main(int argc, char **argv, char **envp)
 		if (gen_input(&input))
 			continue ;
 		if (parse_all_input(&input))
-			continue;
-		// // my part
+			continue ;
 		fd = 0;
 		exit_code = ft_execution(&input, input.root, &fd);
 		if (exit_code >= 256)
@@ -60,8 +58,6 @@ int	main(int argc, char **argv, char **envp)
 		free(input.lexer.input);
 		free_token_list(input.tokens);
 		free_heredoc_list(input.heredoc_files);
-		// system("leaks minishell");
-		// exit(0);
 	}
 	return (ft_atoi(hashmap_get(input.special_sym, "EXITSTATUS")));
 }

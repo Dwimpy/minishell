@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 22:06:01 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 18:34:00 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,29 @@ void		init_state_get_tokens(t_lexer **lexer, t_token_list **tokens, \
 			t_token **token, t_input *input);
 int		init_state_get_tokens_substates(t_fsm *fsm);
 int		tokenizer_run_n_tok_state(t_token *token, t_fsm *fsm, t_input *input);
-int		end_of_tokens(t_token *token, t_token_list *tokens, t_fsm *fsm, t_input *input);
+int		end_of_tokens(t_token *token, t_token_list *tokens, \
+			t_fsm *fsm, t_input *input);
 void	tokenizer_input_complete(t_fsm *fsm);
 void	do_tokenizer_ending(t_fsm *fsm, t_token_list *tokens, t_input *input);
+int		do_heredoc(t_token *token, t_fsm *fsm, t_input *input);
+int		check_correct_token(t_token *token, t_fsm *fsm, t_input *input);
+void	get_file_name(t_token *token, t_input *input, char **filename);
+int		heredoc_token_word(char *line, t_token *token, t_input *input, int fd);
+int		heredoc_token_quote(char *line, t_token *token, t_input *input, int fd);
+int		run_heredoc(t_token *token, t_input *input, int *fd, char *line);
+int		tokenizer_do_rparen(t_token *token, t_fsm *fsm, t_input *input);
+int		tokenizer_do_lparen(t_token *token, t_fsm *fsm, t_input *input);
+int		tokenizer_do_pipe(t_token *token, t_fsm *fsm, t_input *input);
+int		tokenizer_tok_cmd_prefix(t_fsm *fsm, t_token *token, t_input *input);
+int		is_lop_and_none(t_token *token, t_fsm *fsm);
+int		is_lop_and_none_literal(t_token *token, t_fsm *fsm);
+int		is_rparen_and_none(t_token *token, t_fsm *fsm);
+int		is_assign_and_none(t_token *token, t_fsm *fsm);
+int		is_token_redir_and_none(t_token *token, t_fsm *fsm);
+int		tokenizer_tok_cmd_suffix(t_token *token, \
+			t_fsm *fsm, t_input *input);
+int		tokenizer_tok_cmd_name(t_token *token, \
+			t_fsm *fsm, t_input *input);
+int		tokenizer_do_tok_cmd(t_token *token, t_fsm *fsm, t_input *input);
+int		run_tokenizer(t_token *token, t_fsm *fsm, t_input *input);
 #endif

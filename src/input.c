@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 16:58:04 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 18:34:37 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ t_hashmap	*create_special_table(void)
 	hashmap_put(hashmap, "EXITSTATUS", ft_strdup("0"));
 	free(path);
 	return (hashmap);
-	// path = NULL;
 }
 
 void	init_input(t_input	*input, char **envp)
