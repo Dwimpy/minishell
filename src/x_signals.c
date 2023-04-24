@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 20:48:55 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 11:06:19 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 11:13:01 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 #include "signals.h"
 #include "../readline/readline.h"
 #include "../readline/history.h"
-
-void	remove_signal_printing(void);
 
 int	ft_signals(struct sigaction *sa, int is_reading)
 {
@@ -40,15 +38,6 @@ int	ft_signals(struct sigaction *sa, int is_reading)
 		exit (1);
 	}
 	return (0);
-}
-
-void	remove_signal_printing(void)
-{
-	struct termios		termios_settings;
-
-	tcgetattr(1, &termios_settings);
-	termios_settings.c_lflag &= ~ECHOCTL;
-	tcsetattr(1, TCSAFLUSH, &termios_settings);
 }
 
 int	ft_signals_child(struct sigaction *sa)
