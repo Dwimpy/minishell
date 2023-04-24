@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 13:20:18 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 16:51:47 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,10 @@ int				ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell);
 int				ft_close_and_exit(int new_fd[2], int *fd, int status);
 int				ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
 void			ft_redirect_back(int *stdin_cp, int *stdout_cp);
+int				is_directory(const char *path);
+int				ft_put_error(char **str_arr, char *str, int status);
+int				ft_put_error_n(char **str_arr, char *str, int status);
+int				ft_directory_error(char **str_arr, int *status);
+void			ft_cmd_not_found(char **str_arr, int *status);
 
 #endif

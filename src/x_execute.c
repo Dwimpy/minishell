@@ -5,56 +5,39 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/04/18 15:11:41 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 12:54:13 by tkilling         ###   ########.fr       */
+/*   Created: 2023/04/24 14:15:08 by tkilling          #+#    #+#             */
+/*   Updated: 2023/04/24 14:15:50 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "lexer.h"
+#include "parser.h"
 #include "x_execution.h"
+// #include "sys/types.h"
+// #include "sys/wait.h"
+// #include "sys/stat.h"
 
-void	ft_change_tree(t_ast_node *root)
+int	ft_execute(char *path, char **str_arr, t_input *input)
 {
-	t_ast_node	*ptr;
+	int		pid;
+	int		status;
+	char	**hashmap;
 
-	ptr = root->parent;
-	while (ptr)
+	if (access(path, F_OK) == 0)
 	{
-		ptr->right->left = ptr->right->parent;
-		ptr->right->parent = ptr->parent;
-		ptr = ptr->parent;
+		pid = fork();
+		if (pid == -1)
+			exit(1);
+		if (pid == 0)
+		{
+			ft_signals_child(&(input->sa));
+			hashmap = hashmap_tochar(input->hashmap);
+			if (execve(path, str_arr, hashmap))
+				exit(1);
+		}
+		else
+			waitpid(pid, &status, 0);
+		return (WEXITSTATUS(status));
 	}
-}
-
-void	ft_change_tree_back(t_ast_node *root)
-{
-	t_ast_node	*ptr;
-
-	ptr = root->parent;
-	while (ptr)
-	{
-		ptr->right->left = NULL;
-		ptr = ptr->parent;
-	}
-}
-
-int	ft_execution(t_input *input, t_ast_node *root, int *fd)
-{
-	int			exit_code;
-	pid_t		pid;
-	int			status;
-
-	exit_code = 0;
-	while (root->left != NULL)
-		root = root->left;
-	ft_change_tree(root);
-	input->sub = 0;
-	exit_code = ft_execute_tree(input, root, fd);
-	ft_change_tree_back(root);
-	pid = 1;
-	while (pid != -1)
-		pid = waitpid(-1, &status, 0);
-	while (*fd > 2)
-		close((*fd)--);
-	return (exit_code);
+	else
+		return (-1);
 }
