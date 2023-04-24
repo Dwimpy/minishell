@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 18:27:12 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 18:29:01 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:11:58 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	tokenizer_do_tok_cmd(t_token *token, t_fsm *fsm, t_input *input)
 		else if (fsm->cmd_state == TOK_CMD_SUFFIX)
 		{
 			if (tokenizer_tok_cmd_suffix(token, fsm, input))
-				return (1) ;
+				return (1);
 		}
 	}
 	return (0);

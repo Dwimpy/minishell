@@ -6,20 +6,20 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/31 19:42:26 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/14 14:18:48 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:12:34 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "environment_handler.h"
 #include <string.h>
 #include <stdio.h>
+
 t_hashmap	*load_environment(char **envp)
 {
 	t_hashmap	*hashmap;
 
 	hashmap = hashmap_new(500);
 	load_data(hashmap, envp);
-
 	return (hashmap);
 }
 
@@ -42,7 +42,6 @@ void	load_data(t_hashmap *hashmap, char **envp)
 		free(key);
 		(env)++;
 	}
-	// ft_printf("%s\n", (char *)hashmap_get(hashmap, "USER"));
 }
 
 char	**hashmap_tochar(t_hashmap *hashmap)
@@ -57,7 +56,6 @@ char	**hashmap_tochar(t_hashmap *hashmap)
 	if (!hashmap && !hashmap->table)
 		return (NULL);
 	arr = (char **)malloc(sizeof(char *) * (hashmap->length + 1));
-	//printf("\nLEN: %d\n", hashmap->length);
 	if (!arr)
 		return (NULL);
 	while (i < hashmap->size)

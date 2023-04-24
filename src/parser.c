@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 17:40:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:06:21 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,37 +112,6 @@ void	parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t
 	parse_subshell(tokens, sub_count);
 	ast_add(root, parse_subshell(tokens, sub_count));
 }
-
-// t_ast_node	*parse_subshell(t_token_list *tokens, t_input *input, int sub_count)
-// {
-// 	t_ast_node	*root;
-
-// 	root = NULL;
-// 	if (accept(tokens->first, TOKEN_LPARENTHESIS))
-// 	{
-// 		sub_count++;
-// 		consume_token(tokens);
-// 		while (!accept(tokens->first, TOKEN_RPARENTHESIS))
-// 		{
-// 			if (!accept(tokens->first, TOKEN_LPARENTHESIS))
-// 				printf("parentehese\n");
-// 			if (!accept(tokens->first, TOKEN_RPARENTHESIS))
-// 				printf("parentethese closed\n");
-// 			ast_add(&root, parse_command(tokens, input));
-// 			ast_add(&root, parse_pipeline(tokens));
-// 			ast_add(&root, parse_and_if(tokens));
-// 			ast_add(&root, parse_or_if(tokens));
-// 			ast_add(&root, parse_subshell(tokens, input, sub_count));
-// 			if (root)
-// 				root->is_subshell = sub_count;
-// 		}
-// 		// if (root)
-// 		// 	root->is_subshell = sub_count;
-// 		consume_token(tokens);
-// 		return (root);
-// 	}
-// 	return (root);
-// }
 
 void	parse_cmd_word(t_token_list	**tokens, t_command_info *data)
 {

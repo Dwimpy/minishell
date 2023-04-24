@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 21:58:52 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:59:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:06:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int	is_running(t_fsm *fsm)
 void	init_state_get_tokens(t_lexer **lexer, t_token_list **tokens, \
 			t_token **token, t_input *input)
 {
-
 	*lexer = &input->lexer;
 	*token = NULL;
 	*tokens = input->tokens;
@@ -75,7 +74,6 @@ static int	is_beginning(t_token *token, t_fsm *fsm, t_input *input)
 	{
 		if (!is_valid_beginning(token))
 		{
-			// printf("ERROR IN STATE %d\n", fsm->tok_state);
 			fsm->state = ERROR;
 			input->unexpected = token->type;
 			return (1);

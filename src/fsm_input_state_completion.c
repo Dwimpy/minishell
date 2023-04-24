@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 21:15:59 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:16:09 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:06:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,3 @@ void	run_fsm_input_get_input(t_lexer *lexer, t_fsm *fsm, t_input *input)
 	else if (fsm->input_state == IN_SUBSH)
 		do_subsh(input, fsm);
 }
-

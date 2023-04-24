@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 16:39:23 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 17:43:47 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:10:58 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ int	tokenizer_tok_cmd_prefix(t_fsm *fsm, t_token *token, t_input *input)
 	}
 	return (0);
 }
-
 
 static void	tokenizer_cmd_prefix_pipe_lop(t_token *token, t_fsm *fsm)
 {

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 20:53:34 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:14:17 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:11:39 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,4 +80,3 @@ void	free_input_on_error(t_input *input)
 	free(hashmap_put(input->special_sym, "EXITSTATUS", ft_strdup("2")));
 	free_heredoc_list(input->heredoc_files);
 }
-

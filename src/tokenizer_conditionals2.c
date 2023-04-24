@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 18:49:29 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 18:50:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:11:35 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ inline int	is_tok_state_pipe_lop(t_fsm *fsm)
 		fsm->tok_state == TOK_OR_IF);
 }
 
-inline int is_token_word(t_token *token)
+inline int	is_token_word(t_token *token)
 {
 	return (token->type == TOKEN_WORD);
 }

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 18:56:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 18:56:46 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:11:27 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,3 @@ int	do_in_cmdor(t_lexer *lexer, t_fsm *fsm)
 	fsm->input_state = N_INPUT;
 	return (0);
 }
-
