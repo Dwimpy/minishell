@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_execution.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 21:32:14 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 09:38:27 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,5 +42,6 @@ int				ft_or_if(t_input *input, t_ast_node *root, int *fd);
 int				ft_subshell_no_tree(t_input *input, t_ast_node *root);
 void			ft_change_tree(t_ast_node *root);
 void			ft_change_tree_back(t_ast_node *root);
+int				ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell);
 
 #endif

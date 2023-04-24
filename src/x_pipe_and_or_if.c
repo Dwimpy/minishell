@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_pipe_and_or_if.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:15:58 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 21:28:40 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 10:10:59 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 int	ft_pipe(t_input *input, t_ast_node *root, int *fd)
 {
 	static int		new_fd[2];
-	int 			pid;
-	int 			status;
+	int				pid;
+	int				status;
 
 	status = 0;
 	if (pipe(new_fd) == -1)
@@ -29,8 +29,8 @@ int	ft_pipe(t_input *input, t_ast_node *root, int *fd)
 	{
 		ft_signals_child(&(input->sa));
 		close(new_fd[0]);
-		//if (!root->is_subshell)
-		if (root->parent && root->parent->type == PIPELINE && !(root->is_subshell > root->parent->is_subshell))
+		if (root->parent && root->parent->type == PIPELINE
+			&& !(root->is_subshell > root->parent->is_subshell))
 			dup2(new_fd[1], STDOUT_FILENO);
 		dup2(*fd, STDIN_FILENO);
 		status = ft_command(root->data.command.cmd.args, input, root);
@@ -50,9 +50,9 @@ int	ft_pipe(t_input *input, t_ast_node *root, int *fd)
 
 int	ft_and_if(t_input *input, t_ast_node *root, int *fd)
 {
-	int 			pid;
-	int 			st;
-	int				status;
+	int		pid;
+	int		st;
+	int		status;
 
 	st = 0;
 	pid = 0;
@@ -69,9 +69,9 @@ int	ft_and_if(t_input *input, t_ast_node *root, int *fd)
 
 int	ft_or_if(t_input *input, t_ast_node *root, int *fd)
 {
-	int 			pid;
-	int 			st;
-	int				status;
+	int		pid;
+	int		st;
+	int		status;
 
 	st = 0;
 	pid = 0;

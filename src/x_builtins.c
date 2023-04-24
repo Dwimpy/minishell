@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_builtins.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 15:44:49 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/23 22:43:24 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 10:22:05 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ void	handle_whitespaces(char *str)
 
 	i = 0;
 	j = 0;
-	str_cpy	= ft_strdup(str);
+	str_cpy = ft_strdup(str);
 	while (str[j])
 	{
 		if (ft_isspace3(str_cpy[i]))
@@ -135,7 +135,6 @@ void	handle_whitespaces(char *str)
 		i++;
 		j++;
 	}
-	// printf("%s", str);
 }
 
 int	check_valid_unset_ident(char *str, t_input *input, int *status)
@@ -151,7 +150,7 @@ int	check_valid_unset_ident(char *str, t_input *input, int *status)
 	}
 	copy = ft_strdup(str);
 	j = 0;
- 	while(copy[j])
+	while (copy[j])
 	{
 		if (ft_strchr("@%^*#-!&=?$~.{}+", copy[j]))
 		{
@@ -246,7 +245,6 @@ int	ft_env(char **str_arr, t_input *input)
 	return (0);
 }
 
-
 int	ft_echo(char **str_arr, int fd)
 {
 	int		n_flag;
@@ -255,7 +253,6 @@ int	ft_echo(char **str_arr, int fd)
 
 	i = 1;
 	n_flag = 0;
-
 	while (str_arr[i] != NULL && !ft_memcmp(str_arr[i], "-n", 2))
 	{
 		j = 1;
@@ -286,6 +283,7 @@ int	ft_exit(char **str_arr, t_input *input)
 	unsigned char	c;
 	size_t			i;
 	char			*trim;
+	t_ast_node		*root;
 
 	i = 0;
 	c = 0;
@@ -324,18 +322,16 @@ int	ft_exit(char **str_arr, t_input *input)
 		}
 		if (str_arr[2] != NULL)
 		{
-			ft_putstr_fd("minishell: exit: too many arguments\n" ,2);
+			ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 			return (1);
 		}
 		c = ft_atoi(trim);
 		free(trim);
 	}
-
 	free (input->lexer.input);
 	clear_history();
 	free_token_list(input->tokens);
 	free(input->tokens);
-	t_ast_node *root;
 	root = input->root;
 	while (root->left != NULL)
 		root = root->left;
@@ -412,7 +408,6 @@ int	ft_cd(char **str_arr, t_input *input)
 		{
 			ft_putstr_fd("minishell: cd: ", 2);
 			ft_putstr_fd(str_arr[1], 2);
-
 			ft_putendl_fd(" Not a directory", 2);
 			return (1);
 		}

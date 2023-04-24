@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_command.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
+/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/22 21:31:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 10:16:54 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static int	is_directory(const char *path);
 
 int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 {
-	
 	char	*ptr;
 	char	*path;
 	char	**paths;
@@ -148,9 +147,10 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 static int	is_directory(const char *path)
 {
 	struct stat	statbuffer;
+
 	if (stat(path, &statbuffer) != 0)
 		return (0);
-	return S_ISDIR(statbuffer.st_mode);
+	return (S_ISDIR(statbuffer.st_mode));
 }
 
 int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
@@ -201,8 +201,6 @@ int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 
 void	ft_redirect_back(int *stdin_cp, int *stdout_cp)
 {	
-	// printf("input :%s\n", root->data.command.input.filename);
-	// printf("output :%s\n", root->data.command.output.filename);
 	if (*stdout_cp >= 0)
 	{
 		close (STDOUT_FILENO);
@@ -221,7 +219,7 @@ int	ft_execute(char *path, char **str_arr, t_input *input)
 {
 	int		pid;
 	int		status;
-	char 	**hashmap;
+	char	**hashmap;
 
 	if (access(path, F_OK) == 0)
 	{
@@ -240,14 +238,14 @@ int	ft_execute(char *path, char **str_arr, t_input *input)
 		return (WEXITSTATUS(status));
 	}
 	else
-		return(-1);
+		return (-1);
 }
 
 int	ft_executable(char **str_arr, t_input *input)
 {
 	int		pid;
 	int		status;
-	char 	**hashmap;
+	char	**hashmap;
 
 	status = 0;
 	if (is_directory(str_arr[0]))
