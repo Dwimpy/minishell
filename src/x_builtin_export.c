@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:26:33 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 17:59:20 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 20:22:46 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,12 @@
 #include <string.h>
 #include <errno.h>
 
-static int	check_valid_env_ident(char *str_arr, t_input *input, int *status);
+int			check_valid_env_ident(char *str_arr, t_input *input, int *status);
 void		handle_whitespaces(char *str);
 static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value);
 void		ft_execute_export(char **str_arr, t_input *input,
 				char **str, size_t i);
+void		ft_entry(t_entry **entry, t_hashmap *hashmap, const void *key);
 
 int	ft_export(char **str_arr, t_input *input)
 {
@@ -59,53 +60,6 @@ void	ft_execute_export(char **str_arr, t_input *input, char **str, size_t i)
 	}
 }
 
-int	check_valid_env_ident(char *str_arr, t_input *input, int *status)
-{
-	int		j;
-	char	*copy;
-
-	copy = strdup(str_arr);
-	if (!ft_isalpha(copy[0]) && copy[0] != '_')
-	{
-		ft_putstr_fd("minishell: export: `", 2);
-		ft_putstr_fd(copy, 2);
-		ft_putendl_fd("': not a valid identifier", 2);
-		free(hashmap_put(input->hashmap, "EXITSTATUS", ft_itoa(*status)));
-		if (copy[0] == '-')
-			*status = 2;
-		else
-			*status = 1;
-		free(copy);
-		return (*status);
-	}
-	if (ft_strchr(copy, '='))
-		ft_strchr(copy, '=')[1] = '\0';
-	j = 0;
-	while (copy[j])
-	{
-		if (ft_strchr("@%^*#-!&~.{}+", copy[j]))
-		{
-			if (copy[j] == '+' && copy[j + 1] == '=')
-			{
-				j++;
-				continue ;
-			}
-			ft_putstr_fd("minishell: export: `", 2);
-			ft_putstr_fd(copy, 2);
-			ft_putendl_fd("': not a valid identifier", 2);
-			if (copy[0] == '-')
-				*status = 2;
-			else
-				*status = 1;
-			free(hashmap_put(input->hashmap, "EXITSTATUS", ft_itoa(*status)));
-			free(copy);
-			return (*status);
-		}
-		j++;
-	}
-	return (0);
-}
-
 static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 {
 	t_entry	*entry;
@@ -116,12 +70,7 @@ static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 		return (NULL);
 	index = hashmap->hash(key) % hashmap->size;
 	entry = hashmap->table[index];
-	while (entry)
-	{
-		if (hashmap->compare(key, entry->key))
-			break ;
-		entry = entry->next;
-	}
+	ft_entry(&entry, hashmap, key);
 	if (!entry)
 	{
 		entry = (t_entry *)malloc(sizeof(t_entry));
@@ -138,6 +87,16 @@ static void	*hashmap_put_new(t_hashmap *hashmap, const void *key, void *value)
 		entry->value = ft_strdup((char *)value);
 	}
 	return (prev);
+}
+
+void	ft_entry(t_entry **entry, t_hashmap *hashmap, const void *key)
+{
+	while (*entry)
+	{
+		if (hashmap->compare(key, (*entry)->key))
+			break ;
+		*entry = (*entry)->next;
+	}
 }
 
 void	handle_whitespaces(char *str)
