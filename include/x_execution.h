@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 11:18:02 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 11:44:40 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ t_arglist		*expand_vars_heredoc(char	*value);
 void			expand_env_vars(char **args, t_input *input);
 int				ft_execute(char *path, char **str_arr, t_input *input);
 int				ft_execution(t_input *input, t_ast_node *root, int *fd);
-int				ft_execute_tree(t_input *input, t_ast_node *root, int *fd, int subshell);
+int				ft_execute_tree(t_input *input, t_ast_node *root, int *fd);
 int				ft_pipe(t_input *input, t_ast_node *root, int *fd);
 int				ft_and_if(t_input *input, t_ast_node *root, int *fd);
 int				ft_or_if(t_input *input, t_ast_node *root, int *fd);

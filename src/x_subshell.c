@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/18 15:20:28 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 11:02:46 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 12:51:41 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ int	ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell)
 		return (-1);
 	if (pid == 0)
 	{
-		status = ft_execute_tree(input, root, fd, subshell);
+		input->sub = subshell;
+		status = ft_execute_tree(input, root, fd);
 		return (ft_close_and_exit(new_fd, fd, status));
 	}
 	else
