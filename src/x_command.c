@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 10:16:54 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 13:20:07 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,6 @@
 #include "sys/types.h"
 #include "sys/wait.h"
 #include "sys/stat.h"
-
-static int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp);
-static void	ft_redirect_back(int *stdin_cp, int *stdout_cp);
 
 static int	is_directory(const char *path);
 
@@ -151,68 +148,6 @@ static int	is_directory(const char *path)
 	if (stat(path, &statbuffer) != 0)
 		return (0);
 	return (S_ISDIR(statbuffer.st_mode));
-}
-
-int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
-{
-	int		fd;
-
-	if (root->data.command.output.filename && !root->data.command.output.is_appended)
-	{
-		fd = open(root->data.command.output.filename, O_WRONLY | O_TRUNC, 0644);
-		if (fd < 0)
-			return (1);
-		else
-		{
-			*stdout_cp = dup(STDOUT_FILENO);
-			close(STDOUT_FILENO);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
-	}
-	else if (root->data.command.output.filename && root->data.command.output.is_appended)
-	{
-		fd = open(root->data.command.output.filename, O_WRONLY | O_APPEND, 0644);
-		if (fd < 0)
-			return (1);
-		else
-		{
-			*stdout_cp = dup(STDOUT_FILENO);
-			close(STDOUT_FILENO);
-			dup2(fd, STDOUT_FILENO);
-			close(fd);
-		}
-	}
-	if (root->data.command.input.filename)
-	{
-		fd = open(root->data.command.input.filename, O_RDONLY);
-		if (fd < 0)
-			return (1);
-		else
-		{
-			*stdin_cp = dup(STDIN_FILENO);
-			close(STDIN_FILENO);
-			dup2(fd, STDIN_FILENO);
-			close(fd);
-		}
-	}
-	return (0);
-}
-
-void	ft_redirect_back(int *stdin_cp, int *stdout_cp)
-{	
-	if (*stdout_cp >= 0)
-	{
-		close (STDOUT_FILENO);
-		dup2(*stdout_cp, STDOUT_FILENO);
-		close(*stdout_cp);
-	}
-	if (*stdin_cp >= 0)
-	{
-		close (STDIN_FILENO);
-		dup2(*stdin_cp, STDIN_FILENO);
-		close(*stdin_cp);
-	}
 }
 
 int	ft_execute(char *path, char **str_arr, t_input *input)
