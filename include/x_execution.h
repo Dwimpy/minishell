@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 09:38:27 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/24 11:18:02 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,5 +43,6 @@ int				ft_subshell_no_tree(t_input *input, t_ast_node *root);
 void			ft_change_tree(t_ast_node *root);
 void			ft_change_tree_back(t_ast_node *root);
 int				ft_add_subshell(t_input *input, t_ast_node *root, int *fd, int subshell);
+int				ft_close_and_exit(int new_fd[2], int *fd, int status);
 
 #endif
