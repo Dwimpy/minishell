@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 18:59:19 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 19:05:42 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:19:49 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	fsm->input_state = N_INPUT;
 }
 
-char    *read_from_stdin(t_input *input)
+char	*read_from_stdin(t_input *input)
 {
 	char	*prompt;
 	char	*line;

@@ -6,11 +6,16 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 12:30:16 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/21 13:22:20 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 00:32:18 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "hashmap.h"
+
+void	free_all(void *key, void *value, void *node);
+
+int		chech_hashmap_entry(t_hashmap *hashmap, t_entry **entry, \
+			const void *key);
 
 void	*hashmap_get(t_hashmap *hashmap, const void *key)
 {
@@ -42,12 +47,7 @@ void	*hashmap_put(t_hashmap *hashmap, const void *key, void *value)
 		return (NULL);
 	index = hashmap->hash(key) % hashmap->size;
 	entry = hashmap->table[index];
-	while (entry)
-	{
-		if (hashmap->compare(key, entry->key))
-			break ;
-		entry = entry->next;
-	}
+	chech_hashmap_entry(hashmap, &entry, key);
 	if (!entry)
 	{
 		entry = (t_entry *)malloc(sizeof(t_entry));
@@ -62,6 +62,18 @@ void	*hashmap_put(t_hashmap *hashmap, const void *key, void *value)
 		prev = entry->value;
 	entry->value = (char *)value;
 	return (prev);
+}
+
+int	chech_hashmap_entry(t_hashmap *hashmap, t_entry **entry, \
+			const void *key)
+{
+	while (*entry)
+	{
+		if (hashmap->compare(key, (*entry)->key))
+			return (0);
+		*entry = (*entry)->next;
+	}
+	return (0);
 }
 
 void	*hashmap_remove(t_hashmap *hashmap, const void *key)
@@ -85,9 +97,7 @@ void	*hashmap_remove(t_hashmap *hashmap, const void *key)
 			value = entry->value;
 			(*entry_ptr) = entry->next;
 			hashmap->length--;
-			free((void *)(entry->key));
-			free((void *)(value));
-			free((void *)(entry));
+			free_all((void *)entry->key, (void *)entry->value, (void *)entry);
 			return (NULL);
 		}
 		entry_ptr = &(*entry_ptr)->next;
@@ -95,66 +105,9 @@ void	*hashmap_remove(t_hashmap *hashmap, const void *key)
 	return (NULL);
 }
 
-void	**hashmap_toarray(t_hashmap	*hashmap, void *end)
+void	free_all(void *key, void *value, void *node)
 {
-	int		i;
-	int		j;
-	void	**array;
-	t_entry	*entry;
-
-	i = 0;
-	j = 0;
-	if (!hashmap && !hashmap->table)
-		return (NULL);
-	array = malloc((2 * hashmap->length + 1) * sizeof(*array));
-	i = 0;
-	while (i < hashmap->size)
-	{
-		entry = hashmap->table[i];
-		while (entry)
-		{
-			array[j++] = (void *)entry->key;
-			array[j++] = entry->value;
-			entry = entry->next;
-		}
-		i++;
-	}
-	array[j] = end;
-	return (array);
-}
-
-// char	**hashmap_buildenv(t_hashmap *hashmap, void *end)
-// {
-// 	int		i;
-// 	int		j;
-// 	char	**array;
-// }
-
-void	hashmap_free(t_hashmap **hashmap)
-{
-	t_entry	*entry;
-	t_entry	*prev_entry;
-	int		i;
-
-	i = 0;
-	if (!hashmap && !(*hashmap)->table)
-		return ;
-	if ((*hashmap)->length > 0)
-	{
-		while (i < (*hashmap)->size)
-		{
-			entry = (*hashmap)->table[i];
-			while (entry)
-			{
-				prev_entry = entry;
-				entry = entry->next;
-				free((char *)prev_entry->key);
-				free(prev_entry->value);
-				free(prev_entry);
-			}
-			i++;
-		}
-	}
-	free((*hashmap)->table);
-	free(*hashmap);
+	free((void *)(key));
+	free((void *)(value));
+	free((void *)(node));
 }

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 20:07:30 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 20:07:47 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:10:12 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	heredoc_token_quote(char *line, t_token *token, t_input *input, int fd)
 	char	*expanded;
 
 	str = get_env_vars(expand_vars(token->value.quote.value), input);
-	if (!ft_strncmp(line, str, ft_strlen(str)))
+	if (!ft_strncmp(line, str, ft_strlen(str) + 1))
 	{
 		free(str);
 		free(line);

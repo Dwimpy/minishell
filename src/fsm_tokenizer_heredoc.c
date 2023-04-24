@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 14:43:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 20:07:38 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:08:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	heredoc_token_word(char *line, t_token *token, t_input *input, int fd)
 	char	*expanded;
 
 	if (!ft_strncmp(line, token->value.word.value, \
-		ft_strlen(token->value.word.value)))
+		ft_strlen(token->value.word.value) + 1))
 	{
 		free(line);
 		return (1);

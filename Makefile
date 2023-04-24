@@ -6,7 +6,7 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/04/23 20:49:01 by arobu            ###   ########.fr        #
+#    Updated: 2023/04/24 20:42:06 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,7 +23,7 @@ GNL_FOLDER      := ./get_next_line
 CC          = cc
 LDLFLAGS    = -L./libft-printf -L ./get_next_line/ #-L ./readline/
 LIBFLAGS = -lft -lgnl -lreadline #-lhistory -ltermcap
-CFLAGS      = -g3 #-Wall -Werror -Wextra -g3 -pthread
+CFLAGS      = -g3 -Wall -Werror -Wextra# -g3 -pthread
 ASAN        = #-fsanitize=address
 #Archive and Remove
 RM          = rm -f

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 18:51:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 18:57:49 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:34:41 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ static void	fsm_set_init_input_state(char c, t_lexer *lexer, t_fsm *fsm)
 		fsm->state = ERROR;
 	}
 	else if (c == '\0' && fsm->paren > 0)
-	{
 		fsm->input_state = IN_SUBSH;
-	}
 	else if (c == '\0')
 		fsm->input_state = INPUT_COMPLETE;
 }

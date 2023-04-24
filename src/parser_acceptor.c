@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 09:57:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/03/22 16:02:00 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:13:02 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,10 @@ int	accept_redirection(t_token *token)
 			return (1);
 	}
 	return (0);
+}
+
+int	is_cmd_word(t_token *token)
+{
+	return (accept(token, TOKEN_WORD) || \
+		accept(token, TOKEN_QUOTE));
 }

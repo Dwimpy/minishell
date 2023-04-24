@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 17:45:19 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 18:20:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:42:31 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <sys/wait.h>
 #include "signals.h"
 
-static void	tokenizer_is_heredoc(t_token *token, t_fsm *fsm, t_input *input);
+static void	tokenizer_is_heredoc(t_token *token, t_fsm *fsm);
 static void	tokenizer_suffix_lop(t_token *token, t_fsm *fsm);
 static void	tokenizer_suffix_redir(t_token *token, t_fsm *fsm, t_input *input);
 
@@ -22,7 +22,7 @@ int	tokenizer_tok_cmd_suffix(t_token *token, \
 		t_fsm *fsm, t_input *input)
 {
 	if (is_token_redir_and_none(token, fsm))
-		tokenizer_is_heredoc(token, fsm, input);
+		tokenizer_is_heredoc(token, fsm);
 	else if (fsm->cmd_p_substate == TOK_CMD_SUFFIX_REDIR)
 		tokenizer_suffix_redir(token, fsm, input);
 	else if (is_token_word_literal(token) || is_token_assignment(token))
@@ -71,7 +71,7 @@ static void	tokenizer_suffix_lop(t_token *token, t_fsm *fsm)
 		fsm->tok_state = TOK_OR_IF;
 }
 
-static void	tokenizer_is_heredoc(t_token *token, t_fsm *fsm, t_input *input)
+static void	tokenizer_is_heredoc(t_token *token, t_fsm *fsm)
 {
 	fsm->cmd_p_substate = TOK_CMD_SUFFIX_REDIR;
 	if (token->type == TOKEN_DLESS)

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 20:43:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 23:47:58 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,12 @@ typedef enum e_expand_state
 	IN_EXPAND_VAR
 }				t_expand_state;
 
+typedef struct s_index
+{
+	int			start;
+	int			i;
+}				t_index;
+
 typedef struct s_fsm
 {
 	int						in_subshell;
@@ -87,5 +93,7 @@ typedef struct s_fsm
 }					t_fsm;
 
 void	fsm_init_tokenizer(t_fsm *fsm);
+int		is_special_case(t_quote *quote, t_fsm *fsm, int i);
+int		is_not_alnum(t_quote *quote, t_index *index);
 
 #endif

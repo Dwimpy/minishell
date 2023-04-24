@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 09:57:09 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/12 19:54:59 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:12:55 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,3 @@ int	is_assign_word(t_token *token)
 {
 	return (token->type == TOKEN_ASSIGN_WORD);
 }
-
-int	is_cmd_word(t_token *token)
-{
-	return (accept(token, TOKEN_WORD) || \
-		accept(token, TOKEN_QUOTE));
-}
-

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 16:59:45 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/23 18:18:53 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:25:23 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include <stdio.h>
 #include "lexer.h"
 #include "fsm.h"
-
 
 char	get_next_char(t_lexer *lexer)
 {
@@ -43,12 +42,12 @@ char	get_next_char_tok(t_lexer *lexer)
 	return (lexer->tok_ch);
 }
 
-
 t_token	*create_next_token(t_lexer *lexer)
 {
 	while (match_whitespace(get_next_char_tok(lexer)))
 		;
-	if ((lexer->tok_ch == '1' || lexer->tok_ch == '2' || lexer->tok_ch == '0') && \
+	if ((lexer->tok_ch == '1' || lexer->tok_ch == '2' || \
+			lexer->tok_ch == '0') && \
 		look_ahead_tok(lexer) == '>')
 		get_next_char_tok(lexer);
 	if (match_word(lexer->tok_ch))

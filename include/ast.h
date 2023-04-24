@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/22 17:22:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 23:17:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,5 +133,4 @@ void 		print_tree(t_ast_node *root);
 t_arglist	*expand_vars(char *value);
 t_arglist	*expand_vars_heredoc(char *value);
 void		print_node(t_ast_node *node);
-
 #endif

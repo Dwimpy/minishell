@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 00:42:57 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 18:34:37 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:24:56 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "environment_handler.h"
 #include "quote_list.h"
 
-int		parse_all_input(t_input *input)
+int	parse_all_input(t_input *input)
 {
 	size_t	sub_count;
 

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 21:31:40 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:42:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 22:22:04 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "signals.h"
 
 static int	incorrect_parenthesis(t_input *input, t_fsm *fsm);
-static int	subshell_end_of_input(t_input *input, t_fsm * fsm);
+static int	subshell_end_of_input(t_input *input, t_fsm *fsm);
 static void	subshell_states_update(t_lexer *lexer, t_fsm *fsm);
 
 void	do_subsh(t_input *input, t_fsm *fsm)
@@ -54,7 +54,7 @@ void	subshell_states_update(t_lexer *lexer, t_fsm *fsm)
 	}
 }
 
-static int	subshell_end_of_input(t_input *input, t_fsm * fsm)
+static int	subshell_end_of_input(t_input *input, t_fsm *fsm)
 {
 	if (input->lexer.ch == '\0')
 	{

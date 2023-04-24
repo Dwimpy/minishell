@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:26:01 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 18:34:00 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 23:21:52 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,4 +86,5 @@ int		tokenizer_tok_cmd_name(t_token *token, \
 			t_fsm *fsm, t_input *input);
 int		tokenizer_do_tok_cmd(t_token *token, t_fsm *fsm, t_input *input);
 int		run_tokenizer(t_token *token, t_fsm *fsm, t_input *input);
+
 #endif

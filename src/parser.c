@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/19 12:17:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 20:06:21 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 00:34:09 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,12 @@
 #include "parser.h"
 #include "x_execution.h"
 
-t_ast_node	*parse_command(t_token_list *tokens, t_input *input, size_t sub_count)
+t_ast_node	*parse_command(t_token_list *tokens, \
+			t_input *input, size_t sub_count)
 {
 	t_command_info	cmd;
 	t_data			data;
 
-	// if (is_prev_subshell(tokens->first))
-	// 	return (NULL);
 	data.command.cmd.args = NULL;
 	data.command.cmd.assignments = NULL;
 	data.command.cmd.name_path = NULL;
@@ -32,17 +31,9 @@ t_ast_node	*parse_command(t_token_list *tokens, t_input *input, size_t sub_count
 	cmd.type = COMMAND;
 	parse_cmd_word(&tokens, &cmd);
 	cmd.suffix = parse_suffix(&tokens, input);
-	// print_args(cmd.arglist);
-	// print_args(cmd.suffix.arglist);
 	convert_info_to_cmd(cmd, &data);
 	free_cmd_info(cmd);
 	return (new_node(data, COMMAND, sub_count));
-}
-
-int	is_prev_subshell(t_token *token)
-{
-	return (token->type == TOKEN_PIPE || token->type == TOKEN_AND_IF || \
-		token->type == TOKEN_OR_IF || token->type == TOKEN_LPARENTHESIS);
 }
 
 t_ast_node	*parse_pipeline(t_token_list *tokens, size_t sub_count)
@@ -88,7 +79,8 @@ t_ast_node	*parse_or_if(t_token_list *tokens, size_t sub_count)
 
 t_ast_node	*parse_subshell(t_token_list *tokens, size_t *sub_count)
 {
-	while (accept(tokens->first, TOKEN_LPARENTHESIS) || accept(tokens->first, TOKEN_RPARENTHESIS))
+	while (accept(tokens->first, TOKEN_LPARENTHESIS) || \
+		accept(tokens->first, TOKEN_RPARENTHESIS))
 	{
 		if (accept(tokens->first, TOKEN_LPARENTHESIS))
 			(*sub_count)++;
@@ -99,7 +91,8 @@ t_ast_node	*parse_subshell(t_token_list *tokens, size_t *sub_count)
 	return (NULL);
 }
 
-void	parse_input(t_ast_node **root, t_token_list *tokens, t_input *input, size_t	*sub_count)
+void	parse_input(t_ast_node **root, t_token_list *tokens, \
+		t_input *input, size_t	*sub_count)
 {
 	parse_subshell(tokens, sub_count);
 	ast_add(root, parse_command(tokens, input, *sub_count));

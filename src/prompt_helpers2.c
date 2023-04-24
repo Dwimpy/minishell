@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 19:02:09 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/23 21:31:29 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:40:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	do_squote(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
 		readline_new_line(lexer, "squote> ");
-	else if (lexer->ch == '\'' && fsm->in_subshell)
+	else if (lexer->ch == '\'' && fsm->paren > 0)
 		fsm->input_state = IN_SUBSH;
 	else if (lexer->ch == '\'')
 		fsm->input_state = N_INPUT;
@@ -40,7 +40,7 @@ void	do_dquote(t_lexer *lexer, t_fsm *fsm)
 {
 	if (lexer->ch == '\0')
 		readline_new_line(lexer, "dquote> ");
-	else if (lexer->ch == '\"' && fsm->in_subshell)
+	else if (lexer->ch == '\"' && fsm->paren > 0)
 		fsm->input_state = IN_SUBSH;
 	else if (lexer->ch == '\"')
 		fsm->input_state = N_INPUT;

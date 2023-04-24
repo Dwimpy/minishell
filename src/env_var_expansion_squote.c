@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_cond.c                                       :+:      :+:    :+:   */
+/*   env_var_expansion_squote.c                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/11 15:27:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 22:24:36 by arobu            ###   ########.fr       */
+/*   Created: 2023/04/24 23:46:33 by arobu             #+#    #+#             */
+/*   Updated: 2023/04/24 23:50:20 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "token.h"
+#include "ast.h"
+#include "ft_printf.h"
+#include "quote_list.h"
+#include "fsm.h"
 
-int	is_string_type(t_token_type type)
+void	fsm_env_var_squote(t_arglist *arglist, t_quote *quote, \
+			t_index *index, t_fsm *fsm)
 {
-	return (type == TOKEN_WORD || type == TOKEN_AND_IF || \
-		type == TOKEN_OR_IF || type == TOKEN_DLESS || type == TOKEN_DGREAT);
-}
-
-int	is_operator_type(t_token_type type)
-{
-	return (type == TOKEN_PIPE || type == TOKEN_AND || \
-		type == TOKEN_DLESS || type == TOKEN_DGREAT);
+	if (quote->value[index->i] == '\'')
+	{
+		new_argument(arglist, create_expand_arg(&quote->value[index->start], \
+			0, index->i - index->start, NON_EXPAND));
+		fsm->input_state = REGULAR;
+		index->start = index->i + 1;
+	}
 }

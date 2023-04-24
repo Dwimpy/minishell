@@ -1,25 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_cond.c                                       :+:      :+:    :+:   */
+/*   env_var_expansions_chckers.c                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/11 15:27:36 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 22:24:36 by arobu            ###   ########.fr       */
+/*   Created: 2023/04/24 21:40:16 by arobu             #+#    #+#             */
+/*   Updated: 2023/04/24 21:44:50 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "token.h"
+#include "ast.h"
+#include "ft_printf.h"
+#include "quote_list.h"
+#include "fsm.h"
 
-int	is_string_type(t_token_type type)
+int	is_special_case(t_quote *quote, t_fsm *fsm, int i)
 {
-	return (type == TOKEN_WORD || type == TOKEN_AND_IF || \
-		type == TOKEN_OR_IF || type == TOKEN_DLESS || type == TOKEN_DGREAT);
-}
-
-int	is_operator_type(t_token_type type)
-{
-	return (type == TOKEN_PIPE || type == TOKEN_AND || \
-		type == TOKEN_DLESS || type == TOKEN_DGREAT);
+	return (quote->value[i] == '\\' && fsm->input_state != \
+			IN_SQUOTE && fsm->input_state != IN_DQUOTE);
 }

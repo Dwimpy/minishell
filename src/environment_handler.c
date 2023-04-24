@@ -6,13 +6,15 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/31 19:42:26 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 20:12:34 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 21:10:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "environment_handler.h"
 #include <string.h>
 #include <stdio.h>
+
+static void	copy_string(char *str, void *key, void *value);
 
 t_hashmap	*load_environment(char **envp)
 {
@@ -51,28 +53,31 @@ char	**hashmap_tochar(t_hashmap *hashmap)
 	int		i;
 	int		j;
 
-	i = 0;
+	i = -1;
 	j = 0;
 	if (!hashmap && !hashmap->table)
 		return (NULL);
-	arr = (char **)malloc(sizeof(char *) * (hashmap->length + 1));
+	arr = (char **)ft_calloc(hashmap->length + 1, sizeof(char *));
 	if (!arr)
 		return (NULL);
-	while (i < hashmap->size)
+	while (++i < hashmap->size)
 	{
 		entry = hashmap->table[i];
 		while (entry)
 		{
 			arr[j] = (char *)malloc(sizeof(char) * \
 				(ft_strlen((char *)entry->key) + ft_strlen(entry->value) + 2));
-			ft_strcpy(arr[j], (char *)entry->key);
-			ft_strcat(arr[j], "=");
-			ft_strcat(arr[j], (char *)entry->value);
+			copy_string(arr[j], (char *)entry->key, (char *)entry->value);
 			j++;
 			entry = entry->next;
 		}
-		i++;
 	}
-	arr[j] = NULL;
 	return (arr);
+}
+
+static void	copy_string(char *str, void *key, void *value)
+{
+	ft_strcpy(str, key);
+	ft_strcat(str, "=");
+	ft_strcat(str, value);
 }

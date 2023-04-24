@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 21:15:59 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 20:06:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/24 20:42:14 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 void	get_the_input(t_input *input, t_fsm *fsm)
 {
 	t_lexer		*lexer;
-	char		c;
 
 	lexer = &input->lexer;
 	fsm->input_state = N_INPUT;
