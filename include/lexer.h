@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/25 16:24:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:34:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ typedef struct s_input
 	t_hashmap			*special_sym;
 	t_ast_node			*root;
 	t_arglist			*heredoc_files;
-    struct sigaction	sa;
+	struct sigaction	sa;
 	int					sub;
 	int					unexpected;
 }				t_input;
@@ -98,6 +98,5 @@ void			handle_incomplete_input(t_control *control, char c);
 char			*get_new_input(t_incomplete_type type);
 int				get_new_lexer_input(t_lexer *lexer, t_control *control);
 t_hashmap		*create_special_table(void);
-
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 17:01:50 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 23:17:15 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:33:25 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,8 +129,6 @@ int			has_left_child(t_ast_node *root);
 int			has_parent(t_ast_node *root);
 void		ast_set_type(t_ast_node *node, t_node_type type);
 void		ast_del_node(t_ast_node	*node);
-void 		print_tree(t_ast_node *root);
 t_arglist	*expand_vars(char *value);
-t_arglist	*expand_vars_heredoc(char *value);
-void		print_node(t_ast_node *node);
+
 #endif

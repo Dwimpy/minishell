@@ -6,15 +6,12 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/25 17:31:28 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:36:42 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include <stdio.h>
 #include <stdlib.h>
-// #include <readline/readline.h>
-// #include <readline/history.h>
 #include "readline/readline.h"
 #include "readline/history.h"
 #include "parser.h"

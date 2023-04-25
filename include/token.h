@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/10 12:22:38 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/20 03:31:48 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:35:51 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ typedef struct s_token_word
 {
 	char			*value;
 }						t_token_word;
-
 
 typedef struct s_token_quote
 {

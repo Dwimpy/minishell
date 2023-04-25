@@ -6,10 +6,9 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 19:34:58 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 15:10:36 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:35:09 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef QUOTE_LIST_H
 # define QUOTE_LIST_H
