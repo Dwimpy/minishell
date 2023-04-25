@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 16:51:47 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/25 21:26:57 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,6 @@ int				ft_put_error(char **str_arr, char *str, int status);
 int				ft_put_error_n(char **str_arr, char *str, int status);
 int				ft_directory_error(char **str_arr, int *status);
 void			ft_cmd_not_found(char **str_arr, int *status);
+char			**ft_wildcard(char **str_arr, t_ast_node *root);
 
 #endif
