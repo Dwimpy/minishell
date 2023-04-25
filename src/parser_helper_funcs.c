@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 01:58:23 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 02:13:03 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 02:50:53 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	parse_cmd_word(t_token_list	**tokens, t_command_info *data)
 			{
 				new_argument(data->arglist, \
 					create_arg((*tokens)->first, NORMAL));
-				consume_token(*tokens);	
+				consume_token(*tokens);
 			}
 			else if ((*tokens)->first->type == TOKEN_QUOTE)
 			{
@@ -85,7 +85,7 @@ void	parse_suffix_words(t_token_list *tokens, t_cmd_suffix *suffix)
 		{
 			new_argument(suffix->arglist, \
 				create_arg((tokens)->first, NORMAL));
-			consume_token(tokens);	
+			consume_token(tokens);
 		}
 		else if ((tokens)->first->type == TOKEN_QUOTE)
 		{

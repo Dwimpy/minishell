@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 23:23:49 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 02:45:15 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ int				ft_pipe(t_input *input, t_ast_node *root, int *fd);
 int				ft_and_if(t_input *input, t_ast_node *root, int *fd);
 int				ft_or_if(t_input *input, t_ast_node *root, int *fd);
 int				ft_subshell_no_tree(t_input *input, t_ast_node *root);
+int				open_file(char **filename, int io, t_input *input);
 void			ft_change_tree(t_ast_node *root);
 void			ft_change_tree_back(t_ast_node *root);
 

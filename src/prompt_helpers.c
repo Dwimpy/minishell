@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 18:59:19 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 00:50:27 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 02:51:48 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	readline_pipe(t_lexer *lexer, char *prompt)
 
 	append_line = readline(prompt);
 	if (!append_line)
-		return 1;
+		return (1);
 	while (append_line && is_empty(append_line))
 	{
 		free(append_line);
@@ -110,4 +110,3 @@ void	do_linebreak(t_lexer *lexer, char *prompt, t_fsm *fsm)
 	lexer->read_position -= 2;
 	fsm->input_state = N_INPUT;
 }
-

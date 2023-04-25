@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 02:00:07 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 02:02:00 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 02:52:38 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,19 +80,4 @@ int	is_valid_beginning(t_token *token)
 				is_output_redir(token) || \
 					token->type == TOKEN_LPARENTHESIS || \
 						token->type == TOKEN_ASSIGN_WORD);
-}
-
-void	parse_input(t_ast_node **root, t_token_list *tokens, \
-		t_input *input, size_t	*sub_count)
-{
-	parse_subshell(tokens, sub_count);
-	ast_add(root, parse_command(tokens, input, *sub_count));
-	parse_subshell(tokens, sub_count);
-	ast_add(root, parse_pipeline(tokens, *sub_count));
-	parse_subshell(tokens, sub_count);
-	ast_add(root, parse_and_if(tokens, *sub_count));
-	parse_subshell(tokens, sub_count);
-	ast_add(root, parse_or_if(tokens, *sub_count));
-	parse_subshell(tokens, sub_count);
-	ast_add(root, parse_subshell(tokens, sub_count));
 }
