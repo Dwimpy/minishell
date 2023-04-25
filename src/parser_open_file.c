@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 02:43:04 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 02:44:54 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:02:59 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "x_execution.h"
 
 static int	open_fd_heredoc(char *filename, t_input *input);
-static int	open_fd_output(char *filename, t_input *input);
+static int	open_fd_output(char *filename);
 static int	open_fd_output_append(char *filename);
 static int	open_fd_input(char *filename);
 
@@ -29,7 +29,7 @@ int	open_file(char **filename, int io, t_input *input)
 	else if (io == HERE_DOC)
 		fd = open_fd_heredoc(*filename, input);
 	else if (io == OUTPUT)
-		fd = open_fd_output(*filename, input);
+		fd = open_fd_output(*filename);
 	else if (io == OUTPUT_APPEND)
 		fd = open_fd_output_append(*filename);
 	return (fd);
@@ -56,7 +56,7 @@ static int	open_fd_heredoc(char *filename, t_input *input)
 	return (fd);
 }
 
-static int	open_fd_output(char *filename, t_input *input)
+static int	open_fd_output(char *filename)
 {
 	int	fd;
 

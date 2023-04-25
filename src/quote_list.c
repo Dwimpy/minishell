@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 19:36:15 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/18 19:54:10 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:01:42 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,149 +15,101 @@
 #include "ft_printf.h"
 #include <stdio.h>
 
-t_quotelist	*new_quotelist(void)
-{
-	t_quotelist	*qlist;
-
-	qlist = (t_quotelist *)malloc(sizeof(t_quotelist));
-	if (!qlist)
-		return (NULL);
-	qlist->first = NULL;
-	qlist->last = NULL;
-	qlist->count = 0;
-	return (qlist);
-}
-
-t_quote	*new_quote_elem(char *value, t_quote_type type)
-{
-	t_quote	*quote;
-
-	quote = (t_quote *)malloc(sizeof(t_quote));
-	quote->value = value;
-	quote->type = type;
-	quote->next = NULL;
-	return (quote);
-}
+static void	do_quotelist_regular(char *value, t_quotelist *list, \
+			t_index *index, t_fsm *fsm);
+static void	do_quotelist_squote(char *value, t_quotelist *list, \
+			t_index *index, t_fsm *fsm);
+static void	do_quotelist_dquote(char *value, t_quotelist *list, \
+			t_index *index, t_fsm *fsm);
+static void	do_quotelist_ninput(char *value, \
+			t_index *index, t_fsm *fsm);
 
 t_quotelist	*create_list(char *value)
 {
-	int			i;
-	int			start;
+	t_index		index;
 	t_fsm		fsm;
 	t_quotelist	*list;
 
-	i = 0;
+	index.i = 0;
 	if (!value)
 		return (NULL);
 	list = new_quotelist();
 	fsm.input_state = N_INPUT;
 	while (fsm.input_state != INPUT_COMPLETE)
 	{
-		if (value[i] == '\0')
-		{
-			fsm.input_state = INPUT_COMPLETE;
+		if (end_of_input(value, &index, &fsm))
 			break ;
-		}
 		if (fsm.input_state == N_INPUT)
-		{
-			if (value[i] == '\'')
-				fsm.input_state = IN_SQUOTE;
-			else if (value[i] == '\"')
-				fsm.input_state = IN_DQUOTE;
-			else
-			{
-				fsm.input_state = REGULAR;
-			}
-			start = i;
-			if (value[i + 1] == '\0')
-				i -= 1;
-		}
+			do_quotelist_ninput(value, &index, &fsm);
 		else if (fsm.input_state == IN_SQUOTE)
-		{
-			if (value[i] == '\'')
-			{
-				fsm.input_state = N_INPUT;
-				add_quote_element(list, new_quote_elem(ft_substr(value, start, i - start + 1), QUOTE_SQUOTE));
-			}
-		}
+			do_quotelist_squote(value, list, &index, &fsm);
 		else if (fsm.input_state == IN_DQUOTE)
-		{
-			if (value[i] == '\"')
-			{
-				fsm.input_state = N_INPUT;
-				add_quote_element(list, new_quote_elem(ft_substr(value, start, i - start + 1), QUOTE_DQUOTE));
-			}
-		}
+			do_quotelist_dquote(value, list, &index, &fsm);
 		else if (fsm.input_state == REGULAR)
-		{
-			if (value[i] == '\'')
-			{
-				fsm.input_state = IN_SQUOTE;
-				add_quote_element(list, new_quote_elem(ft_substr(value, start, i - start), QUOTE_REGULAR));
-				start = i;
-			}
-			else if (value[i] == '\"')
-			{
-				fsm.input_state = IN_DQUOTE;
-				add_quote_element(list, new_quote_elem(ft_substr(value, start, i - start), QUOTE_REGULAR));
-				start = i;
-			}
-			else if (value[i + 1] == '\0')
-			{
-				add_quote_element(list, new_quote_elem(ft_substr(value, start, i - start + 1), QUOTE_REGULAR));
-			}
-		}
-		i++;
+			do_quotelist_regular(value, list, &index, &fsm);
+		index.i++;
 	}
 	return (list);
 }
 
-void	add_quote_element(t_quotelist *list, t_quote *quote)
+static void	do_quotelist_ninput(char *value, \
+			t_index *index, t_fsm *fsm)
 {
-	if (!quote)
-		return ;
-	if (!list->first)
-	{
-		list->first = quote;
-		list->last = quote;
-	}
+	if (value[index->i] == '\'')
+		fsm->input_state = IN_SQUOTE;
+	else if (value[index->i] == '\"')
+		fsm->input_state = IN_DQUOTE;
 	else
 	{
-		list->last->next = quote;
-		list->last = quote;
+		fsm->input_state = REGULAR;
 	}
-	list->count++;
+	index->start = index->i;
+	if (value[index->i + 1] == '\0')
+		index->i -= 1;
 }
 
-void	print_quotelist(t_quotelist *list)
+static void	do_quotelist_squote(char *value, t_quotelist *list, \
+			t_index *index, t_fsm *fsm)
 {
-	t_quote	*arg;
-
-	if (!list)
-		return ;
-	arg = list->first;
-	printf("Args: ");
-	while (arg)
+	if (value[index->i] == '\'')
 	{
-		printf("%s | ", arg->value);
-		arg = arg->next;
+		fsm->input_state = N_INPUT;
+		add_quote_element(list, new_quote_elem(ft_substr(value, \
+			index->start, index->i - index->start + 1), QUOTE_SQUOTE));
 	}
-	printf("\n");
 }
 
-void	free_quotelist(t_quotelist *list)
+static void	do_quotelist_dquote(char *value, t_quotelist *list, \
+			t_index *index, t_fsm *fsm)
 {
-	t_quote	*quote;
-
-	if (!list)
-		return ;
-	quote = list->first;
-	while (quote)
+	if (value[index->i] == '\"')
 	{
-		list->first = list->first->next;
-		free(quote->value);
-		free(quote);
-		quote = list->first;
+		fsm->input_state = N_INPUT;
+		add_quote_element(list, new_quote_elem(ft_substr(value, \
+			index->start, index->i - index->start + 1), QUOTE_DQUOTE));
 	}
-	free(list);
+}
+
+static void	do_quotelist_regular(char *value, t_quotelist *list, \
+			t_index *index, t_fsm *fsm)
+{
+	if (value[index->i] == '\'')
+	{
+		fsm->input_state = IN_SQUOTE;
+		add_quote_element(list, new_quote_elem(ft_substr(value, \
+			index->start, index->i - index->start), QUOTE_REGULAR));
+		index->start = index->i;
+	}
+	else if (value[index->i] == '\"')
+	{
+		fsm->input_state = IN_DQUOTE;
+		add_quote_element(list, new_quote_elem(ft_substr(value, \
+			index->start, index->i - index->start), QUOTE_REGULAR));
+		index->start = index->i;
+	}
+	else if (value[index->i + 1] == '\0')
+	{
+		add_quote_element(list, new_quote_elem(ft_substr(value, \
+			index->start, index->i - index->start + 1), QUOTE_REGULAR));
+	}
 }

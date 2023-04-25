@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/25 14:37:22 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 16:24:36 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,5 +98,6 @@ void			handle_incomplete_input(t_control *control, char c);
 char			*get_new_input(t_incomplete_type type);
 int				get_new_lexer_input(t_lexer *lexer, t_control *control);
 t_hashmap		*create_special_table(void);
+
 
 #endif

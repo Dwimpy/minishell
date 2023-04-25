@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_redirect.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 13:17:07 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/25 12:31:10 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/25 14:40:08 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,15 +49,18 @@ int	ft_redirect(t_ast_node *root, int *stdin_cp, int *stdout_cp)
 {
 	int		fd;
 
-	if (root->data.command.output.filename && !root->data.command.output.is_appended)
+	if (root->data.command.output.filename && \
+		!root->data.command.output.is_appended)
 	{
 		fd = open(root->data.command.output.filename, O_WRONLY | O_TRUNC, 0644);
 		if (ft_re_stdout(stdout_cp, &fd) == 1)
 			return (1);
 	}
-	else if (root->data.command.output.filename && root->data.command.output.is_appended)
+	else if (root->data.command.output.filename && \
+		root->data.command.output.is_appended)
 	{
-		fd = open(root->data.command.output.filename, O_WRONLY | O_APPEND, 0644);
+		fd = open(root->data.command.output.filename, \
+			O_WRONLY | O_APPEND, 0644);
 		if (ft_re_stdout(stdout_cp, &fd) == 1)
 			return (1);
 	}

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 22:15:18 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/25 00:36:12 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:31:28 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,14 +47,7 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		fd = 0;
 		exit_code = ft_execution(&input, input.root, &fd);
-		if (exit_code >= 256)
-			exit_code = exit_code / 256;
-		free(hashmap_put(input.special_sym, "EXITSTATUS", ft_itoa(exit_code)));
-		ast_del_node(input.root);
-		input.root = NULL;
-		free(input.lexer.input);
-		free_token_list(input.tokens);
-		free_heredoc_list(input.heredoc_files);
+		free_loop(&input, &exit_code);
 	}
 	return (ft_atoi(hashmap_get(input.special_sym, "EXITSTATUS")));
 }

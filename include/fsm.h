@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 17:18:46 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 23:47:58 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:25:00 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,5 @@ typedef struct s_fsm
 void	fsm_init_tokenizer(t_fsm *fsm);
 int		is_special_case(t_quote *quote, t_fsm *fsm, int i);
 int		is_not_alnum(t_quote *quote, t_index *index);
-
+int		end_of_input(char *value, t_index *index, t_fsm *fsm);
 #endif

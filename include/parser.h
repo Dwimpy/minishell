@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/12 13:28:56 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 01:54:07 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 17:31:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,4 +58,11 @@ t_io_redirect	get_output_file(t_command_info info);
 void			get_assignments(t_command_info info, t_data *data);
 void			get_cmd_args(t_command_info info, t_data *data);
 void			free_cmd_info(t_command_info info);
+void			get_env_var_loop(t_arg *arg, char *new, t_input *input);
+int				count_len(t_arg *arg, t_input *input);
+void			do_arg_expand(char *new, t_arg *arg, t_input *input);
+void			do_arg_non_expand(char *new, t_arg *arg);
+int				count_len_helper(t_arg *arg, size_t *len, t_input *input);
+char			*get_env_vars(t_arglist *list, t_input *input);
+void			free_loop(t_input *input, int *exit_code);
 #endif
