@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/25 21:26:57 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/25 22:40:41 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,20 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include "signals.h"
+# include <dirent.h>
+
+typedef struct s_wild
+{
+	size_t			i;
+	size_t			j;
+	size_t			a;
+	size_t			b;
+	size_t			c_cp;
+	DIR				*dir;
+	struct dirent	*new_dir;
+	size_t 			*count;
+}						t_wild;
+
 
 int				ft_command(char **str_arr, t_input *input, t_ast_node *root);
 int				ft_cd(char **str_arr, t_input *input);

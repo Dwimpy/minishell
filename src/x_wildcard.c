@@ -6,7 +6,7 @@
 /*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/25 13:22:24 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/25 22:00:39 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/25 22:23:22 by tkilling         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "sys/types.h"
 #include "sys/wait.h"
 #include "sys/stat.h"
-#include <dirent.h>
 
 int		ft_if_wildcard(char *str, char new_arr[1024][256], size_t *count);
 void	ft_check(char *str, char **arr, char new_arr[1024][256], size_t *count);
