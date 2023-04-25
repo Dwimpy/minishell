@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/22 20:48:55 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/25 14:38:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 18:21:06 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	ft_signal_handler_reading(int sig, siginfo_t *info, void *context)
 	(void)context;
 	if (sig == 2)
 	{
-		// rl_replace_line("", 0);
+		rl_replace_line("", 0);
 		write(1, "\n", 2);
 		rl_on_new_line();
 		rl_redisplay();

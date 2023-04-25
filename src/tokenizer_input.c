@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 20:53:34 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 20:11:39 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 18:21:03 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ static int	check_lexer_input(t_input *input)
 	if (!input->lexer.input)
 	{
 		status = ft_atoi((char *)hashmap_get(input->special_sym, "EXITSTATUS"));
+		ft_putstr_fd("exit\n", 1);
 		free_input_at_exit(input);
 		exit(status);
 	}
@@ -67,6 +68,7 @@ int	handle_tokenizer_errors(t_input *input, t_fsm *fsm)
 void	free_input_at_exit(t_input *input)
 {
 	free(input->tokens);
+	free_heredoc_list(input->heredoc_files);
 	free(input->heredoc_files);
 	hashmap_free(&input->hashmap);
 	hashmap_free(&input->special_sym);

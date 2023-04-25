@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 14:43:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/24 22:08:50 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 18:17:40 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ int	do_heredoc(t_token *token, t_fsm *fsm, t_input *input)
 		while (1)
 		{
 			line = readline("heredoc> ");
-			if (!line)
-				return (1);
-			if (run_heredoc(token, input, &fd, line))
+			if (!line || run_heredoc(token, input, &fd, line))
 				return (1);
 		}
 	}

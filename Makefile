@@ -6,12 +6,12 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/04/25 16:59:53 by arobu            ###   ########.fr        #
+#    Updated: 2023/04/25 18:21:26 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME            = minishell
-INCLUDE         = -I include/ -I libft-printf/include/ -I get_next_line/gnl/include #-I readline/
+INCLUDE         = -I include/ -I libft-printf/include/ -I get_next_line/gnl/include -I readline/
 DSYM            = ./minishell.dSYM
 SRC_DIR         = ./src
 OBJ_DIR         = ./obj
@@ -21,9 +21,9 @@ LIBFT_FOLDER    := ./libft-printf
 GNL_FOLDER      := ./get_next_line
 # Compiler
 CC          = cc
-LDLFLAGS    = -L./libft-printf -L ./get_next_line/ #-L ./readline/
-LIBFLAGS = -lft -lgnl -lreadline #-lhistory -ltermcap
-CFLAGS      = -g3 -Wall -Werror -Wextra# -g3 -pthread
+LDLFLAGS    = -L./libft-printf -L ./get_next_line/ -L ./readline/
+LIBFLAGS  	= -lft -lgnl -lreadline -lhistory -ltermcap
+CFLAGS      = -g3 #-Wall -Werror -Wextra# -g3 -pthread
 ASAN        = #-fsanitize=address
 #Archive and Remove
 RM          = rm -f
