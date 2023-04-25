@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 23:24:13 by dwimpy            #+#    #+#             */
-/*   Updated: 2023/04/22 21:22:26 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/25 14:37:22 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ typedef struct s_input
 	t_ast_node			*root;
 	t_arglist			*heredoc_files;
     struct sigaction	sa;
+	int					sub;
 	int					unexpected;
 }				t_input;
 
