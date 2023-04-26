@@ -6,7 +6,7 @@
 #    By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/06 16:57:34 by dwimpy            #+#    #+#              #
-#    Updated: 2023/04/25 18:21:26 by arobu            ###   ########.fr        #
+#    Updated: 2023/04/26 13:23:53 by arobu            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,15 +19,17 @@ MAIN_FILE       := main.c
 NORM_INCLUDE    = ./include
 LIBFT_FOLDER    := ./libft-printf
 GNL_FOLDER      := ./get_next_line
+
 # Compiler
 CC          = cc
 LDLFLAGS    = -L./libft-printf -L ./get_next_line/ -L ./readline/
 LIBFLAGS  	= -lft -lgnl -lreadline -lhistory -ltermcap
-CFLAGS      = -g3 #-Wall -Werror -Wextra# -g3 -pthread
-ASAN        = #-fsanitize=address
+CFLAGS      = -g3 -Wall -Werror -Wextra
+
 #Archive and Remove
 RM          = rm -f
 AR          = ar rcs
+
 # Colors
 DEF_COLOR = \033[0;39m
 RED = \033[0;91m

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/05 12:16:27 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/25 17:36:13 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/26 13:24:43 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,19 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include "signals.h"
+# include <dirent.h>
+
+typedef struct s_wild
+{
+	size_t			i;
+	size_t			j;
+	size_t			a;
+	size_t			b;
+	size_t			c_cp;
+	DIR				*dir;
+	struct dirent	*new_dir;
+	size_t			*count;
+}						t_wild;
 
 int				ft_command(char **str_arr, t_input *input, t_ast_node *root);
 int				ft_cd(char **str_arr, t_input *input);
@@ -53,5 +66,8 @@ int				ft_put_error_n(char **str_arr, char *str, int status);
 int				ft_directory_error(char **str_arr, int *status);
 void			ft_cmd_not_found(char **str_arr, int *status);
 int				open_file(char **filename, int io, t_input *input);
-
+void			ft_check(char *str, char **arr, \
+					char new_arr[1024][256], size_t *count);
+char			**ft_wildcard(char **str_arr, t_ast_node *root);
+void			ft_get_arr(char *str, char new_arr[1024][256], size_t *count);
 #endif

@@ -6,7 +6,7 @@
 /*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 19:38:03 by arobu             #+#    #+#             */
-/*   Updated: 2023/04/25 17:55:43 by arobu            ###   ########.fr       */
+/*   Updated: 2023/04/26 13:21:45 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ int	gen_input(t_input *input)
 	fsm_init_tokenizer_params(&i, &status, &pid, &prompt);
 	if (get_tokenizer_input(input))
 		return (1);
+	add_history(input->lexer.input);
 	while (fsm.state != COMPLETE && fsm.state != ERROR)
 	{
 		get_the_input(input, &fsm);
@@ -33,6 +34,5 @@ int	gen_input(t_input *input)
 	}
 	if (handle_tokenizer_errors(input, &fsm))
 		return (1);
-	add_history(input->lexer.input);
 	return (0);
 }

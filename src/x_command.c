@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_command.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/17 16:15:29 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 17:17:09 by tkilling         ###   ########.fr       */
+/*   Created: 2023/04/26 13:07:27 by arobu             #+#    #+#             */
+/*   Updated: 2023/04/26 13:07:29 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,19 @@ int	ft_command(char **str_arr, t_input *input, t_ast_node *root)
 	int		status;
 	int		stdin_cp;
 	int		stdout_cp;
+	char	**new_arr;
 
 	if (!str_arr)
 		return (1);
 	stdin_cp = -1;
 	stdout_cp = -1;
 	expand_env_vars(root->data.command.cmd.args, input);
-	if (ft_if_tilde(str_arr, input, root) != 0)
+	new_arr = ft_wildcard(str_arr, root);
+	if (ft_if_tilde((char **)new_arr, input, root) != 0)
 		return (126);
 	if (ft_redirect(root, &stdin_cp, &stdout_cp))
 		return (1);
-	status = ft_which_command(str_arr, input);
+	status = ft_which_command((char **)new_arr, input);
 	ft_redirect_back(&stdin_cp, &stdout_cp);
 	return (status);
 }

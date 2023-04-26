@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   x_builtin_cd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkilling <tkilling@student.42.fr>          +#+  +:+       +#+        */
+/*   By: arobu <arobu@student.42heilbronn.de>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/24 18:07:59 by tkilling          #+#    #+#             */
-/*   Updated: 2023/04/24 19:53:22 by tkilling         ###   ########.fr       */
+/*   Updated: 2023/04/26 13:45:54 by arobu            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <string.h>
 #include <errno.h>
 
-int	ft_cd_to_homedir(t_input *input, char **old);
+int	ft_cd_to_homedir(t_input *input, char **str_arr, char **old);
 int	ft_no_dir_error(char **str_arr);
 int	ft_old_pwd(t_input *input, char **str_arr, char **old);
 
@@ -25,8 +25,8 @@ int	ft_cd(char **str_arr, t_input *input)
 	char	*path;
 	char	*old;
 
-	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 2)))
-		return (ft_cd_to_homedir(input, &old));
+	if (str_arr[1] == NULL || !(ft_memcmp("~", str_arr[1], 1)))
+		return (ft_cd_to_homedir(input, &str_arr[1], &old));
 	if (!ft_strncmp(str_arr[1], "-", 2))
 	{
 		return_code = ft_old_pwd(input, str_arr, &old);
@@ -74,24 +74,28 @@ int	ft_no_dir_error(char **str_arr)
 	return (1);
 }
 
-int	ft_cd_to_homedir(t_input *input, char **old)
+int	ft_cd_to_homedir(t_input *input, char **str_arr, char **old)
 {
 	char	*str;
+	char	*old_str;
 
 	str = NULL;
 	str = (char *)hashmap_get(input->hashmap, "HOME");
 	if (!str || str[0] == '\0')
 		str = getcwd(NULL, 0);
-	*old = hashmap_put(input->hashmap, "PWD", ft_strdup(str));
+	old_str = (*str_arr);
+	(*str_arr) = ft_strjoin(str, &old_str[1]);
+	free(old_str);
+	*old = hashmap_put(input->hashmap, "PWD", ft_strdup(*str_arr));
 	free(hashmap_put(input->hashmap, "OLDPWD", *old));
-	if (str)
+	if (*str_arr)
 	{
-		if (chdir(str) == -1)
+		if (chdir(*str_arr) == -1)
 		{
 			ft_putstr_fd("cd: ", 2);
 			ft_putstr_fd(strerror(errno), 2);
 			ft_putstr_fd(": ", 2);
-			ft_putstr_fd(str, 2);
+			ft_putstr_fd(*str_arr, 2);
 			ft_putstr_fd("\n", 2);
 			return (1);
 		}
